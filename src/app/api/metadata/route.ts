@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getMetadata } from "~/server/queries/metadata";
+import urlMetadata from "url-metadata";
 
 export async function POST(req: Request) {
   const { url }: { url: string } = await req.json();
-  const response = await getMetadata(url);
+  const response = await urlMetadata(url);
   return NextResponse.json(response);
 }

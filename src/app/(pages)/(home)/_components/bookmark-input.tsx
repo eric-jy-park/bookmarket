@@ -4,17 +4,34 @@ import React from "react";
 import { Loader2, Search } from "lucide-react";
 import { Input } from "~/app/_core/components/input";
 import { useUrlMetadataMutation } from "../_state/mutations/use-url-metadata-mutation";
+import { useCreateBookmarkMutation } from "../_state/mutations/use-create-bookmark-mutation";
+import { useRouter } from "next/navigation";
+import { type UrlMetadata } from "~/types/metadata";
+import { urlToDomain } from "~/app/_core/utils/url-to-domain";
+import { useAuth } from "@clerk/nextjs";
 
 export function BookmarkInput() {
   const [url, setUrl] = React.useState("");
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
 
-  const { mutateAsync, isPending } = useUrlMetadataMutation();
+  const { mutateAsync: getUrlMetadata, isPending: isGettingUrlMetadata } =
+    useUrlMetadataMutation();
+  const { mutateAsync: createBookmarkMutation } = useCreateBookmarkMutation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = await mutateAsync(url);
-    console.log(data);
+    const data: UrlMetadata = await getUrlMetadata(url);
+
+    await createBookmarkMutation({
+      title: data.title,
+      description: data.description,
+      faviconUrl: `https://icon.horse/icon/${urlToDomain(url)}`,
+      url,
+    });
+
     setUrl("");
+    router.refresh();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,11 +45,11 @@ export function BookmarkInput() {
         <Input
           className="pl-8"
           placeholder="Paste a link to add a bookmark"
-          disabled={isPending}
+          disabled={isGettingUrlMetadata || !isSignedIn}
           value={url}
           onChange={handleChange}
         />
-        {isPending && (
+        {isGettingUrlMetadata && (
           <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
         )}
       </div>

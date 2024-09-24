@@ -20,11 +20,11 @@ export const createTable = pgTableCreator((name) => `bookmarket_${name}`);
 
 export const bookmarks = createTable("bookmark", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 256 }),
-  url: varchar("url", { length: 256 }),
-  title: varchar("title", { length: 256 }),
-  description: varchar("description", { length: 256 }),
-  faviconUrl: varchar("favicon_url", { length: 256 }),
+  userId: varchar("user_id", { length: 256 }).notNull(),
+  url: varchar("url", { length: 256 }).notNull(),
+  title: varchar("title", { length: 512 }).notNull(),
+  description: varchar("description", { length: 4000 }),
+  faviconUrl: varchar("favicon_url", { length: 512 }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

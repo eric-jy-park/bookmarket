@@ -1,15 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import ky from "ky";
+import { metadataService } from "../../services/metadata-service";
 
 export const useUrlMetadataMutation = () => {
   return useMutation({
-    mutationFn: async (url: string) => {
-      const response = await ky
-        .post("/api/getMetadata", {
-          json: { url },
-        })
-        .json();
-      return response;
-    },
+    mutationFn: (url: string) => metadataService.getMetadata(url),
   });
 };
