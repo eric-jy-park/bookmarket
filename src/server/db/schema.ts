@@ -27,10 +27,25 @@ export const posts = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
+
+export const bookmarks = createTable("bookmark", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 256 }),
+  url: varchar("url", { length: 256 }),
+  title: varchar("title", { length: 256 }),
+  description: varchar("description", { length: 256 }),
+  faviconUrl: varchar("favicon_url", { length: 256 }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});

@@ -1,6 +1,6 @@
 import { BookmarkInput } from "./_components/bookmark-input";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <main>
       <BookmarkInput />
