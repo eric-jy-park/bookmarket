@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { cn } from "../_core/utils/cn";
 import { GlobalProvider } from "../_common/providers/global-provider";
+import { Toaster } from "../_core/components/toaster";
 
 export const metadata: Metadata = {
   title: "Bookmarket",
@@ -24,6 +25,7 @@ export default function RootLayout({
           <main className="mt-6 flex w-full min-w-0 flex-auto flex-col px-5 sm:px-4">
             <TopNavbar />
             {children}
+            <Toaster />
             <Analytics />
             <SpeedInsights />
           </main>

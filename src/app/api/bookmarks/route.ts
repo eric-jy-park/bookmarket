@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { createBookmark, getBookmarks } from "~/server/queries/bookmark";
+import {
+  createBookmark,
+  deleteBookmark,
+  getBookmarks,
+} from "~/server/queries/bookmark";
 
 export async function POST(req: Request) {
   const { title, description, faviconUrl, url } = await req.json();
@@ -18,4 +22,12 @@ export async function GET() {
   const bookmarks = await getBookmarks();
 
   return NextResponse.json(bookmarks);
+}
+
+export async function DELETE(req: Request) {
+  const { id } = await req.json();
+
+  await deleteBookmark({ id });
+
+  return NextResponse.json({ success: true });
 }

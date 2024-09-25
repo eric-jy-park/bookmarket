@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import ky from "ky";
 import { type createBookmark } from "~/server/queries/bookmark";
 import { bookmarkService } from "../../services/bookmark-service";
 

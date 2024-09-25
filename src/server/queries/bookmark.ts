@@ -41,3 +41,13 @@ export const createBookmark = async ({
     userId,
   });
 };
+
+export const deleteBookmark = async ({ id }: { id: number }) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  return db.delete(bookmarks).where(eq(bookmarks.id, id));
+};

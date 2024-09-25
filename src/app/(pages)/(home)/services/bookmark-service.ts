@@ -12,6 +12,10 @@ class BookmarkService {
   async getBookmarks(): Promise<ReturnType<typeof getBookmarks>> {
     return ky.get("/api/bookmarks").json();
   }
+
+  async deleteBookmark(id: number) {
+    return ky.delete(`/api/bookmarks`, { json: { id } }).json();
+  }
 }
 
 export const bookmarkService = new BookmarkService();
