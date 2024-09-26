@@ -3,12 +3,7 @@ import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
 import Image from "next/image";
 import { encode } from "qss";
 import React, { useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useSpring,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "../utils/cn";
 
@@ -44,24 +39,14 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   children,
   url,
   className,
-  width = 200,
-  height = 125,
+  width = 160,
+  height = 90,
   quality = 50,
   layout = "fixed",
   isStatic = false,
   imageSrc = "",
 }) => {
   const [isOpen, setOpen] = useState(false);
-  const x = useMotionValue(0);
-  const translateX = useSpring(x, { stiffness: 100, damping: 15 });
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (event.target instanceof HTMLElement) {
-      const { left, width } = event.target.getBoundingClientRect();
-      const offsetFromCenter = (event.clientX - left - width / 2) / 2;
-      x.set(offsetFromCenter);
-    }
-  };
 
   return (
     <HoverCardPrimitive.Root
@@ -70,7 +55,6 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       onOpenChange={setOpen}
     >
       <HoverCardPrimitive.Trigger
-        onMouseMove={handleMouseMove}
         className={cn("text-black dark:text-white", className)}
         href={url}
       >
@@ -78,29 +62,29 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       </HoverCardPrimitive.Trigger>
 
       <HoverCardPrimitive.Content
-        className="[transform-origin:var(--radix-hover-card-content-transform-origin)]"
-        side="top"
+        className="z-50 hidden [transform-origin:var(--radix-hover-card-content-transform-origin)] lg:block"
+        side="left"
         align="center"
         sideOffset={10}
+        collisionPadding={20}
       >
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.6 }}
+              initial={{ opacity: 0, x: 20, scale: 0.4 }}
               animate={{
                 opacity: 1,
-                y: 0,
+                x: 0,
                 scale: 1,
                 transition: { type: "spring", stiffness: 260, damping: 20 },
               }}
-              exit={{ opacity: 0, y: 20, scale: 0.6 }}
-              className="rounded-xl shadow-xl"
-              style={{ x: translateX }}
+              exit={{ opacity: 0, x: 20, scale: 0.6 }}
+              className="rounded-md shadow-md"
             >
               <Link
                 target="_blank"
                 href={url}
-                className="block rounded-xl border-2 border-transparent bg-white p-1 shadow hover:border-neutral-200 dark:hover:border-neutral-800"
+                className="block rounded-lg border-2 border-transparent bg-white p-1 shadow-sm"
                 style={{ fontSize: 0 }}
               >
                 <Image
@@ -110,7 +94,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                   quality={quality}
                   layout={layout}
                   priority={true}
-                  className="rounded-lg"
+                  className="rounded-md"
                   alt="preview image"
                 />
               </Link>

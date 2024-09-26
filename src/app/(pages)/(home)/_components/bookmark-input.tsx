@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { type UrlMetadata } from "~/types/metadata";
 import { urlToDomain } from "~/app/_core/utils/url-to-domain";
 import { useAuth } from "@clerk/nextjs";
+import BlurFade from "~/app/_core/components/blur-fade";
 
 export function BookmarkInput() {
   const [url, setUrl] = React.useState("");
@@ -47,20 +48,26 @@ export function BookmarkInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          className="pl-8"
-          placeholder="Paste a link to add a bookmark"
-          disabled={isGettingUrlMetadata || !isSignedIn}
-          value={url}
-          onChange={handleChange}
-        />
-        {isGettingUrlMetadata && (
-          <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
-        )}
-      </div>
-    </form>
+    <BlurFade
+      duration={0.2}
+      delay={0.1}
+      className="sticky top-0 z-10 w-full bg-background pt-2 sm:top-12"
+    >
+      <form onSubmit={handleSubmit}>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            className="pl-8"
+            placeholder="Paste a link to add a bookmark"
+            disabled={isGettingUrlMetadata || !isSignedIn}
+            value={url}
+            onChange={handleChange}
+          />
+          {isGettingUrlMetadata && (
+            <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
+          )}
+        </div>
+      </form>
+    </BlurFade>
   );
 }
