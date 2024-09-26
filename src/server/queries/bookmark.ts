@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { bookmarks } from "../db/schema";
 import { auth } from "@clerk/nextjs/server";
@@ -6,14 +6,13 @@ import { auth } from "@clerk/nextjs/server";
 export const dynamic = "force-dynamic";
 
 export const getBookmarks = async () => {
-  // const { userId } = auth();
+  const { userId } = auth();
 
-  // if (!userId) {
-  //   return [];
-  // }
+  if (!userId) {
+    return [];
+  }
 
-  // return db.select().from(bookmarks).where(eq(bookmarks.userId, userId));
-  return db.select().from(bookmarks);
+  return db.select().from(bookmarks).where(eq(bookmarks.userId, userId));
 };
 
 export const createBookmark = async ({
@@ -49,5 +48,7 @@ export const deleteBookmark = async ({ id }: { id: number }) => {
     throw new Error("User not authenticated");
   }
 
-  return db.delete(bookmarks).where(eq(bookmarks.id, id));
+  return db
+    .delete(bookmarks)
+    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
 };

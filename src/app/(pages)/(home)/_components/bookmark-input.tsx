@@ -21,17 +21,25 @@ export function BookmarkInput() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data: UrlMetadata = await getUrlMetadata(url);
+    let fullUrl = url;
+    if (!fullUrl.startsWith("http")) {
+      fullUrl = `https://${fullUrl}`;
+    }
+    const data: UrlMetadata = await getUrlMetadata(fullUrl);
 
-    await createBookmarkMutation({
-      title: data.title,
-      description: data.description,
-      faviconUrl: `https://icon.horse/icon/${urlToDomain(url)}`,
-      url,
-    });
-
-    setUrl("");
-    router.refresh();
+    try {
+      await createBookmarkMutation({
+        title: data.title,
+        description: data.description,
+        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
+        url: fullUrl,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUrl("");
+      router.refresh();
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -4,7 +4,6 @@ import { BookmarkList } from "./_components/bookmark-list";
 
 export default async function HomePage() {
   const bookmarks = await getBookmarks();
-  console.log(bookmarks);
 
   return (
     <main className="flex flex-col gap-4">

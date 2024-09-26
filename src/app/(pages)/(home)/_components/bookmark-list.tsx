@@ -1,7 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
 import { type getBookmarks } from "~/server/queries/bookmark";
-import { BookmarkDeleteButton } from "./bookmark-delete-button";
+import { BookmarkCard } from "./bookmark-card";
 
 export function BookmarkList({
   bookmarks,
@@ -11,31 +9,7 @@ export function BookmarkList({
   return (
     <div className="flex flex-col gap-2">
       {bookmarks.map((bookmark) => (
-        <Link
-          target="_blank"
-          key={bookmark.id}
-          href={bookmark.url}
-          className="flex cursor-pointer items-center gap-2 rounded-md p-2 hover:bg-muted"
-        >
-          {bookmark.faviconUrl ? (
-            <Image
-              src={bookmark.faviconUrl}
-              alt={bookmark.title}
-              width={16}
-              height={16}
-              className="overflow-hidden"
-            />
-          ) : (
-            <div className="h-4 w-4 bg-muted" />
-          )}
-          <div className="flex flex-1 flex-col">
-            <span className="text-sm font-medium">{bookmark.title}</span>
-            <span className="text-sm text-muted-foreground">
-              {bookmark.description}
-            </span>
-          </div>
-          <BookmarkDeleteButton id={bookmark.id} />
-        </Link>
+        <BookmarkCard key={bookmark.id} bookmark={bookmark} />
       ))}
     </div>
   );

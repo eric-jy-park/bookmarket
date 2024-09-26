@@ -1,12 +1,12 @@
-[] Setup basic style guides
-[] Basic Landing Page
-[] Clerk-based Authentication
-[] Setup database on neon
-[] Setup CICD on vercel
-[] Scaffold basic ui with mock data
-[] Attach database to UI
-[] Add metadata fetcher for urls
-[] Add Url uploading input box
-[] Add Bookmark list
+[x] Setup basic style guides
+[x] Clerk-based Authentication
+[x] Setup database on neon
+[x] Setup CICD on vercel
+[x] Attach database to UI
+[x] Add metadata fetcher for urls
+[x] Add Url uploading input box
+[x] Add Bookmark list
+[x] Add Bookmark deletion
+[x] Add Link preview
 [] Add categories for bookmarks
-[] Add Link preview
+[] Basic Landing Page
