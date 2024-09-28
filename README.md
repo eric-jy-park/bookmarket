@@ -9,6 +9,7 @@
 [x] Add Bookmark deletion
 [x] Add Link preview
 [x] Add Sticky Header
+[] Add Bookmark Editing
 [] Add categories for bookmarks
 [] Basic Landing Page
 [] Add skeleton when metadata is loading
