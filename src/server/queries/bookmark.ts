@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { bookmarks } from "../db/schema";
 import { auth } from "@clerk/nextjs/server";
@@ -12,7 +12,11 @@ export const getBookmarks = async () => {
     return [];
   }
 
-  return db.select().from(bookmarks).where(eq(bookmarks.userId, userId));
+  return await db
+    .select()
+    .from(bookmarks)
+    .where(eq(bookmarks.userId, userId))
+    .orderBy(desc(bookmarks.createdAt));
 };
 
 export const createBookmark = async ({

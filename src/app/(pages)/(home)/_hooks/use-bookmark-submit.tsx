@@ -15,9 +15,12 @@ export function useBookmarkSubmit() {
   const { mutateAsync: createBookmarkMutation } = useCreateBookmarkMutation();
 
   const validateUrl = (input: string) => {
-    const urlPattern =
-      /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    return urlPattern.test(input);
+    try {
+      new URL(input);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
