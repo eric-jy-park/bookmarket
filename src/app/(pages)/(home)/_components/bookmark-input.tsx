@@ -2,54 +2,16 @@
 
 import React from "react";
 import { Loader2, Search } from "lucide-react";
-import { Input } from "~/app/_core/components/input";
-import { useUrlMetadataMutation } from "../_state/mutations/use-url-metadata-mutation";
-import { useCreateBookmarkMutation } from "../_state/mutations/use-create-bookmark-mutation";
-import { useRouter } from "next/navigation";
-import { type UrlMetadata } from "~/types/metadata";
-import { urlToDomain } from "~/app/_core/utils/url-to-domain";
+
 import { useAuth } from "@clerk/nextjs";
 import BlurFade from "~/app/_core/components/blur-fade";
+import { useBookmarkSubmit } from "../_hooks/use-bookmark-submit";
+import { UrlInput } from "./url-input";
 
 export function BookmarkInput() {
-  const [url, setUrl] = React.useState("");
-  const router = useRouter();
   const { isSignedIn } = useAuth();
-
-  const { mutateAsync: getUrlMetadata, isPending: isGettingUrlMetadata } =
-    useUrlMetadataMutation();
-  const { mutateAsync: createBookmarkMutation } = useCreateBookmarkMutation();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let fullUrl = url;
-    if (!fullUrl.startsWith("http")) {
-      fullUrl = `https://${fullUrl}`;
-    }
-
-    try {
-      const data: UrlMetadata = await getUrlMetadata(fullUrl);
-      await createBookmarkMutation({
-        title: data.title,
-        description: data.description,
-        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
-        url: fullUrl,
-      });
-    } catch {
-      await createBookmarkMutation({
-        title: fullUrl,
-        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
-        url: fullUrl,
-      });
-    } finally {
-      setUrl("");
-      router.refresh();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(e.target.value);
-  };
+  const { url, setUrl, isValidUrl, isLoading, handleSubmit } =
+    useBookmarkSubmit();
 
   return (
     <BlurFade
@@ -60,17 +22,19 @@ export function BookmarkInput() {
       <form onSubmit={handleSubmit}>
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            className="pl-8"
-            placeholder="Paste a link to add a bookmark"
-            disabled={isGettingUrlMetadata || !isSignedIn}
-            value={url}
-            onChange={handleChange}
+          <UrlInput
+            url={url}
+            setUrl={setUrl}
+            isValidUrl={isValidUrl}
+            isDisabled={isLoading || !isSignedIn}
           />
-          {isGettingUrlMetadata && (
+          {isLoading && (
             <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
           )}
         </div>
+        {!isValidUrl && (
+          <p className="mt-1 text-sm text-red-500">Please enter a valid URL</p>
+        )}
       </form>
     </BlurFade>
   );
