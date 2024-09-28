@@ -23,8 +23,10 @@ export const BookmarkCard = ({
           <div className="h-4 w-4 bg-muted" />
         )}
         <div className="flex flex-1 flex-col">
-          <span className="text-sm font-medium">{bookmark.title}</span>
-          <span className="text-sm text-muted-foreground">
+          <span className="break-all text-sm font-medium">
+            {bookmark.title}
+          </span>
+          <span className="break-words text-sm text-muted-foreground">
             {bookmark.description}
           </span>
         </div>
