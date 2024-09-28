@@ -6,7 +6,7 @@ export default async function HomePage() {
   const bookmarks = await getBookmarks();
 
   return (
-    <main className="flex flex-col gap-4">
+    <main className="flex flex-col gap-4 pb-10">
       <BookmarkInput />
       <BookmarkList bookmarks={bookmarks} />
     </main>

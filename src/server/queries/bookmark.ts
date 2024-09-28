@@ -22,7 +22,7 @@ export const createBookmark = async ({
   url,
 }: {
   title: string;
-  description: string;
+  description?: string;
   faviconUrl: string;
   url: string;
 }) => {

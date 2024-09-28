@@ -26,17 +26,21 @@ export function BookmarkInput() {
     if (!fullUrl.startsWith("http")) {
       fullUrl = `https://${fullUrl}`;
     }
-    const data: UrlMetadata = await getUrlMetadata(fullUrl);
 
     try {
+      const data: UrlMetadata = await getUrlMetadata(fullUrl);
       await createBookmarkMutation({
         title: data.title,
         description: data.description,
         faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
         url: fullUrl,
       });
-    } catch (error) {
-      console.error(error);
+    } catch {
+      await createBookmarkMutation({
+        title: fullUrl,
+        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
+        url: fullUrl,
+      });
     } finally {
       setUrl("");
       router.refresh();
