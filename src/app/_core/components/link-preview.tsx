@@ -57,6 +57,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       <HoverCardPrimitive.Trigger
         className={cn("text-black dark:text-white", className)}
         href={url}
+        target="_blank"
       >
         {children}
       </HoverCardPrimitive.Trigger>

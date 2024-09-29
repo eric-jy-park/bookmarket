@@ -4,6 +4,9 @@ import { useUrlMetadataMutation } from "../_state/mutations/use-url-metadata-mut
 import { useCreateBookmarkMutation } from "../_state/mutations/use-create-bookmark-mutation";
 import { urlToDomain } from "~/app/_core/utils/url-to-domain";
 import { type UrlMetadata } from "~/types/metadata";
+import { useVanishingInput } from "./use-vanishing-input";
+
+const urlRegex = /^(http[s]?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}\.?/;
 
 export function useBookmarkSubmit() {
   const [url, setUrl] = React.useState("");
@@ -14,48 +17,67 @@ export function useBookmarkSubmit() {
     useUrlMetadataMutation();
   const { mutateAsync: createBookmarkMutation } = useCreateBookmarkMutation();
 
+  const {
+    canvasValue,
+    setCanvasValue,
+    animating,
+    inputRef,
+    vanishAndSubmit,
+    canvasRef,
+  } = useVanishingInput();
+
   const validateUrl = (input: string) => {
     try {
-      new URL(input);
-      return true;
+      return urlRegex.test(input);
     } catch {
       return false;
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUrl(e.target.value);
+    },
+    [],
+  );
 
-    let fullUrl = url;
-    if (!fullUrl.startsWith("http")) {
-      fullUrl = `https://${fullUrl}`;
-    }
+  const handleSubmit = React.useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!validateUrl(fullUrl)) {
-      setIsValidUrl(false);
-      return;
-    }
+      let fullUrl = url;
+      if (!fullUrl.startsWith("http")) {
+        fullUrl = `https://${fullUrl}`;
+      }
 
-    try {
-      const data: UrlMetadata = await getUrlMetadata(fullUrl);
-      await createBookmarkMutation({
-        title: data.title,
-        description: data.description,
-        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
-        url: fullUrl,
-      });
-    } catch {
-      await createBookmarkMutation({
-        title: fullUrl,
-        faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
-        url: fullUrl,
-      });
-    } finally {
-      setUrl("");
-      setIsValidUrl(true);
-      router.refresh();
-    }
-  };
+      if (!validateUrl(fullUrl)) {
+        setIsValidUrl(false);
+        return;
+      }
+
+      try {
+        const data: UrlMetadata = await getUrlMetadata(fullUrl);
+        await createBookmarkMutation({
+          title: data.title,
+          description: data.description,
+          faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
+          url: fullUrl,
+        });
+      } catch {
+        await createBookmarkMutation({
+          title: fullUrl,
+          faviconUrl: `https://icon.horse/icon/${urlToDomain(fullUrl)}`,
+          url: fullUrl,
+        });
+      } finally {
+        setUrl("");
+        setIsValidUrl(true);
+        vanishAndSubmit();
+        router.refresh();
+      }
+    },
+    [url, router, createBookmarkMutation, getUrlMetadata, vanishAndSubmit],
+  );
 
   React.useEffect(() => {
     setIsValidUrl(true);
@@ -63,9 +85,14 @@ export function useBookmarkSubmit() {
 
   return {
     url,
-    setUrl,
     isValidUrl,
     isLoading: isGettingUrlMetadata,
+    handleChange,
     handleSubmit,
+    canvasValue,
+    setCanvasValue,
+    animating,
+    inputRef,
+    canvasRef,
   };
 }
