@@ -2,6 +2,7 @@ import ky from "ky";
 import {
   type createBookmark as createBookmarkServer,
   type getBookmarks,
+  type updateBookmark as updateBookmarkServer,
 } from "~/server/queries/bookmark";
 
 class BookmarkService {
@@ -11,6 +12,13 @@ class BookmarkService {
 
   async getBookmarks(): Promise<ReturnType<typeof getBookmarks>> {
     return ky.get("/api/bookmarks").json();
+  }
+
+  async updateBookmark(
+    id: number,
+    bookmark: Parameters<typeof updateBookmarkServer>[0],
+  ) {
+    return ky.patch(`/api/bookmarks/${id}`, { json: bookmark }).json();
   }
 
   async deleteBookmark(id: number) {

@@ -105,7 +105,7 @@ export const useVanishingInput = () => {
           });
         }
         if (newDataRef.current.length > 0) {
-          animateFrame(pos - 4);
+          animateFrame(pos - 1.5);
         } else {
           setCanvasValue("");
           setAnimating(false);

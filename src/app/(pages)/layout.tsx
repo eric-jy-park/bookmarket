@@ -20,12 +20,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn(GeistSans.variable)}>
-      <body className="mx-auto max-w-2xl antialiased">
+      <body>
         <GlobalProvider>
-          <main className="flex w-full min-w-0 flex-auto flex-col px-5 sm:px-4">
+          <main className="mx-auto flex w-full min-w-0 max-w-2xl flex-auto flex-col px-5 antialiased sm:px-4">
             <TopNavbar />
             {children}
-            <Toaster />
+            <Toaster position="bottom-center" />
             <Analytics />
             <SpeedInsights />
           </main>

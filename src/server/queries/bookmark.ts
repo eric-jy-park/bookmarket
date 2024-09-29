@@ -45,6 +45,40 @@ export const createBookmark = async ({
   });
 };
 
+export const updateBookmark = async ({
+  id,
+  title,
+  description,
+  faviconUrl,
+  url,
+}: {
+  id: number;
+  title: string;
+  description: string;
+  faviconUrl: string;
+  url: string;
+}) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const bookmark = await db
+    .select()
+    .from(bookmarks)
+    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
+
+  if (!bookmark) {
+    throw new Error("Bookmark not found");
+  }
+
+  return db
+    .update(bookmarks)
+    .set({ title, description, faviconUrl, url })
+    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
+};
+
 export const deleteBookmark = async ({ id }: { id: number }) => {
   const { userId } = auth();
 
