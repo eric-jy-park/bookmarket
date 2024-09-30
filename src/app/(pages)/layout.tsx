@@ -44,9 +44,9 @@ export const metadata: Metadata = {
     siteName: "BookMarket",
     images: [
       {
-        url: "https://bmkt.tech/images/og-image.png",
+        url: "https://utfs.io/f/3A5RWyP8uGdp1aTyPGvFNZ8uUODoJXCrmlfzwiqaygGRY0Qv",
         width: 1200,
-        height: 630,
+        height: 1200,
         alt: "BookMarket - Buy and Sell Curated Bookmark Collections",
       },
     ],
