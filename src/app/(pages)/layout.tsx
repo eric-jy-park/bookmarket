@@ -10,9 +10,50 @@ import { GlobalProvider } from "../_common/providers/global-provider";
 import { Toaster } from "../_core/components/toaster";
 
 export const metadata: Metadata = {
-  title: "Bookmarket",
-  description: "Buy and sell your bookmarks at ease.",
+  title: {
+    default: "BookMarket - Buy and Sell Curated Bookmark Collections",
+    template: "%s | BookMarket",
+  },
+  description:
+    "Discover expert-curated bookmark collections or monetize your own web resources on BookMarket. Connect with knowledge seekers and share valuable online content.",
+  keywords: [
+    "bookmarks",
+    "curated collections",
+    "knowledge sharing",
+    "expert resources",
+    "web curation",
+    "digital marketplace",
+    "buy bookmarks",
+    "sell bookmarks",
+  ],
+  authors: [{ name: "Eric Park" }],
+  creator: "Eric Park",
+  publisher: "Eric Park",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://bmkt.tech",
+    title: "BookMarket - Buy and Sell Curated Bookmark Collections",
+    description:
+      "Discover expert-curated bookmark collections or monetize your own web resources on BookMarket. Connect with knowledge seekers and share valuable online content.",
+    siteName: "BookMarket",
+    images: [
+      {
+        url: "https://bmkt.tech/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "BookMarket - Buy and Sell Curated Bookmark Collections",
+      },
+    ],
+  },
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  manifest: "/site.webmanifest",
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
