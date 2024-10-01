@@ -61,6 +61,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn(GeistSans.variable)}>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="ww7YPb1kClVezWYDUBhYUWDPFWBPqRuTxZjX4YJb45U"
+        />
+      </head>
       <body>
         <GlobalProvider>
           <main className="mx-auto flex w-full min-w-0 max-w-2xl flex-auto flex-col px-5 antialiased sm:px-4">
