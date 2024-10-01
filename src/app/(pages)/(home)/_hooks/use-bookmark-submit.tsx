@@ -73,10 +73,9 @@ export function useBookmarkSubmit() {
         setUrl("");
         setIsValidUrl(true);
         vanishAndSubmit();
-        router.refresh();
       }
     },
-    [url, router, createBookmarkMutation, getUrlMetadata, vanishAndSubmit],
+    [url, createBookmarkMutation, getUrlMetadata, vanishAndSubmit],
   );
 
   React.useEffect(() => {

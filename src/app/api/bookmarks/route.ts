@@ -3,7 +3,6 @@ import {
   createBookmark,
   deleteBookmark,
   getBookmarks,
-  updateBookmark,
 } from "~/server/queries/bookmark";
 
 export async function GET() {
@@ -16,20 +15,6 @@ export async function POST(req: Request) {
   const { title, description, faviconUrl, url } = await req.json();
 
   const bookmark = await createBookmark({
-    title,
-    description,
-    faviconUrl,
-    url,
-  });
-
-  return NextResponse.json(bookmark);
-}
-
-export async function PATCH(req: Request) {
-  const { id, title, description, faviconUrl, url } = await req.json();
-
-  const bookmark = await updateBookmark({
-    id,
     title,
     description,
     faviconUrl,

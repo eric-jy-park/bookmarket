@@ -7,6 +7,6 @@ export const bookmarksQueries = {
   bookmarks: () =>
     queryOptions({
       queryKey: [bookmarksQueryKey],
-      queryFn: () => bookmarkService.getBookmarks(),
+      queryFn: async () => await bookmarkService.getBookmarks(),
     }),
 };

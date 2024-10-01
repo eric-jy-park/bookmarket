@@ -15,6 +15,7 @@ type LinkPreviewProps = {
   height?: number;
   quality?: number;
   layout?: string;
+  isDisabled?: boolean;
 } & (
   | { isStatic: true; imageSrc: string }
   | { isStatic?: false; imageSrc?: never }
@@ -45,8 +46,13 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   layout = "fixed",
   isStatic = false,
   imageSrc = "",
+  isDisabled = false,
 }) => {
   const [isOpen, setOpen] = useState(false);
+
+  if (isDisabled) {
+    return children;
+  }
 
   return (
     <HoverCardPrimitive.Root

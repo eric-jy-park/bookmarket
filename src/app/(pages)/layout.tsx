@@ -69,7 +69,7 @@ export default function RootLayout({
       </head>
       <body>
         <GlobalProvider>
-          <main className="mx-auto flex w-full min-w-0 max-w-2xl flex-auto flex-col px-5 antialiased sm:px-4">
+          <main className="mx-auto flex w-full min-w-0 max-w-2xl flex-auto select-none flex-col px-5 antialiased sm:select-text sm:px-4">
             <TopNavbar />
             {children}
             <Toaster position="bottom-center" />

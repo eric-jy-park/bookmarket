@@ -11,10 +11,14 @@ import { useBookmarkDelete } from "../_hooks/use-bookmark-delete";
 import React from "react";
 import { useBookmarkCopy } from "../_hooks/use-bookmark-copy";
 import { type Bookmark } from "~/types/bookmark";
+import { useBookmarkStore } from "../_state/store/use-bookmark-store";
 
 export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {
   const { handleDelete } = useBookmarkDelete();
   const { handleCopy } = useBookmarkCopy();
+
+  const { setActiveBookmarkId, activeBookmarkId } = useBookmarkStore();
+
   const menuItems = [
     {
       icon: CopyIcon,
@@ -28,9 +32,13 @@ export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {
       icon: PencilIcon,
       label: "Rename",
       onClick: () => {
-        console.log("Rename");
+        if (activeBookmarkId !== bookmark.id) {
+          setActiveBookmarkId(bookmark.id);
+        } else {
+          setActiveBookmarkId(null);
+        }
       },
-      disabled: true,
+      disabled: false,
     },
     {
       icon: TrashIcon,
@@ -66,22 +74,5 @@ export function BookmarkContextMenuTrigger({
 }: {
   children: React.ReactNode;
 }) {
-  const handleAuxClick = React.useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("aux click");
-    },
-    [],
-  );
-
-  const handleBlur = React.useCallback(() => {
-    console.log("blur");
-  }, []);
-
-  return (
-    <ContextMenuTrigger onAuxClick={handleAuxClick} onBlur={handleBlur}>
-      {children}
-    </ContextMenuTrigger>
-  );
+  return <ContextMenuTrigger>{children}</ContextMenuTrigger>;
 }

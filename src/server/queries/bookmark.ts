@@ -2,6 +2,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { bookmarks } from "../db/schema";
 import { auth } from "@clerk/nextjs/server";
+import { type Bookmark } from "~/types/bookmark";
 
 export const dynamic = "force-dynamic";
 
@@ -51,13 +52,7 @@ export const updateBookmark = async ({
   description,
   faviconUrl,
   url,
-}: {
-  id: number;
-  title: string;
-  description: string;
-  faviconUrl: string;
-  url: string;
-}) => {
+}: Omit<Bookmark, "userId" | "createdAt" | "updatedAt">) => {
   const { userId } = auth();
 
   if (!userId) {
