@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { type createBookmark } from "~/server/queries/bookmark";
 import { bookmarkService } from "../../services/bookmark-service";
-import { useQueryClient } from "@tanstack/react-query";
 import { bookmarksQueries } from "../queries/bookmark-query";
+import { getQueryClient } from "~/app/_core/utils/get-query-client";
 
 export const useCreateBookmarkMutation = () => {
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
 
   return useMutation({
     mutationFn: (bookmark: Parameters<typeof createBookmark>[0]) =>

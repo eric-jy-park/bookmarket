@@ -13,7 +13,7 @@ export const getBookmarks = async () => {
     return [];
   }
 
-  return await db
+  return db
     .select()
     .from(bookmarks)
     .where(eq(bookmarks.userId, userId))

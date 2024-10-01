@@ -3,8 +3,9 @@
 import { BookmarkCard } from "./bookmark-card";
 import BlurFade from "~/app/_core/components/blur-fade";
 import { useBookmarkStore } from "../_state/store/use-bookmark-store";
-import { useQuery } from "@tanstack/react-query";
+
 import { bookmarksQueries } from "../_state/queries/bookmark-query";
+import { useQuery } from "@tanstack/react-query";
 
 export function BookmarkList() {
   const { activeBookmarkId } = useBookmarkStore();
