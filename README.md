@@ -13,10 +13,10 @@ Bookmarket is a modern web application for managing and organizing your bookmark
 - ✅ Sticky Header
 - ✅ Context Menu for Bookmarks
 - ✅ Animated Vanishing Input for URL Entry
+- ✅ Bookmark Editing
 
 ## Upcoming Features
 
-- [ ] Bookmark Editing
 - [ ] Bookmark Categories
 - [ ] Landing Page
 - [ ] Loading Skeletons for Metadata Fetching
