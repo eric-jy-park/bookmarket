@@ -6,11 +6,10 @@ import { useBookmarkStore } from "../_state/store/use-bookmark-store";
 
 import { bookmarksQueries } from "../_state/queries/bookmark-query";
 import { useQuery } from "@tanstack/react-query";
+import { Bookmark } from "~/types/bookmark";
 
-export function BookmarkList() {
+export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
   const { activeBookmarkId } = useBookmarkStore();
-
-  const { data: bookmarks } = useQuery(bookmarksQueries.bookmarks());
 
   return (
     <div className="flex flex-col gap-2">

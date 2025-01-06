@@ -11,8 +11,8 @@ import { Toaster } from "../_core/components/toaster";
 
 export const metadata: Metadata = {
   title: {
-    default: "BookMarket - Buy and Sell Curated Bookmark Collections",
-    template: "%s | BookMarket",
+    default: "Bookmarket",
+    template: "%s",
   },
   description:
     "Discover expert-curated bookmark collections or monetize your own web resources on BookMarket. Connect with knowledge seekers and share valuable online content.",
