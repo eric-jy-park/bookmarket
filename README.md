@@ -2,6 +2,10 @@
 
 Bookmarket is a modern web application for managing and organizing your bookmarks. Built with Next.js, TypeScript, and leveraging cutting-edge technologies, Bookmarket offers a seamless and intuitive bookmarking experience.
 
+## Diagram
+<img width="1527" alt="image" src="https://github.com/user-attachments/assets/636e1398-cf05-4b06-a9f2-97420479c18c" />
+
+
 ## Features
 
 - ✅ User Authentication (Clerk)
