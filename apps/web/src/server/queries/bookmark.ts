@@ -1,23 +1,20 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { bookmarks } from "../db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { type Bookmark } from "~/types/bookmark";
+import { http } from "~/app/_core/utils/http";
 
 export const dynamic = "force-dynamic";
 
 export const getBookmarks = async () => {
-  const { userId } = auth();
-
-  if (!userId) {
+  try {
+    const bookmarks: Bookmark[] = await http.get("bookmarks");
+    return bookmarks;
+  } catch (error) {
+    console.error(error);
     return [];
   }
-
-  return db
-    .select()
-    .from(bookmarks)
-    .where(eq(bookmarks.userId, userId))
-    .orderBy(desc(bookmarks.createdAt));
 };
 
 export const createBookmark = async ({
