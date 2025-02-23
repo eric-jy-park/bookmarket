@@ -48,6 +48,7 @@ export const BookmarkCard = ({
                 width={16}
                 height={16}
                 className="shrink-0 overflow-hidden"
+                unoptimized={true}
               />
             ) : (
               <div className="h-4 w-4 shrink-0 bg-muted" />
