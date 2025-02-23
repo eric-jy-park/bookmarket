@@ -1,7 +1,7 @@
+import ky from "ky";
 import { NextResponse } from "next/server";
 import urlMetadata from "url-metadata";
-import puppeteer from "puppeteer";
-
+import * as Sentry from "@sentry/nextjs";
 const options = {
   requestHeaders: {
     Accept:
@@ -14,6 +14,15 @@ const options = {
   },
 };
 
+interface MetadataResponse {
+  data: {
+    title: string;
+    description: string;
+    logo: string;
+    url: string;
+  };
+}
+
 export async function POST(req: Request) {
   const { url }: { url: string } = await req.json();
   try {
@@ -21,52 +30,42 @@ export async function POST(req: Request) {
     const metadata = {
       title: response.title,
       description: response.description,
-      faviconUrl: response.icon,
+      logo: response.icon,
       url: response.url,
     };
     return NextResponse.json(metadata);
   } catch (error) {
-    console.error("url-metadata failed, falling back to puppeteer", error);
+    Sentry.captureException(
+      "url-metadata failed, falling back to metadata-vision",
+      {
+        extra: {
+          url,
+          error,
+        },
+      },
+    );
 
-    try {
-      const browser = await puppeteer.launch({ headless: true });
-      const page = await browser.newPage();
-      await page.setUserAgent(options.requestHeaders["User-Agent"]);
-      await page.goto(url, { waitUntil: "networkidle2" });
+    const response = await ky
+      .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
+        timeout: 30000,
+        retry: 2,
+        hooks: {
+          beforeRetry: [
+            async ({ error }) => {
+              console.log(`Retrying metadata fetch due to: ${error?.message}`);
+            },
+          ],
+        },
+      })
+      .json();
 
-      const metadata = await page.evaluate(() => {
-        const metaTags = Array.from(document.getElementsByTagName("meta"));
-        const metadata: Record<string, string> = {};
-        metaTags.forEach((tag) => {
-          if (tag.getAttribute("name")) {
-            metadata[tag.getAttribute("name")!] = tag.getAttribute("content")!;
-          } else if (tag.getAttribute("property")) {
-            metadata[tag.getAttribute("property")!] =
-              tag.getAttribute("content")!;
-          }
-        });
+    const metadata = {
+      title: response.data.title,
+      description: response.data.description,
+      logo: response.data.logo,
+      url: response.data.url,
+    };
 
-        const title = document.querySelector("title")?.innerText ?? "";
-        const faviconUrl =
-          document.querySelector("link[rel~='icon']")?.getAttribute("href") ??
-          "";
-
-        return {
-          title,
-          description: metadata.description ?? "",
-          faviconUrl,
-          url: window.location.href,
-        };
-      });
-
-      await browser.close();
-      return NextResponse.json(metadata);
-    } catch (puppeteerError) {
-      console.error("puppeteer failed", puppeteerError);
-      return NextResponse.json(
-        { error: "Failed to fetch metadata" },
-        { status: 500 },
-      );
-    }
+    return NextResponse.json(metadata);
   }
 }
