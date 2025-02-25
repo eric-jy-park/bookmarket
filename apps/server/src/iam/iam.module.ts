@@ -11,6 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './authentication/guards/authentication/authentication.guard';
+import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
+import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
 
 @Module({
   imports: [
@@ -29,7 +31,8 @@ import { AuthenticationGuard } from './authentication/guards/authentication/auth
     },
     AccessTokenGuard,
     AuthenticationService,
+    GoogleAuthenticationService,
   ],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, GoogleAuthenticationController],
 })
 export class IamModule {}

@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConfig } from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 
 @Injectable()
 export class AuthenticationService {
@@ -34,6 +35,7 @@ export class AuthenticationService {
       const user = new User();
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
+      user.auth_provider = AuthProvider.EMAIL;
 
       await this.usersRepository.save(user);
     } catch (err) {
@@ -47,6 +49,7 @@ export class AuthenticationService {
   async signIn(signInDto: SignInDto) {
     const user = await this.usersRepository.findOneBy({
       email: signInDto.email,
+      auth_provider: AuthProvider.EMAIL,
     });
 
     if (!user) {
@@ -65,7 +68,7 @@ export class AuthenticationService {
     return await this.generateTokens(user);
   }
 
-  private async generateTokens(user: User) {
+  async generateTokens(user: User) {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(user.id, this.jwtConfiguration.accessTokenTtl, {
         email: user.email,
