@@ -10,6 +10,8 @@ import { type Bookmark } from "~/types/bookmark";
 import { cn } from "~/app/_core/utils/cn";
 import React from "react";
 import { BookmarkCardTitleInput } from "./bookmark-card-title-input";
+import { useMutation } from "@tanstack/react-query";
+import { fixBrokenFavicon } from "../_actions/fix-broken-favicon.action";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -22,6 +24,18 @@ export const BookmarkCard = ({
   isActive,
   isBlurred,
 }: BookmarkCardProps) => {
+
+  const { mutate } = useMutation({
+    mutationFn: () => fixBrokenFavicon(bookmark.id, bookmark.url),
+  });
+
+  // FIXME: This is a hack to migrate the favicon url to the new format
+  React.useEffect(() => {
+    if (bookmark.faviconUrl?.startsWith("https://icon.horse")) {
+      mutate();
+    }
+  }, [bookmark.faviconUrl, mutate]);
+
   return (
     <BookmarkContextMenuProvider>
       <BookmarkContextMenuTrigger>
