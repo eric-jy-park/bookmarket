@@ -12,6 +12,7 @@ import React from "react";
 import { BookmarkCardTitleInput } from "./bookmark-card-title-input";
 import { useMutation } from "@tanstack/react-query";
 import { fixBrokenFavicon } from "../_actions/fix-broken-favicon.action";
+import { useRouter } from "next/navigation";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -24,12 +25,13 @@ export const BookmarkCard = ({
   isActive,
   isBlurred,
 }: BookmarkCardProps) => {
-
+  const router = useRouter();
   const { mutate } = useMutation({
     mutationFn: () => fixBrokenFavicon(bookmark.id, bookmark.url),
+    onSuccess: () => router.refresh(),
   });
 
-  // FIXME: This is a hack to migrate the favicon url to the new format
+  // FIXME: This is a hack to migrate the favicon url to the new provider
   React.useEffect(() => {
     if (bookmark.faviconUrl?.startsWith("https://icon.horse")) {
       mutate();
