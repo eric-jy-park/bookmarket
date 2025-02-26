@@ -1,9 +1,9 @@
-import ky from "ky";
+import { http } from "~/app/_common/utils/http";
 import { type UrlMetadata } from "~/types/metadata";
 
 class MetadataService {
   async getMetadata(url: string): Promise<UrlMetadata> {
-    return ky.post(`/api/metadata`, { json: { url } }).json();
+    return http.post(`/api/metadata`, { json: { url } }).json();
   }
 }
 

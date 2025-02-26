@@ -1,10 +1,10 @@
 import { getMetadata } from "./get-metadata.action";
-import ky from "ky";
+import { http } from "~/app/_common/utils/http";
 
 export async function fixBrokenFavicon(id: number, url: string) {
   const metadata = await getMetadata(url);
   const faviconUrl = metadata.logo;
-  await ky.patch(`/api/bookmarks/${id}`, {
+  await http.patch(`/api/bookmarks/${id}`, {
     json: {
       faviconUrl,
     },

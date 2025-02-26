@@ -1,4 +1,4 @@
-import ky from "ky";
+import { http } from "~/app/_common/utils/http";
 import urlMetadata from "url-metadata";
 import * as Sentry from "@sentry/nextjs";
 import { type UrlMetadata } from "~/types/metadata";
@@ -23,7 +23,7 @@ export async function getMetadata(url: string) {
   let metadata: UrlMetadata;
 
   try {
-    const response = await ky
+    const response = await http
       .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
         timeout: 30000,
         retry: 2,

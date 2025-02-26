@@ -1,4 +1,4 @@
-import ky from "ky";
+import { http } from "~/app/_common/utils/http";
 import {
   type createBookmark as createBookmarkServer,
   type getBookmarks,
@@ -7,22 +7,22 @@ import {
 
 class BookmarkService {
   async createBookmark(bookmark: Parameters<typeof createBookmarkServer>[0]) {
-    return ky.post("/api/bookmarks", { json: bookmark }).json();
+    return http.post("/api/bookmarks", { json: bookmark }).json();
   }
 
   async getBookmarks(): Promise<ReturnType<typeof getBookmarks>> {
-    return ky.get("/api/bookmarks").json();
+    return http.get("/api/bookmarks").json();
   }
 
   async updateBookmark(
     id: number,
     bookmark: Parameters<typeof updateBookmarkServer>[0],
   ) {
-    return ky.patch(`/api/bookmarks/${id}`, { json: bookmark }).json();
+    return http.patch(`/api/bookmarks/${id}`, { json: bookmark }).json();
   }
 
   async deleteBookmark(id: number) {
-    return ky.delete(`/api/bookmarks`, { json: { id } }).json();
+    return http.delete(`/api/bookmarks`, { json: { id } }).json();
   }
 }
 
