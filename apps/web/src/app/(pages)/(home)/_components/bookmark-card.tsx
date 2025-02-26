@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { LinkPreview } from "~/app/_core/components/link-preview";
 import { motion } from "framer-motion";
 import {
@@ -63,7 +63,10 @@ export const BookmarkCard = ({
                 height={16}
                 className="shrink-0 overflow-hidden"
                 unoptimized={true}
-              />
+                style={{
+                  maxWidth: "100%",
+                  height: "auto"
+                }} />
             ) : (
               <div className="h-4 w-4 shrink-0 bg-muted" />
             )}

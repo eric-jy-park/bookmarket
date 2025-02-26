@@ -1,6 +1,6 @@
 "use client";
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { encode } from "qss";
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -67,7 +67,6 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       >
         {children}
       </HoverCardPrimitive.Trigger>
-
       <HoverCardPrimitive.Content
         className="z-50 hidden [transform-origin:var(--radix-hover-card-content-transform-origin)] lg:block"
         side="left"
@@ -103,7 +102,10 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                   priority={true}
                   className="rounded-md"
                   alt="preview image"
-                />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                  }} />
               </Link>
             </motion.div>
           )}
