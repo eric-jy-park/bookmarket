@@ -1,6 +1,6 @@
 "use client";
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { encode } from "qss";
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
