@@ -7,7 +7,7 @@ import { type Bookmark } from "~/types/bookmark";
 export const dynamic = "force-dynamic";
 
 export const getBookmarks = async () => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return [];
@@ -31,7 +31,7 @@ export const createBookmark = async ({
   faviconUrl: string;
   url: string;
 }) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");
@@ -53,7 +53,7 @@ export const updateBookmark = async ({
   faviconUrl,
   url,
 }: Omit<Bookmark, "userId" | "createdAt" | "updatedAt">) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");
@@ -75,7 +75,7 @@ export const updateBookmark = async ({
 };
 
 export const deleteBookmark = async ({ id }: { id: number }) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");

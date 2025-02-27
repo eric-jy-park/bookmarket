@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMetadata } from "~/app/(pages)/(home)/_actions/get-metadata.action";
+import { getMetadata } from "~/app/api/(actions)/metadata/get-metadata.action";
 
 
 

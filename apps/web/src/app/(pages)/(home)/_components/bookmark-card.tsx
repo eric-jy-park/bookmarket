@@ -11,7 +11,7 @@ import { cn } from "~/app/_core/utils/cn";
 import React from "react";
 import { BookmarkCardTitleInput } from "./bookmark-card-title-input";
 import { useMutation } from "@tanstack/react-query";
-import { fixBrokenFavicon } from "../_actions/fix-broken-favicon.action";
+import { fixBrokenFavicon } from "../../../api/(actions)/metadata/fix-broken-favicon.action";
 import { useRouter } from "next/navigation";
 
 interface BookmarkCardProps {

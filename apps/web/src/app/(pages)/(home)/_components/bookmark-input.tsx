@@ -16,10 +16,6 @@ export function BookmarkInput() {
     isLoading,
     handleChange,
     handleSubmit,
-    canvasRef,
-    setCanvasValue,
-    animating,
-    inputRef,
   } = useBookmarkSubmit();
 
   return (
@@ -37,10 +33,6 @@ export function BookmarkInput() {
               handleChange={handleChange}
               isValidUrl={isValidUrl}
               isDisabled={isLoading || !isSignedIn}
-              animating={animating}
-              canvasRef={canvasRef}
-              inputRef={inputRef}
-              setCanvasValue={setCanvasValue}
             />
             {isLoading && (
               <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />

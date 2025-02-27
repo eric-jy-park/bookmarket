@@ -3,7 +3,7 @@ import { useUrlMetadataMutation } from "../_state/mutations/use-url-metadata-mut
 import { useCreateBookmarkMutation } from "../_state/mutations/use-create-bookmark-mutation";
 import { urlToDomain } from "~/app/_core/utils/url-to-domain";
 import { type UrlMetadata } from "~/types/metadata";
-import { useVanishingInput } from "./use-vanishing-input";
+
 
 const urlRegex = /^(http[s]?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}\.?/;
 
@@ -14,15 +14,6 @@ export function useBookmarkSubmit() {
   const { mutateAsync: getUrlMetadata, isPending: isGettingUrlMetadata } =
     useUrlMetadataMutation();
   const { mutateAsync: createBookmarkMutation } = useCreateBookmarkMutation();
-
-  const {
-    canvasValue,
-    setCanvasValue,
-    animating,
-    inputRef,
-    vanishAndSubmit,
-    canvasRef,
-  } = useVanishingInput();
 
   const validateUrl = (input: string) => {
     try {
@@ -64,9 +55,8 @@ export function useBookmarkSubmit() {
 
       setUrl("");
       setIsValidUrl(true);
-      vanishAndSubmit();
     },
-    [url, createBookmarkMutation, getUrlMetadata, vanishAndSubmit],
+    [url, createBookmarkMutation, getUrlMetadata],
   );
 
   React.useEffect(() => {
@@ -79,10 +69,5 @@ export function useBookmarkSubmit() {
     isLoading: isGettingUrlMetadata,
     handleChange,
     handleSubmit,
-    canvasValue,
-    setCanvasValue,
-    animating,
-    inputRef,
-    canvasRef,
   };
 }
