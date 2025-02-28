@@ -16,7 +16,8 @@ import { jwtConfig } from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
-
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthenticationService {
   constructor(
@@ -28,6 +29,8 @@ export class AuthenticationService {
 
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+
+    private readonly configService: ConfigService,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
@@ -37,7 +40,7 @@ export class AuthenticationService {
       user.password = await this.hashingService.hash(signUpDto.password);
       user.auth_provider = AuthProvider.EMAIL;
 
-      await this.usersRepository.save(user);
+      return await this.usersRepository.save(user);
     } catch (err) {
       if (err.code === pgUniqueViolationErrorCode) {
         throw new ConflictException();
@@ -46,7 +49,7 @@ export class AuthenticationService {
     }
   }
 
-  async signIn(signInDto: SignInDto) {
+  async signIn(signInDto: SignInDto, response: Response) {
     const user = await this.usersRepository.findOneBy({
       email: signInDto.email,
       auth_provider: AuthProvider.EMAIL,
@@ -65,7 +68,29 @@ export class AuthenticationService {
       throw new UnauthorizedException('Incorrect credentials provided');
     }
 
-    return await this.generateTokens(user);
+    const tokens = await this.generateTokens(user);
+
+    // split into separate function and reuse it
+    response.cookie('access_token', tokens.accessToken, {
+      secure: true,
+      httpOnly: true,
+      path: '/',
+      expires: new Date(
+        Date.now() +
+          Number(this.configService.getOrThrow('JWT_ACCESS_TOKEN_TTL')) * 1000,
+      ),
+    });
+    response.cookie('refresh_token', tokens.refreshToken, {
+      secure: true,
+      httpOnly: true,
+      path: '/',
+      expires: new Date(
+        Date.now() +
+          Number(this.configService.getOrThrow('JWT_REFRESH_TOKEN_TTL')) * 1000,
+      ),
+    });
+
+    return tokens;
   }
 
   async generateTokens(user: User) {
@@ -82,7 +107,7 @@ export class AuthenticationService {
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+  async refreshToken(refreshTokenDto: RefreshTokenDto, response: Response) {
     try {
       const { sub } = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
@@ -92,7 +117,30 @@ export class AuthenticationService {
         id: sub,
       });
 
-      return this.generateTokens(user);
+      const tokens = await this.generateTokens(user);
+
+      response.cookie('access_token', tokens.accessToken, {
+        secure: true,
+        httpOnly: true,
+        path: '/',
+        expires: new Date(
+          Date.now() +
+            Number(this.configService.getOrThrow('JWT_ACCESS_TOKEN_TTL')) *
+              1000,
+        ),
+      });
+      response.cookie('refresh_token', tokens.refreshToken, {
+        secure: true,
+        httpOnly: true,
+        path: '/',
+        expires: new Date(
+          Date.now() +
+            Number(this.configService.getOrThrow('JWT_REFRESH_TOKEN_TTL')) *
+              1000,
+        ),
+      });
+
+      return tokens;
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token', error);
     }

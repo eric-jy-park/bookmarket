@@ -1,6 +1,4 @@
-import { AnimatedUnderlinedText } from "~/app/_core/components/animated-underlined-text";
 import { Logo } from "./logo";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export function TopNavbar() {
   return (
@@ -10,14 +8,7 @@ export function TopNavbar() {
         id="nav"
       >
         <Logo />
-        <SignedOut>
-          <SignInButton>
-            <AnimatedUnderlinedText>Sign In</AnimatedUnderlinedText>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
+        <div className="flex items-center gap-2"></div>
       </nav>
     </aside>
   );
