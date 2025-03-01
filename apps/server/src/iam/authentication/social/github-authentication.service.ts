@@ -3,34 +3,32 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { AuthenticationService } from '../authentication.service';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class GithubAuthenticationService {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly usersService: UsersService,
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
-    console.log(oauthTokenDto);
     try {
-      let user = await this.usersRepository.findOneBy({
-        github_id: oauthTokenDto.id,
-      });
+      let user = await this.usersService.findOne(
+        oauthTokenDto.email,
+        AuthProvider.GITHUB,
+      );
 
       if (!user) {
-        user = await this.usersRepository.save({
+        user = await this.usersService.create({
           email: oauthTokenDto.email,
           github_id: oauthTokenDto.id,
           auth_provider: AuthProvider.GITHUB,
+          picture: oauthTokenDto.picture,
         });
       }
 

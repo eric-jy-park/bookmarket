@@ -3,33 +3,32 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { AuthenticationService } from '../authentication.service';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class GoogleAuthenticationService {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly usersService: UsersService,
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
     try {
-      let user = await this.usersRepository.findOneBy({
-        google_id: oauthTokenDto.id,
-      });
+      let user = await this.usersService.findOne(
+        oauthTokenDto.email,
+        AuthProvider.GOOGLE,
+      );
 
       if (!user) {
-        user = await this.usersRepository.save({
+        user = await this.usersService.create({
           email: oauthTokenDto.email,
           google_id: oauthTokenDto.id,
           auth_provider: AuthProvider.GOOGLE,
+          picture: oauthTokenDto.picture,
         });
       }
 
