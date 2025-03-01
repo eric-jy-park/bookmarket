@@ -4,9 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
@@ -16,13 +14,13 @@ import { jwtConfig } from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
-import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from 'src/users/users.service';
+
 @Injectable()
 export class AuthenticationService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly usersService: UsersService,
 
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
@@ -35,12 +33,14 @@ export class AuthenticationService {
 
   async signUp(signUpDto: SignUpDto) {
     try {
-      const user = new User();
-      user.email = signUpDto.email;
-      user.password = await this.hashingService.hash(signUpDto.password);
-      user.auth_provider = AuthProvider.EMAIL;
+      const user = await this.usersService.create({
+        email: signUpDto.email,
+        password: await this.hashingService.hash(signUpDto.password),
+        auth_provider: AuthProvider.EMAIL,
+        picture: signUpDto.picture,
+      });
 
-      return await this.usersRepository.save(user);
+      return await this.generateTokens(user);
     } catch (err) {
       if (err.code === pgUniqueViolationErrorCode) {
         throw new ConflictException();
@@ -49,11 +49,11 @@ export class AuthenticationService {
     }
   }
 
-  async signIn(signInDto: SignInDto, response: Response) {
-    const user = await this.usersRepository.findOneBy({
-      email: signInDto.email,
-      auth_provider: AuthProvider.EMAIL,
-    });
+  async signIn(signInDto: SignInDto) {
+    const user = await this.usersService.findOne(
+      signInDto.email,
+      AuthProvider.EMAIL,
+    );
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -68,29 +68,7 @@ export class AuthenticationService {
       throw new UnauthorizedException('Incorrect credentials provided');
     }
 
-    const tokens = await this.generateTokens(user);
-
-    // split into separate function and reuse it
-    response.cookie('access_token', tokens.accessToken, {
-      secure: true,
-      httpOnly: true,
-      path: '/',
-      expires: new Date(
-        Date.now() +
-          Number(this.configService.getOrThrow('JWT_ACCESS_TOKEN_TTL')) * 1000,
-      ),
-    });
-    response.cookie('refresh_token', tokens.refreshToken, {
-      secure: true,
-      httpOnly: true,
-      path: '/',
-      expires: new Date(
-        Date.now() +
-          Number(this.configService.getOrThrow('JWT_REFRESH_TOKEN_TTL')) * 1000,
-      ),
-    });
-
-    return tokens;
+    return await this.generateTokens(user);
   }
 
   async generateTokens(user: User) {
@@ -107,40 +85,15 @@ export class AuthenticationService {
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto, response: Response) {
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
       const { sub } = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
       );
 
-      const user = await this.usersRepository.findOneByOrFail({
-        id: sub,
-      });
+      const user = await this.usersService.findOne(sub, AuthProvider.EMAIL);
 
-      const tokens = await this.generateTokens(user);
-
-      response.cookie('access_token', tokens.accessToken, {
-        secure: true,
-        httpOnly: true,
-        path: '/',
-        expires: new Date(
-          Date.now() +
-            Number(this.configService.getOrThrow('JWT_ACCESS_TOKEN_TTL')) *
-              1000,
-        ),
-      });
-      response.cookie('refresh_token', tokens.refreshToken, {
-        secure: true,
-        httpOnly: true,
-        path: '/',
-        expires: new Date(
-          Date.now() +
-            Number(this.configService.getOrThrow('JWT_REFRESH_TOKEN_TTL')) *
-              1000,
-        ),
-      });
-
-      return tokens;
+      return await this.generateTokens(user);
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token', error);
     }

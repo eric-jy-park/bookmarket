@@ -5,6 +5,16 @@ import { cookies } from "next/headers";
 const ACCESS_TOKEN_COOKIE_NAME = "access_token";
 const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
+export const setAccessToken = async (accessToken: string) => {
+  const cookieStore = await cookies();
+  cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken);
+};
+
+export const setRefreshToken = async (refreshToken: string) => {
+  const cookieStore = await cookies();
+  cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
+};
+
 export const getAccessToken = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_NAME);

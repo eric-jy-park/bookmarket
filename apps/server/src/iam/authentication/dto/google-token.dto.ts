@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class GoogleTokenDto {
   @IsString()
@@ -8,4 +8,8 @@ export class GoogleTokenDto {
   @IsString()
   @IsNotEmpty()
   email: string;
+
+  @IsUrl()
+  @IsOptional()
+  picture?: string;
 }

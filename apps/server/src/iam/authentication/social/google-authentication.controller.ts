@@ -1,9 +1,8 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { GoogleAuthenticationService } from './google-authentication.service';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from '../enums/auth-type.enum';
 import { GoogleTokenDto } from '../dto/google-token.dto';
-import { Response } from 'express';
 
 @Controller('authentication/google')
 @Auth(AuthType.None)
@@ -13,13 +12,7 @@ export class GoogleAuthenticationController {
   ) {}
 
   @Post()
-  authenticate(
-    @Body() googleTokenDto: GoogleTokenDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.googleAuthenticationService.authenticate(
-      googleTokenDto,
-      response,
-    );
+  authenticate(@Body() googleTokenDto: GoogleTokenDto) {
+    return this.googleAuthenticationService.authenticate(googleTokenDto);
   }
 }

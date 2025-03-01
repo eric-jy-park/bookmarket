@@ -1,18 +1,10 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { Response } from 'express';
 
 @Controller('authentication')
 @Auth(AuthType.None)
@@ -26,20 +18,13 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  async signIn(
-    @Body() signInDto: SignInDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    console.log(signInDto);
-    return this.authenticationService.signIn(signInDto, response);
+  async signIn(@Body() signInDto: SignInDto) {
+    return this.authenticationService.signIn(signInDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
-  async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authenticationService.refreshToken(refreshTokenDto, response);
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authenticationService.refreshToken(refreshTokenDto);
   }
 }

@@ -17,4 +17,7 @@ export class User {
 
   @Column({ nullable: true })
   google_id?: string;
+
+  @Column({ nullable: true })
+  picture?: string;
 }
