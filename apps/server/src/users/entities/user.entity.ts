@@ -19,5 +19,8 @@ export class User {
   google_id?: string;
 
   @Column({ nullable: true })
+  github_id?: string;
+
+  @Column({ nullable: true })
   picture?: string;
 }

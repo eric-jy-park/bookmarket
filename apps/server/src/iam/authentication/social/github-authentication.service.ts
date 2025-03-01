@@ -12,7 +12,7 @@ import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
 
 @Injectable()
-export class GoogleAuthenticationService {
+export class GithubAuthenticationService {
   constructor(
     private readonly authenticationService: AuthenticationService,
     @InjectRepository(User)
@@ -20,21 +20,23 @@ export class GoogleAuthenticationService {
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
+    console.log(oauthTokenDto);
     try {
       let user = await this.usersRepository.findOneBy({
-        google_id: oauthTokenDto.id,
+        github_id: oauthTokenDto.id,
       });
 
       if (!user) {
         user = await this.usersRepository.save({
           email: oauthTokenDto.email,
-          google_id: oauthTokenDto.id,
-          auth_provider: AuthProvider.GOOGLE,
+          github_id: oauthTokenDto.id,
+          auth_provider: AuthProvider.GITHUB,
         });
       }
 
       return await this.authenticationService.generateTokens(user);
     } catch (error) {
+      console.log(error);
       if (error.code === pgUniqueViolationErrorCode) {
         throw new ConflictException('User already exists');
       }
