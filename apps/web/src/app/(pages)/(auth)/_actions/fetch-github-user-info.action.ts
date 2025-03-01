@@ -14,7 +14,7 @@ export const fetchGithubUserInfo = async (code: string) => {
         json: {
           code,
           client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-          client_secret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
         },
       })
       .json();
