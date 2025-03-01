@@ -10,8 +10,13 @@ import {
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
+import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 
 @Controller('bookmarks')
+@Auth(AuthType.Bearer)
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
@@ -21,7 +26,8 @@ export class BookmarksController {
   }
 
   @Get()
-  findAllBookmarks() {
+  findAllBookmarks(@ActiveUser() user: ActiveUserData) {
+    console.log(user.email);
     return this.bookmarksService.findAllBookmarks();
   }
 
