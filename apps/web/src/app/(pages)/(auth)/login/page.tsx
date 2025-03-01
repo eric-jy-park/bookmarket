@@ -12,7 +12,7 @@ import { useActionState } from "react";
 import { loginUser } from "../_actions/login-user.action";
 
 export default function LoginPage() {
-  const { googleLogin } = useOAuth();
+  const { googleLogin, githubLogin } = useOAuth();
   const [_, formAction, isPending] = useActionState(loginUser, null);
 
   return (
@@ -38,7 +38,11 @@ export default function LoginPage() {
               <GoogleIcon />
               <span>Google</span>
             </Button>
-            <Button type="button" variant="outline" disabled>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => githubLogin()}
+            >
               <GithubIcon />
               <span>Github</span>
             </Button>

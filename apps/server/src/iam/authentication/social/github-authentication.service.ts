@@ -10,7 +10,7 @@ import { OAuthTokenDto } from '../dto/oauth-token.dto';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
-export class GoogleAuthenticationService {
+export class GithubAuthenticationService {
   constructor(
     private readonly authenticationService: AuthenticationService,
     private readonly usersService: UsersService,
@@ -20,20 +20,21 @@ export class GoogleAuthenticationService {
     try {
       let user = await this.usersService.findOne(
         oauthTokenDto.email,
-        AuthProvider.GOOGLE,
+        AuthProvider.GITHUB,
       );
 
       if (!user) {
         user = await this.usersService.create({
           email: oauthTokenDto.email,
-          google_id: oauthTokenDto.id,
-          auth_provider: AuthProvider.GOOGLE,
+          github_id: oauthTokenDto.id,
+          auth_provider: AuthProvider.GITHUB,
           picture: oauthTokenDto.picture,
         });
       }
 
       return await this.authenticationService.generateTokens(user);
     } catch (error) {
+      console.log(error);
       if (error.code === pgUniqueViolationErrorCode) {
         throw new ConflictException('User already exists');
       }

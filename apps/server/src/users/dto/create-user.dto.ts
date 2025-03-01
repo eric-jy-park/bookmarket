@@ -13,12 +13,20 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
-  password: string;
+  @IsOptional()
+  password?: string;
 
   @IsEnum(AuthProvider)
   @IsNotEmpty()
   auth_provider: AuthProvider;
+
+  @IsString()
+  @IsOptional()
+  github_id?: string;
+
+  @IsString()
+  @IsOptional()
+  google_id?: string;
 
   @IsString()
   @IsOptional()

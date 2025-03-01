@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
-export class GoogleTokenDto {
+export class OAuthTokenDto {
   @IsString()
   @IsNotEmpty()
-  googleId: string;
+  id: string;
 
   @IsString()
   @IsNotEmpty()

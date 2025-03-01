@@ -8,6 +8,7 @@ import {
   setRefreshToken,
 } from "~/app/_common/actions/auth.action";
 import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
+import * as Sentry from "@sentry/nextjs";
 
 export const fetchGoogleUserInfo = async (
   codeResponse: GoogleTokenResponse,
@@ -18,13 +19,13 @@ export const fetchGoogleUserInfo = async (
       email: string;
       picture: string;
     } = await ky
-      .get(process.env.NEXT_PUBLIC_GOOGLE_USERINFO_URL!, {
+      .get("https://www.googleapis.com/oauth2/v1/userinfo", {
         searchParams: { access_token: codeResponse.access_token },
       })
       .json();
 
     const googleTokenDto = {
-      googleId: userInfo.id,
+      id: userInfo.id,
       email: userInfo.email,
       picture: userInfo.picture,
     };
@@ -38,7 +39,7 @@ export const fetchGoogleUserInfo = async (
     await setAccessToken(response.accessToken);
     await setRefreshToken(response.refreshToken);
   } catch (error) {
-    throw new Error(JSON.stringify(error));
+    Sentry.captureException(error);
   } finally {
     redirect("/");
   }

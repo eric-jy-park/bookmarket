@@ -14,6 +14,9 @@ import { AuthenticationGuard } from './authentication/guards/authentication/auth
 import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
 import { UsersModule } from 'src/users/users.module';
+import { GithubAuthenticationService } from './authentication/social/github-authentication.service';
+import { GithubAuthenticationController } from './authentication/social/github-authentication.controller';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -33,7 +36,12 @@ import { UsersModule } from 'src/users/users.module';
     AccessTokenGuard,
     AuthenticationService,
     GoogleAuthenticationService,
+    GithubAuthenticationService,
   ],
-  controllers: [AuthenticationController, GoogleAuthenticationController],
+  controllers: [
+    AuthenticationController,
+    GoogleAuthenticationController,
+    GithubAuthenticationController,
+  ],
 })
 export class IamModule {}

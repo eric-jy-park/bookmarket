@@ -12,7 +12,7 @@ import { useActionState } from "react";
 import { createUser } from "../_actions/create-user.action";
 
 export default function SignupPage() {
-  const { googleLogin } = useOAuth();
+  const { googleLogin, githubLogin } = useOAuth();
   const [_, formAction, isPending] = useActionState(createUser, null);
 
   return (
@@ -38,7 +38,11 @@ export default function SignupPage() {
               <GoogleIcon />
               <span>Google</span>
             </Button>
-            <Button type="button" variant="outline" disabled>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => githubLogin()}
+            >
               <GithubIcon />
               <span>Github</span>
             </Button>
