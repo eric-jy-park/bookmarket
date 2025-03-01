@@ -3,13 +3,13 @@ import { updateBookmark } from "~/server/queries/bookmark";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const { title, description, faviconUrl, url } = await req.json();
-  const id = +params.id;
 
   const bookmark = await updateBookmark({
-    id,
+    id: +id,
     title,
     description,
     faviconUrl,
