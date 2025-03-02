@@ -47,6 +47,12 @@ export class BookmarksService {
     id: string,
     updateBookmarkDto: UpdateBookmarkDto,
   ) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
     return this.bookmarksRepository.update(id, {
       ...updateBookmarkDto,
       user: { id: userId },
@@ -55,10 +61,6 @@ export class BookmarksService {
 
   async removeBookmark(userId: string, id: string) {
     const bookmark = await this.findOneBookmark(userId, id);
-
-    if (!bookmark) {
-      throw new NotFoundException('Bookmark not found');
-    }
 
     if (bookmark.user.id !== userId) {
       throw new ForbiddenException();
