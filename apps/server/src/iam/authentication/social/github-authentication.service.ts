@@ -9,6 +9,7 @@ import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
 import { UsersService } from 'src/users/users.service';
 import * as Sentry from '@sentry/nestjs';
+
 @Injectable()
 export class GithubAuthenticationService {
   constructor(
@@ -34,6 +35,7 @@ export class GithubAuthenticationService {
 
       return await this.authenticationService.generateTokens(user);
     } catch (error) {
+      throw new Error(JSON.stringify(error));
       Sentry.captureException(error);
       if (error.code === pgUniqueViolationErrorCode) {
         throw new ConflictException('User already exists');
