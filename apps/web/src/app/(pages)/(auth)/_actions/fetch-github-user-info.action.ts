@@ -28,6 +28,31 @@ export const fetchGithubUserInfo = async (code: string) => {
       })
       .json();
 
+    if (!user.email) {
+      const emails: {
+        email: string;
+        primary: boolean;
+        verified: boolean;
+        visibility: "public" | "private";
+      }[] = await ky
+        .get("https://api.github.com/user/emails", {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        })
+        .json();
+
+      const primaryEmail = emails.find(
+        (email: { primary: boolean; verified: boolean }) =>
+          email.primary && email.verified,
+      );
+      const verifiedEmail = emails.find(
+        (email: { verified: boolean }) => email.verified,
+      );
+      user.email =
+        primaryEmail?.email ?? verifiedEmail?.email ?? "no-email@github.com";
+    }
+
     const githubTokenDto = {
       id: String(user.id),
       email: user.email,
