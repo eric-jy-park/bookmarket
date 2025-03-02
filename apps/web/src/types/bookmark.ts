@@ -1,3 +1,9 @@
-import { type bookmarks } from "~/server/db/schema";
-
-export type Bookmark = typeof bookmarks.$inferSelect;
+export interface Bookmark {
+  id: string;
+  title: string;
+  url: string;
+  description: string;
+  faviconUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

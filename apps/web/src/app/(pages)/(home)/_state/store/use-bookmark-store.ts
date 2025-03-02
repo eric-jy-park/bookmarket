@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 interface BookmarkStore {
-  activeBookmarkId: number | null;
-  setActiveBookmarkId: (id: number | null) => void;
+  activeBookmarkId: string | null;
+  setActiveBookmarkId: (id: string | null) => void;
 }
 
 export const useBookmarkStore = create<BookmarkStore>((set) => ({

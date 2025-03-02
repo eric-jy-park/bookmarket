@@ -27,7 +27,7 @@ export const BookmarkCard = ({
 }: BookmarkCardProps) => {
   const router = useRouter();
   const { mutate } = useMutation({
-    mutationFn: () => fixBrokenFavicon(bookmark.id, bookmark.url),
+    mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
     onSuccess: () => router.refresh(),
   });
 
@@ -67,8 +67,9 @@ export const BookmarkCard = ({
                 unoptimized={true}
                 style={{
                   maxWidth: "100%",
-                  height: "auto"
-                }} />
+                  height: "auto",
+                }}
+              />
             ) : (
               <div className="h-4 w-4 shrink-0 bg-muted" />
             )}

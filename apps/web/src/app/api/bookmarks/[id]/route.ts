@@ -9,7 +9,7 @@ export async function PATCH(
   const { title, description, faviconUrl, url } = await req.json();
 
   const bookmark = await updateBookmark({
-    id: +id,
+    id,
     title,
     description,
     faviconUrl,
