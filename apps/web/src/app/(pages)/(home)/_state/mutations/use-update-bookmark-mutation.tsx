@@ -12,7 +12,7 @@ export const useUpdateBookmarkMutation = () => {
   const router = useRouter();
   return useMutation({
     mutationFn: (bookmark: Parameters<typeof updateBookmark>[0]) =>
-      bookmarkService.updateBookmark(bookmark.id, bookmark),
+      bookmarkService.updateBookmark(bookmark),
     onSuccess: async () => {
       await queryClient.invalidateQueries(bookmarksQueries.bookmarks());
       router.refresh();

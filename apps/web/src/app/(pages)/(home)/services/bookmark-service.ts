@@ -14,10 +14,7 @@ class BookmarkService {
     return getBookmarksServer();
   }
 
-  async updateBookmark(
-    id: string,
-    bookmark: Parameters<typeof updateBookmarkServer>[0],
-  ) {
+  async updateBookmark(bookmark: Parameters<typeof updateBookmarkServer>[0]) {
     return updateBookmarkServer(bookmark);
   }
 
