@@ -69,6 +69,7 @@ export class AuthenticationService {
   }
 
   async generateTokens(user: User) {
+    console.log('user', user);
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(user.id, this.jwtConfiguration.accessTokenTtl, {
         id: user.id,
@@ -97,6 +98,8 @@ export class AuthenticationService {
   }
 
   private async signToken<T>(userId: string, expiresIn: number, payload?: T) {
+    console.log('payload', payload);
+    console.log('userId', userId);
     return await this.jwtService.signAsync(
       {
         sub: userId,
