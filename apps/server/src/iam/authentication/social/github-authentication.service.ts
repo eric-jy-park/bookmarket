@@ -25,6 +25,13 @@ export class GithubAuthenticationService {
       );
 
       if (!user) {
+        user = await this.usersService.findOne(
+          oauthTokenDto.id,
+          AuthProvider.GITHUB,
+        );
+      }
+
+      if (!user) {
         user = await this.usersService.create({
           email: oauthTokenDto.email,
           github_id: oauthTokenDto.id,
