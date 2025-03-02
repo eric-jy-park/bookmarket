@@ -2,18 +2,18 @@ import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateBookmarkDto {
   @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @IsNotEmpty()
   @IsUrl()
   url: string;
+
+  @IsString()
+  @IsOptional()
+  title?: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsUrl()
-  faviconUrl: string;
+  faviconUrl?: string;
 }

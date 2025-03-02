@@ -5,9 +5,81 @@ import { http } from "../utils/http";
 import { getAuthCookie } from "../utils/get-auth-cookie";
 import { type User } from "~/app/(pages)/(auth)/types";
 import { redirect } from "next/navigation";
-
+import { type TokenResponse } from "../interfaces/token.interface";
+import * as Sentry from "@sentry/nextjs";
 const ACCESS_TOKEN_COOKIE_NAME = "access_token";
 const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+
+const refreshNewAccessToken = async (): Promise<TokenResponse | null> => {
+  try {
+    const refreshToken = await getRefreshToken();
+
+    if (!refreshToken) {
+      return null;
+    }
+
+    const tokens: TokenResponse = await http
+      .post("authentication/refresh-token", {
+        json: {
+          refreshToken,
+        },
+      })
+      .json();
+
+    return tokens;
+  } catch (error) {
+    console.error("Failed to refresh token:", error);
+    return null;
+  }
+};
+
+export const getMe = async (): Promise<User | null> => {
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    const tokens = await refreshNewAccessToken();
+    if (!tokens) {
+      return null;
+    }
+
+    await setAccessToken(tokens.accessToken);
+    await setRefreshToken(tokens.refreshToken);
+  }
+
+  try {
+    const user: User = await http
+      .get("users/me", {
+        headers: {
+          Cookie: await getAuthCookie(),
+        },
+      })
+      .json();
+
+    return user;
+  } catch (error) {
+    const tokens = await refreshNewAccessToken();
+    if (!tokens) {
+      return null;
+    }
+
+    await setAccessToken(tokens.accessToken);
+    await setRefreshToken(tokens.refreshToken);
+
+    try {
+      const user: User = await http
+        .get("users/me", {
+          headers: {
+            Cookie: await getAuthCookie(),
+          },
+        })
+        .json();
+      return user;
+    } catch (retryError) {
+      Sentry.captureException(retryError);
+      return null;
+    }
+  }
+};
 
 export const setAccessToken = async (accessToken: string) => {
   const cookieStore = await cookies();
@@ -34,7 +106,18 @@ export const getRefreshToken = async () => {
 export const isAuthenticated = async () => {
   const accessToken = await getAccessToken();
   const refreshToken = await getRefreshToken();
-  return accessToken !== undefined && refreshToken !== undefined;
+
+  if (accessToken !== undefined && refreshToken !== undefined) {
+    return true;
+  }
+
+  try {
+    const user = await getMe();
+    return user !== null;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };
 
 export const signOut = async () => {
@@ -43,22 +126,4 @@ export const signOut = async () => {
   cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
 
   redirect("/login");
-};
-
-export const getMe = async () => {
-  const isAuth = await isAuthenticated();
-
-  if (!isAuth) {
-    return null;
-  }
-
-  const user: User = await http
-    .get("users/me", {
-      headers: {
-        Cookie: await getAuthCookie(),
-      },
-    })
-    .json();
-
-  return user;
 };
