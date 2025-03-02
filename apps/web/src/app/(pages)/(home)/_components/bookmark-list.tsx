@@ -10,7 +10,7 @@ export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
   const { activeBookmarkId } = useBookmarkStore();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="relative flex flex-col gap-2">
       {bookmarks?.map((bookmark, index) => (
         <BlurFade key={bookmark.id} duration={0.2} delay={0.2 + index * 0.05}>
           <BookmarkCard

@@ -19,8 +19,8 @@ export default function SignupPage() {
     <section className="flex min-h-screen bg-background px-4 py-16 dark:bg-transparent md:py-32">
       <form action={formAction} className="max-w-92 m-auto h-fit w-full">
         <div className="p-6">
-          <div>
-            <Link href="/" aria-label="go home">
+          <div className="flex flex-col">
+            <Link href="/" aria-label="home" className="w-fit">
               <Logo />
             </Link>
             <h1 className="mb-1 mt-4 text-xl font-semibold">
@@ -66,7 +66,7 @@ export default function SignupPage() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="pwd" className="text-title text-sm">
+                <Label htmlFor="password" className="text-title text-sm">
                   Password
                 </Label>
               </div>

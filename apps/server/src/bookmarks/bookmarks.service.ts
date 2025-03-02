@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
 import { Repository } from 'typeorm';
@@ -12,23 +16,54 @@ export class BookmarksService {
     private bookmarksRepository: Repository<Bookmark>,
   ) {}
 
-  createBookmark(createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarksRepository.save(createBookmarkDto);
+  createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
+    return this.bookmarksRepository.save({
+      ...createBookmarkDto,
+      user: { id: userId },
+    });
   }
 
-  findAllBookmarks() {
-    return `This action returns all bookmarks`;
+  findAllBookmarks(userId: string) {
+    return this.bookmarksRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  findOneBookmark(id: number) {
-    return `This action returns a #${id} bookmark`;
+  async findOneBookmark(userId: string, id: string) {
+    const bookmark = await this.bookmarksRepository.findOne({
+      where: { user: { id: userId }, id },
+    });
+
+    if (!bookmark) {
+      throw new NotFoundException('Bookmark not found');
+    }
+
+    return bookmark;
   }
 
-  updateBookmark(id: number, updateBookmarkDto: UpdateBookmarkDto) {
-    return `This action updates a #${id} bookmark`;
+  async updateBookmark(
+    userId: string,
+    id: string,
+    updateBookmarkDto: UpdateBookmarkDto,
+  ) {
+    return this.bookmarksRepository.update(id, {
+      ...updateBookmarkDto,
+      user: { id: userId },
+    });
   }
 
-  removeBookmark(id: number) {
-    return `This action removes a #${id} bookmark`;
+  async removeBookmark(userId: string, id: string) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (!bookmark) {
+      throw new NotFoundException('Bookmark not found');
+    }
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    return this.bookmarksRepository.delete(id);
   }
 }

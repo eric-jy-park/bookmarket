@@ -6,6 +6,7 @@ import { setAccessToken } from "~/app/_common/actions/auth.action";
 import { setRefreshToken } from "~/app/_common/actions/auth.action";
 import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
 import * as Sentry from "@sentry/nextjs";
+import { http } from "~/app/_common/utils/http";
 
 export const fetchGithubUserInfo = async (code: string) => {
   try {
@@ -33,13 +34,11 @@ export const fetchGithubUserInfo = async (code: string) => {
       picture: user.avatar_url,
     };
 
-    const response: TokenResponse = await ky
-      .post(`${process.env.NEXT_PUBLIC_BASE_URL!}/authentication/github`, {
+    const response: TokenResponse = await http
+      .post(`authentication/github`, {
         json: githubTokenDto,
       })
       .json();
-
-    console.log(response);
 
     await setAccessToken(response.accessToken);
     await setRefreshToken(response.refreshToken);

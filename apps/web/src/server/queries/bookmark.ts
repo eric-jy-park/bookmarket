@@ -1,23 +1,26 @@
-import { and, desc, eq } from "drizzle-orm";
-import { db } from "../db";
-import { bookmarks } from "../db/schema";
-import { auth } from "@clerk/nextjs/server";
-import { type Bookmark } from "~/types/bookmark";
+"use server";
 
-export const dynamic = "force-dynamic";
+import { type Bookmark } from "~/types/bookmark";
+import { http } from "~/app/_common/utils/http";
+import { getAuthCookie } from "~/app/_common/utils/get-auth-cookie";
+import { isAuthenticated } from "~/app/_common/actions/auth.action";
 
 export const getBookmarks = async () => {
-  const { userId } = auth();
+  const isAuth = await isAuthenticated();
 
-  if (!userId) {
+  if (!isAuth) {
     return [];
   }
 
-  return db
-    .select()
-    .from(bookmarks)
-    .where(eq(bookmarks.userId, userId))
-    .orderBy(desc(bookmarks.createdAt));
+  const response: Bookmark[] = await http
+    .get("bookmarks", {
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
+    })
+    .json();
+
+  return response;
 };
 
 export const createBookmark = async ({
@@ -31,19 +34,21 @@ export const createBookmark = async ({
   faviconUrl: string;
   url: string;
 }) => {
-  const { userId } = auth();
+  const response: Bookmark = await http
+    .post("bookmarks", {
+      json: {
+        title,
+        description,
+        faviconUrl,
+        url,
+      },
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
+    })
+    .json();
 
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  return db.insert(bookmarks).values({
-    title,
-    description,
-    faviconUrl,
-    url,
-    userId,
-  });
+  return response;
 };
 
 export const updateBookmark = async ({
@@ -53,35 +58,27 @@ export const updateBookmark = async ({
   faviconUrl,
   url,
 }: Omit<Bookmark, "userId" | "createdAt" | "updatedAt">) => {
-  const { userId } = auth();
+  const response: Bookmark = await http
+    .patch(`bookmarks/${id}`, {
+      json: {
+        title,
+        description,
+        faviconUrl,
+        url,
+      },
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
+    })
+    .json();
 
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  const bookmark = await db
-    .select()
-    .from(bookmarks)
-    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
-
-  if (!bookmark) {
-    throw new Error("Bookmark not found");
-  }
-
-  return db
-    .update(bookmarks)
-    .set({ title, description, faviconUrl, url })
-    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
+  return response;
 };
 
-export const deleteBookmark = async ({ id }: { id: number }) => {
-  const { userId } = auth();
-
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  return db
-    .delete(bookmarks)
-    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
+export const deleteBookmark = async ({ id }: { id: string }) => {
+  await http.delete(`bookmarks/${id}`, {
+    headers: {
+      Cookie: await getAuthCookie(),
+    },
+  });
 };

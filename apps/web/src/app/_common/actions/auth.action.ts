@@ -1,6 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { http } from "../utils/http";
+import { getAuthCookie } from "../utils/get-auth-cookie";
+import { type User } from "~/app/(pages)/(auth)/types";
+import { redirect } from "next/navigation";
 
 const ACCESS_TOKEN_COOKIE_NAME = "access_token";
 const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
@@ -37,4 +41,24 @@ export const signOut = async () => {
   const cookieStore = await cookies();
   cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
   cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
+
+  redirect("/login");
+};
+
+export const getMe = async () => {
+  const isAuth = await isAuthenticated();
+
+  if (!isAuth) {
+    return null;
+  }
+
+  const user: User = await http
+    .get("users/me", {
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
+    })
+    .json();
+
+  return user;
 };

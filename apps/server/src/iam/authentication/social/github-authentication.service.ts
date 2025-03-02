@@ -34,7 +34,6 @@ export class GithubAuthenticationService {
 
       return await this.authenticationService.generateTokens(user);
     } catch (error) {
-      console.log(error);
       if (error.code === pgUniqueViolationErrorCode) {
         throw new ConflictException('User already exists');
       }

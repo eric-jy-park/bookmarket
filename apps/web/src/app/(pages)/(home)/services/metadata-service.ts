@@ -1,9 +1,9 @@
-import { http } from "~/app/_common/utils/http";
 import { type UrlMetadata } from "~/types/metadata";
+import { getMetadata as getMetadataAction } from "../_actions/get-metadata.action";
 
 class MetadataService {
   async getMetadata(url: string): Promise<UrlMetadata> {
-    return http.post(`/api/metadata`, { json: { url } }).json();
+    return await getMetadataAction(url);
   }
 }
 

@@ -8,21 +8,24 @@ import { Reflector } from '@nestjs/core';
 import { AccessTokenGuard } from '../access-token/access-token.guard';
 import { AuthType } from '../../enums/auth-type.enum';
 import { AUTH_TYPE_KEY } from '../../decorators/auth.decorator';
+import { CookieAuthGuard } from '../cookie/cookie.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  private static readonly defaultAuthType = AuthType.Bearer;
+  private static readonly defaultAuthType = AuthType.Cookie;
   private readonly authTypeGuardMap: Record<
     AuthType,
     CanActivate | CanActivate[]
   > = {
     [AuthType.Bearer]: this.accessTokenGuard,
+    [AuthType.Cookie]: this.cookieGuard,
     [AuthType.None]: { canActivate: () => true },
   };
 
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
+    private readonly cookieGuard: CookieAuthGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

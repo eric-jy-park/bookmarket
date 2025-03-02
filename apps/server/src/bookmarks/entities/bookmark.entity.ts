@@ -31,6 +31,6 @@ export class Bookmark {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.bookmarks)
+  @ManyToOne(() => User, (user) => user.bookmarks, { eager: true })
   user: User;
 }

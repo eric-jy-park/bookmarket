@@ -12,13 +12,10 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
     const user = await this.usersRepository.save(createUserDto);
     return user;
-  }
-
-  findAll() {
-    return this.usersRepository.find();
   }
 
   findOne(email: string, auth_provider: AuthProvider) {

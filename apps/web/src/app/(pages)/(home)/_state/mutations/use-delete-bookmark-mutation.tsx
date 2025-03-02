@@ -8,7 +8,7 @@ export const useDeleteBookmarkMutation = () => {
   const queryClient = getQueryClient();
   const router = useRouter();
   return useMutation({
-    mutationFn: (id: number) => bookmarkService.deleteBookmark(id),
+    mutationFn: (id: string) => bookmarkService.deleteBookmark(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries(bookmarksQueries.bookmarks());
       router.refresh();
