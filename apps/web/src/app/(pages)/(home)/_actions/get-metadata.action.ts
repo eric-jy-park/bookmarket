@@ -1,3 +1,5 @@
+"use server";
+
 import { http } from "~/app/_common/utils/http";
 import urlMetadata from "url-metadata";
 import * as Sentry from "@sentry/nextjs";
@@ -23,7 +25,6 @@ export async function getMetadata(url: string) {
   let metadata: UrlMetadata;
 
   try {
-
     const response = await urlMetadata(url, options);
     metadata = {
       title: response.title,
@@ -31,11 +32,12 @@ export async function getMetadata(url: string) {
       logo: response.icon,
       url: response.url,
     };
-
   } catch (error) {
-    Sentry.captureException("url-metadata failed, falling back to metadata vision", {
-      extra: {
-        url,
+    Sentry.captureException(
+      "url-metadata failed, falling back to metadata vision",
+      {
+        extra: {
+          url,
           error,
         },
       },
@@ -45,13 +47,6 @@ export async function getMetadata(url: string) {
       .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
         timeout: 30000,
         retry: 2,
-        hooks: {
-          beforeRetry: [
-            async ({ error }) => {
-              console.log(`Retrying metadata fetch due to: ${error?.message}`);
-            },
-          ],
-        },
       })
       .json();
 
@@ -61,7 +56,6 @@ export async function getMetadata(url: string) {
       logo: response.data.logo,
       url: response.data.url,
     };
-
   }
 
   return metadata;

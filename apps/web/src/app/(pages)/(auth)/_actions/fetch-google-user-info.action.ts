@@ -9,6 +9,7 @@ import {
 } from "~/app/_common/actions/auth.action";
 import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
 import * as Sentry from "@sentry/nextjs";
+import { http } from "~/app/_common/utils/http";
 
 export const fetchGoogleUserInfo = async (
   codeResponse: GoogleTokenResponse,
@@ -30,8 +31,8 @@ export const fetchGoogleUserInfo = async (
       picture: userInfo.picture,
     };
 
-    const response: TokenResponse = await ky
-      .post(`${process.env.NEXT_PUBLIC_BASE_URL!}/authentication/google`, {
+    const response: TokenResponse = await http
+      .post(`authentication/google`, {
         json: googleTokenDto,
       })
       .json();

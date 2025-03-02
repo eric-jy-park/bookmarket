@@ -7,14 +7,15 @@ import {
   setRefreshToken,
 } from "~/app/_common/actions/auth.action";
 import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
+import { http } from "~/app/_common/utils/http";
 
 export const loginUser = async (state: null, formData: FormData) => {
   const email = formData.get("email");
   const password = formData.get("password");
 
   try {
-    const response: TokenResponse = await ky
-      .post(`${process.env.NEXT_PUBLIC_BASE_URL}/authentication/signin`, {
+    const response: TokenResponse = await http
+      .post(`authentication/signin`, {
         json: { email, password },
       })
       .json();

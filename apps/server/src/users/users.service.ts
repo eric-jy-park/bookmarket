@@ -10,14 +10,12 @@ import { AuthProvider } from './enums/auth-provider.enum';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
   ) {}
-  create(createUserDto: CreateUserDto) {
-    return this.usersRepository.save(createUserDto);
-  }
 
-  findAll() {
-    return this.usersRepository.find();
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.usersRepository.save(createUserDto);
+    return user;
   }
 
   findOne(email: string, auth_provider: AuthProvider) {

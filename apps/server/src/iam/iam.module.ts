@@ -16,6 +16,7 @@ import { GoogleAuthenticationController } from './authentication/social/google-a
 import { UsersModule } from 'src/users/users.module';
 import { GithubAuthenticationService } from './authentication/social/github-authentication.service';
 import { GithubAuthenticationController } from './authentication/social/github-authentication.controller';
+import { CookieAuthGuard } from './authentication/guards/cookie/cookie.guard';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { GithubAuthenticationController } from './authentication/social/github-a
       useClass: AuthenticationGuard,
     },
     AccessTokenGuard,
+    CookieAuthGuard,
     AuthenticationService,
     GoogleAuthenticationService,
     GithubAuthenticationService,

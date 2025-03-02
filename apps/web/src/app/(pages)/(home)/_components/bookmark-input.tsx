@@ -3,13 +3,12 @@
 import React from "react";
 import { Loader2, Search } from "lucide-react";
 
-import { useAuth } from "@clerk/nextjs";
 import BlurFade from "~/app/_core/components/blur-fade";
 import { useBookmarkSubmit } from "../_hooks/use-bookmark-submit";
 import { UrlInput } from "./url-input";
+import { ProgressiveBlur } from "~/app/_core/components/progressive-blur";
 
 export function BookmarkInput() {
-  const { isSignedIn } = useAuth();
   const {
     url,
     isValidUrl,
@@ -23,12 +22,12 @@ export function BookmarkInput() {
   } = useBookmarkSubmit();
 
   return (
-    <>
-      <BlurFade
-        duration={0.2}
-        delay={0.1}
-        className="sticky top-0 z-10 w-full bg-background pt-2 sm:top-12"
-      >
+    <div className="sticky top-14 z-10 w-full bg-background pt-1">
+      <ProgressiveBlur
+        className="pointer-events-none absolute -bottom-10 left-0 z-0 h-14 w-full"
+        direction="top"
+      />
+      <BlurFade duration={0.2} delay={0.1} className="z-20">
         <form onSubmit={handleSubmit}>
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -36,7 +35,7 @@ export function BookmarkInput() {
               url={url}
               handleChange={handleChange}
               isValidUrl={isValidUrl}
-              isDisabled={isLoading || !isSignedIn}
+              isDisabled={isLoading}
               animating={animating}
               canvasRef={canvasRef}
               inputRef={inputRef}
@@ -45,14 +44,14 @@ export function BookmarkInput() {
             {isLoading && (
               <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
             )}
+            {!isValidUrl && (
+              <p className="mt-1 text-sm text-red-500">
+                Please enter a valid URL
+              </p>
+            )}
           </div>
-          {!isValidUrl && (
-            <p className="mt-1 text-sm text-red-500">
-              Please enter a valid URL
-            </p>
-          )}
         </form>
       </BlurFade>
-    </>
+    </div>
   );
 }

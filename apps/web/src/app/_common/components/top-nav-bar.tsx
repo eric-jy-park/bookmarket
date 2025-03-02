@@ -1,24 +1,19 @@
+import Link from "next/link";
+import { getMe } from "../actions/auth.action";
 import { Logo } from "./logo";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { UserAvatar } from "./user-avatar";
 
-import { AnimatedUnderlinedText } from "~/app/_core/components/animated-underlined-text";
+export async function TopNavbar() {
+  const user = await getMe();
 
-export function TopNavbar() {
   return (
-    <aside className="z-50 mb-4 w-full bg-background pt-2 tracking-tight sm:sticky sm:top-0 sm:mb-10">
+    <aside className="sticky top-0 z-50 w-full bg-background pt-2 tracking-tight">
       <nav
-        className="fade relative flex scroll-pr-6 flex-row items-center justify-between px-2 py-2 pl-0 md:relative md:overflow-auto"
+        className="fade relative flex items-center justify-between overflow-auto py-2"
         id="nav"
       >
         <Logo />
-        <SignedOut>
-          <SignInButton>
-            <AnimatedUnderlinedText>Sign In</AnimatedUnderlinedText>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
+        {user ? <UserAvatar user={user} /> : <Link href="/login">Login</Link>}
       </nav>
     </aside>
   );

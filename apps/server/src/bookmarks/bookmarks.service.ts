@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { Bookmark } from './entities/bookmark.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 
 @Injectable()
 export class BookmarksService {
-  createBookmark(createBookmarkDto: CreateBookmarkDto) {
-    return 'This action adds a new bookmark';
+  constructor(
+    @InjectRepository(Bookmark)
+    private bookmarksRepository: Repository<Bookmark>,
+  ) {}
+
+  createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
+    return this.bookmarksRepository.save({
+      ...createBookmarkDto,
+      user: { id: userId },
+    });
   }
 
-  findAllBookmarks() {
-    return `This action returns all bookmarks`;
+  findAllBookmarks(userId: string) {
+    return this.bookmarksRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  findOneBookmark(id: number) {
-    return `This action returns a #${id} bookmark`;
+  async findOneBookmark(userId: string, id: string) {
+    const bookmark = await this.bookmarksRepository.findOne({
+      where: { user: { id: userId }, id },
+    });
+
+    if (!bookmark) {
+      throw new NotFoundException('Bookmark not found');
+    }
+
+    return bookmark;
   }
 
-  updateBookmark(id: number, updateBookmarkDto: UpdateBookmarkDto) {
-    return `This action updates a #${id} bookmark`;
+  async updateBookmark(
+    userId: string,
+    id: string,
+    updateBookmarkDto: UpdateBookmarkDto,
+  ) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    return this.bookmarksRepository.update(id, {
+      ...updateBookmarkDto,
+      user: { id: userId },
+    });
   }
 
-  removeBookmark(id: number) {
-    return `This action removes a #${id} bookmark`;
+  async removeBookmark(userId: string, id: string) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    return this.bookmarksRepository.delete(id);
   }
 }

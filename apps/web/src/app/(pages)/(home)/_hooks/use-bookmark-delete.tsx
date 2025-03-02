@@ -6,7 +6,7 @@ export const useBookmarkDelete = () => {
   const { mutateAsync, isPending } = useDeleteBookmarkMutation();
 
   const handleDelete = React.useCallback(
-    async (id: number) => {
+    async (id: string) => {
       try {
         toast.promise(mutateAsync(id), {
           loading: "Deleting bookmark...",
