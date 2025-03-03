@@ -4,7 +4,7 @@ import { BookmarkCard } from "./bookmark-card";
 import BlurFade from "~/app/_core/components/blur-fade";
 import { useBookmarkStore } from "../_state/store/use-bookmark-store";
 
-import { type Bookmark } from "~/types/bookmark";
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 
 export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
   const { activeBookmarkId } = useBookmarkStore();

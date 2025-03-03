@@ -1,6 +1,6 @@
 import { updateBookmark } from "~/app/_common/actions/bookmark.action";
 import { getMetadata } from "./get-metadata.action";
-import { type Bookmark } from "~/types/bookmark";
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 
 export async function fixBrokenFavicon({
   id,

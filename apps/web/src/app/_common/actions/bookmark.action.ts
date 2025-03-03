@@ -1,6 +1,6 @@
 "use server";
 
-import { type Bookmark } from "~/types/bookmark";
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 import { http } from "~/app/_common/utils/http";
 import { getAuthCookie } from "~/app/_common/utils/get-auth-cookie";
 import { isAuthenticated } from "~/app/_common/actions/auth.action";
@@ -31,7 +31,7 @@ export const createBookmark = async ({
 }: {
   title: string;
   description?: string;
-  faviconUrl: string;
+  faviconUrl?: string;
   url: string;
 }) => {
   const response: Bookmark = await http

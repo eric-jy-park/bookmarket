@@ -6,7 +6,7 @@ import {
   BookmarkContextMenuProvider,
   BookmarkContextMenuTrigger,
 } from "./bookmark-context-menu";
-import { type Bookmark } from "~/types/bookmark";
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 import { cn } from "~/app/_core/utils/cn";
 import React from "react";
 import { BookmarkCardTitleInput } from "./bookmark-card-title-input";
@@ -76,7 +76,7 @@ export const BookmarkCard = ({
             {faviconUrl ? (
               <Image
                 src={faviconUrl}
-                alt={bookmark.title}
+                alt={bookmark.title ?? ""}
                 width={16}
                 height={16}
                 className="shrink-0 overflow-hidden"
@@ -94,7 +94,7 @@ export const BookmarkCard = ({
                 <BookmarkCardTitleInput bookmark={bookmark} />
               ) : (
                 <TextMorph className="truncate text-sm font-medium">
-                  {bookmark.title}
+                  {bookmark.title ?? ""}
                 </TextMorph>
               )}
               <span className="truncate text-xs text-muted-foreground">

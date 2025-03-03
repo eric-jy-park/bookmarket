@@ -2,24 +2,34 @@
 
 import React from "react";
 import { Loader2, Search } from "lucide-react";
-
+import { createBookmarkAction } from "../_actions/create-bookmark.action";
 import BlurFade from "~/app/_core/components/blur-fade";
-import { useBookmarkSubmit } from "../_hooks/use-bookmark-submit";
 import { UrlInput } from "./url-input";
 import { ProgressiveBlur } from "~/app/_core/components/progressive-blur";
-
+import { useRouter } from "next/navigation";
 export function BookmarkInput() {
-  const {
-    url,
-    isValidUrl,
-    isLoading,
-    handleChange,
-    handleSubmit,
-    canvasRef,
-    setCanvasValue,
-    animating,
-    inputRef,
-  } = useBookmarkSubmit();
+  const router = useRouter();
+
+  const handleCreateBookmark = async (
+    previousState: { error: string; success: string },
+    formData: FormData,
+  ) => {
+    const result = await createBookmarkAction(previousState, formData);
+    if (result.success) {
+      router.refresh();
+    }
+    return result;
+  };
+
+  const [state, formAction, isPending] = React.useActionState(
+    handleCreateBookmark,
+    {
+      error: "",
+      success: "",
+    },
+  );
+
+  const isValidUrl = state.error === "";
 
   return (
     <div className="sticky top-14 z-10 w-full bg-background pt-1">
@@ -28,26 +38,15 @@ export function BookmarkInput() {
         direction="top"
       />
       <BlurFade duration={0.2} delay={0.1} className="z-20">
-        <form onSubmit={handleSubmit}>
+        <form action={formAction}>
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <UrlInput
-              url={url}
-              handleChange={handleChange}
-              isValidUrl={isValidUrl}
-              isDisabled={isLoading}
-              animating={animating}
-              canvasRef={canvasRef}
-              inputRef={inputRef}
-              setCanvasValue={setCanvasValue}
-            />
-            {isLoading && (
+            <UrlInput isValidUrl={isValidUrl} isDisabled={isPending} />
+            {isPending && (
               <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
             )}
-            {!isValidUrl && (
-              <p className="mt-1 text-sm text-red-500">
-                Please enter a valid URL
-              </p>
+            {state.error && (
+              <p className="mt-1 text-sm text-red-500">{state.error}</p>
             )}
           </div>
         </form>

@@ -10,7 +10,7 @@ import {
 import { useBookmarkDelete } from "../_hooks/use-bookmark-delete";
 import React from "react";
 import { useBookmarkCopy } from "../_hooks/use-bookmark-copy";
-import { type Bookmark } from "~/types/bookmark";
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 import { useBookmarkStore } from "../_state/store/use-bookmark-store";
 
 export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {

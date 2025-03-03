@@ -1,24 +1,24 @@
 import { toast } from "sonner";
-import { useDeleteBookmarkMutation } from "../_state/mutations/use-delete-bookmark-mutation";
 import React from "react";
+import { deleteBookmark } from "~/app/_common/actions/bookmark.action";
+import { useRouter } from "next/navigation";
 
 export const useBookmarkDelete = () => {
-  const { mutateAsync, isPending } = useDeleteBookmarkMutation();
+  const router = useRouter();
+  const handleDelete = React.useCallback(async (id: string) => {
+    try {
+      toast.promise(deleteBookmark({ id }), {
+        loading: "Deleting bookmark...",
+        success: "Bookmark deleted successfully",
+        error: "Failed to delete bookmark",
+        finally: () => {
+          router.refresh();
+        },
+      });
+    } catch {
+      toast.error("Failed to delete bookmark");
+    }
+  }, []);
 
-  const handleDelete = React.useCallback(
-    async (id: string) => {
-      try {
-        toast.promise(mutateAsync(id), {
-          loading: "Deleting bookmark...",
-          success: "Bookmark deleted successfully",
-          error: "Failed to delete bookmark",
-        });
-      } catch {
-        toast.error("Failed to delete bookmark");
-      }
-    },
-    [mutateAsync],
-  );
-
-  return { handleDelete, isPending };
+  return { handleDelete };
 };
