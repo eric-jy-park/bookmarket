@@ -15,8 +15,8 @@ export class Bookmark {
   @Column({ nullable: true })
   description?: string;
 
-  @Column()
-  faviconUrl: string;
+  @Column({ nullable: true })
+  faviconUrl?: string;
 
   @Column({
     type: 'timestamp',
