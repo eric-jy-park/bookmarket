@@ -3,7 +3,7 @@
 import { http } from "~/app/_common/utils/http";
 import urlMetadata from "url-metadata";
 import * as Sentry from "@sentry/nextjs";
-import { type UrlMetadata } from "~/types/metadata";
+import { type UrlMetadata } from "~/app/_common/interfaces/metadata.interface";
 import ky from "ky";
 
 interface MetadataResponse {
@@ -53,7 +53,6 @@ export async function getMetadata(url: string, isFallback = false) {
     metadata = {
       title: response.data.title,
       description: response.data.description,
-      logo: response.data.logo,
       url: response.data.url,
     };
   }

@@ -1,18 +1,20 @@
 "use client";
 
 import React from "react";
-import { useBookmarkUpdate } from "../_hooks/use-bookmark-update";
-import { type Bookmark } from "~/types/bookmark";
+
+import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 import { toast } from "sonner";
 import { useBookmarkStore } from "../_state/store/use-bookmark-store";
+import { updateBookmark } from "~/app/_common/actions/bookmark.action";
+import { useRouter } from "next/navigation";
 
 export const BookmarkCardTitleInput = ({
   bookmark,
 }: {
   bookmark: Bookmark;
 }) => {
+  const router = useRouter();
   const [inputValue, setInputValue] = React.useState(bookmark.title);
-  const { updateBookmark, isPending } = useBookmarkUpdate();
   const { setActiveBookmarkId } = useBookmarkStore();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -39,6 +41,7 @@ export const BookmarkCardTitleInput = ({
       error: "Failed to update bookmark",
       finally: () => {
         setActiveBookmarkId(null);
+        router.refresh();
       },
     });
   };
@@ -51,7 +54,6 @@ export const BookmarkCardTitleInput = ({
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         className="w-full bg-transparent text-sm font-medium text-foreground/50 focus-visible:outline-none"
-        disabled={isPending}
       />
     </form>
   );
