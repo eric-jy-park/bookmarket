@@ -1,6 +1,8 @@
 import { UrlMetadata } from "~/app/_common/interfaces/metadata.interface";
 import { getMetadata } from "./get-metadata.action";
 import { createBookmark } from "~/app/_common/actions/bookmark.action";
+import * as Sentry from "@sentry/nextjs";
+
 const urlRegex = /^(http[s]?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}\.?/;
 
 const validateUrl = (input: string) => {
@@ -32,11 +34,25 @@ export const createBookmarkAction = async (
 
   const data: UrlMetadata = await getMetadata(fullUrl);
 
-  await createBookmark({
-    title: data.title,
-    description: data.description,
-    url: fullUrl,
-  });
+  try {
+    await createBookmark({
+      title: data.title,
+      description: data.description,
+      url: fullUrl,
+    });
 
-  return { success: "Bookmark created", error: "" };
+    return { success: "Bookmark created", error: "" };
+  } catch (error) {
+    Sentry.captureException("Error creating bookmark:", {
+      extra: {
+        url: fullUrl,
+        error,
+      },
+    });
+
+    return {
+      error: "Failed to create bookmark. Please try again.",
+      success: previousState.success,
+    };
+  }
 };
