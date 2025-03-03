@@ -57,7 +57,7 @@ export const updateBookmark = async ({
   description,
   faviconUrl,
   url,
-}: Omit<Bookmark, "userId" | "createdAt" | "updatedAt">) => {
+}: Partial<Omit<Bookmark, "userId" | "createdAt" | "updatedAt">>) => {
   const response: Bookmark = await http
     .patch(`bookmarks/${id}`, {
       json: {

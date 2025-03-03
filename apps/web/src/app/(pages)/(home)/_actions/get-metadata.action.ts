@@ -4,6 +4,7 @@ import { http } from "~/app/_common/utils/http";
 import urlMetadata from "url-metadata";
 import * as Sentry from "@sentry/nextjs";
 import { type UrlMetadata } from "~/types/metadata";
+import ky from "ky";
 
 interface MetadataResponse {
   data: UrlMetadata;
@@ -21,15 +22,19 @@ const options = {
   },
 };
 
-export async function getMetadata(url: string) {
+export async function getMetadata(url: string, isFallback = false) {
   let metadata: UrlMetadata;
+
+  if (isFallback) {
+    const response = await getMetadataFallback(url);
+    return response.data;
+  }
 
   try {
     const response = await urlMetadata(url, options);
     metadata = {
       title: response.title,
       description: response.description,
-      logo: response.icon,
       url: response.url,
     };
   } catch (error) {
@@ -43,12 +48,7 @@ export async function getMetadata(url: string) {
       },
     );
 
-    const response = await http
-      .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
-        timeout: 30000,
-        retry: 2,
-      })
-      .json();
+    const response = await getMetadataFallback(url);
 
     metadata = {
       title: response.data.title,
@@ -59,4 +59,15 @@ export async function getMetadata(url: string) {
   }
 
   return metadata;
+}
+
+export async function getMetadataFallback(url: string) {
+  const response = await ky
+    .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
+      timeout: 30000,
+      retry: 2,
+    })
+    .json();
+
+  return response;
 }

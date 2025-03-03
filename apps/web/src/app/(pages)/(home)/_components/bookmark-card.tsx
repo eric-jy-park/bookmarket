@@ -13,6 +13,8 @@ import { BookmarkCardTitleInput } from "./bookmark-card-title-input";
 import { useMutation } from "@tanstack/react-query";
 import { fixBrokenFavicon } from "../_actions/fix-broken-favicon.action";
 import { useRouter } from "next/navigation";
+import { Logo } from "~/app/_common/components/logo";
+import { TextMorph } from "~/app/_common/components/text-morph";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -33,10 +35,24 @@ export const BookmarkCard = ({
 
   // FIXME: This is a hack to migrate the favicon url to the new provider
   React.useEffect(() => {
-    if (bookmark.faviconUrl?.startsWith("https://icon.horse")) {
+    if (
+      !bookmark.faviconUrl ||
+      bookmark.faviconUrl.startsWith("https://icon.horse")
+    ) {
       mutate();
     }
   }, [bookmark.faviconUrl, mutate]);
+
+  const faviconUrl = React.useMemo(() => {
+    if (
+      !bookmark.faviconUrl ||
+      bookmark.faviconUrl.startsWith("https://icon.horse")
+    ) {
+      return null;
+    }
+
+    return bookmark.faviconUrl;
+  }, [bookmark.faviconUrl]);
 
   return (
     <BookmarkContextMenuProvider>
@@ -57,9 +73,9 @@ export const BookmarkCard = ({
               ease: "linear",
             }}
           >
-            {bookmark.faviconUrl ? (
+            {faviconUrl ? (
               <Image
-                src={bookmark.faviconUrl}
+                src={faviconUrl}
                 alt={bookmark.title}
                 width={16}
                 height={16}
@@ -71,15 +87,15 @@ export const BookmarkCard = ({
                 }}
               />
             ) : (
-              <div className="h-4 w-4 shrink-0 bg-muted" />
+              <Logo className="h-4 w-4 shrink-0" includeText={false} />
             )}
             <div className="flex min-w-0 flex-1 flex-col">
               {isActive ? (
                 <BookmarkCardTitleInput bookmark={bookmark} />
               ) : (
-                <span className="truncate text-sm font-medium">
+                <TextMorph className="truncate text-sm font-medium">
                   {bookmark.title}
-                </span>
+                </TextMorph>
               )}
               <span className="truncate text-xs text-muted-foreground">
                 {new URL(bookmark.url).hostname.replace("www.", "")}

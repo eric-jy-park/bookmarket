@@ -21,9 +21,12 @@ import { APP_FILTER } from '@nestjs/core';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       ssl: true,
-      // FIXME: Should be set to false on prod
-      synchronize: true,
       autoLoadEntities: true,
+      // FIXME: Should be set to false on prod
+      synchronize: process.env.NODE_ENV !== 'production',
+      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      migrationsTableName: 'migrations',
+      migrationsRun: true,
     }),
     IamModule,
   ],

@@ -1,16 +1,17 @@
+import { updateBookmark } from "~/app/_common/actions/bookmark.action";
 import { getMetadata } from "./get-metadata.action";
-import { http } from "~/app/_common/utils/http";
 import { type Bookmark } from "~/types/bookmark";
 
 export async function fixBrokenFavicon({
   id,
   url,
 }: Pick<Bookmark, "id" | "url">) {
-  const metadata = await getMetadata(url);
-  const faviconUrl = metadata.logo;
-  await http.patch(`/api/bookmarks/${id}`, {
-    json: {
-      faviconUrl,
-    },
+  const metadata = await getMetadata(url, true);
+  await updateBookmark({
+    id,
+    faviconUrl: metadata.logo,
+    url: metadata.url,
+    title: metadata.title,
+    description: metadata.description,
   });
 }

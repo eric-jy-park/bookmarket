@@ -3,7 +3,7 @@ import {
   getBookmarks as getBookmarksServer,
   updateBookmark as updateBookmarkServer,
   deleteBookmark as deleteBookmarkServer,
-} from "~/server/queries/bookmark";
+} from "~/app/_common/actions/bookmark.action";
 
 class BookmarkService {
   async createBookmark(bookmark: Parameters<typeof createBookmarkServer>[0]) {
