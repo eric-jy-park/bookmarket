@@ -35,6 +35,9 @@ export class Bookmark {
   @ManyToOne(() => User, (user) => user.bookmarks, { eager: true })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.bookmarks, { eager: true })
-  category: Category;
+  @ManyToOne(() => Category, (category) => category.bookmarks, {
+    eager: true,
+    nullable: true,
+  })
+  category?: Category;
 }
