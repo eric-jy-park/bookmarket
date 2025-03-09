@@ -74,7 +74,7 @@ export class BookmarksService {
     return this.bookmarksRepository.update(id, {
       ...updateBookmarkDto,
       user: { id: userId },
-      category: { id: updateBookmarkDto.category ?? bookmark.category.id },
+      category: { id: updateBookmarkDto.category ?? bookmark.category?.id },
     });
   }
 
@@ -84,7 +84,6 @@ export class BookmarksService {
     categoryId?: string,
   ) {
     const bookmark = await this.findOneBookmark(userId, id);
-
     if (bookmark.user.id !== userId) {
       throw new ForbiddenException();
     }

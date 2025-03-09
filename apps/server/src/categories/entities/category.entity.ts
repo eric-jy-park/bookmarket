@@ -21,7 +21,7 @@ export class Category extends BaseEntity {
   @Unique(['name', 'user'])
   name: string;
 
-  @ManyToOne(() => User, (user) => user.categories)
+  @ManyToOne(() => User, (user) => user.categories, { eager: true })
   user: User;
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.category, {
