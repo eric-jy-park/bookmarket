@@ -16,7 +16,7 @@ export default function SignupPage() {
   const [_, formAction, isPending] = useActionState(createUser, null);
 
   return (
-    <section className="flex min-h-screen bg-background px-4 py-16 dark:bg-transparent md:py-32">
+    <section className="flex w-full bg-background dark:bg-transparent md:px-4 md:py-32">
       <form action={formAction} className="max-w-92 m-auto h-fit w-full">
         <div className="p-6">
           <div className="flex flex-col">

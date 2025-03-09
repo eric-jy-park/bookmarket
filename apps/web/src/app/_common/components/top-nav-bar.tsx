@@ -21,7 +21,7 @@ export async function TopNavbar() {
         <span className="block md:hidden">
           <Logo includeText={false} />
         </span>
-        <AnimatedTab categories={categories} />
+        {user && <AnimatedTab categories={categories} />}
         {user ? <UserAvatar user={user} /> : <Link href="/login">Login</Link>}
       </nav>
     </aside>
