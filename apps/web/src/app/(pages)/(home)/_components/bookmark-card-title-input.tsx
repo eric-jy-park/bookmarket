@@ -38,7 +38,7 @@ export const BookmarkCardTitleInput = ({
     toast.promise(
       updateBookmark({
         ...bookmark,
-        category: bookmark.category.id,
+        category: bookmark.category?.id,
         title: inputValue,
       }),
       {

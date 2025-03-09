@@ -11,7 +11,7 @@ export const BookmarkContextMenuCategoryList = ({
   selectedCategory,
   bookmarkId,
 }: {
-  selectedCategory: string;
+  selectedCategory?: string;
   bookmarkId: string;
 }) => {
   const router = useRouter();
