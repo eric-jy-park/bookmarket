@@ -8,5 +8,5 @@ export interface Bookmark {
   faviconUrl?: string;
   createdAt: Date;
   updatedAt: Date;
-  category: Category;
+  category?: Category;
 }

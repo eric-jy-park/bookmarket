@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 
 import { Input } from "~/app/_core/components/input";
 import {
@@ -24,10 +24,15 @@ export const AddCategoryButton = () => {
       if (typeof categoryName !== "string") {
         return { error: "Invalid category name" };
       }
-      await createCategory(categoryName);
-      setOpen(false);
-      router.refresh();
-      return { error: "" };
+      try {
+        await createCategory(categoryName);
+        setOpen(false);
+        return { error: "" };
+      } catch (error) {
+        return { error: "Failed to create category" };
+      } finally {
+        router.refresh();
+      }
     },
     { error: "" },
   );
@@ -55,15 +60,20 @@ export const AddCategoryButton = () => {
               Create New Category
             </SheetTitle>
           </SheetHeader>
-          <Input
-            ref={inputRef}
-            name="categoryName"
-            placeholder="Category Name"
-            disabled={isPending}
-          />
-          {state.error && (
-            <p className="mt-1 text-sm text-red-500">{state.error}</p>
-          )}
+          <div className="relative">
+            <Input
+              ref={inputRef}
+              name="categoryName"
+              placeholder="Category Name"
+              disabled={isPending}
+            />
+            {isPending && (
+              <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
+            )}
+            {state.error && (
+              <p className="mt-1 text-sm text-red-500">{state.error}</p>
+            )}
+          </div>
         </form>
       </SheetContent>
     </Sheet>
