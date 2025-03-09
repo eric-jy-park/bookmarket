@@ -16,4 +16,8 @@ export class CreateBookmarkDto {
   @IsOptional()
   @IsUrl()
   faviconUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
 }

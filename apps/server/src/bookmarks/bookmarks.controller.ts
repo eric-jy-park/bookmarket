@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -13,6 +14,7 @@ import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Controller('bookmarks')
 @Auth(AuthType.Cookie)
@@ -28,8 +30,11 @@ export class BookmarksController {
   }
 
   @Get()
-  findAllBookmarks(@ActiveUser('id') userId: string) {
-    return this.bookmarksService.findAllBookmarks(userId);
+  findAllBookmarks(
+    @ActiveUser('id') userId: string,
+    @Query('category') categoryName?: Category['name'],
+  ) {
+    return this.bookmarksService.findAllBookmarks(userId, categoryName);
   }
 
   @Get(':id')
@@ -44,6 +49,15 @@ export class BookmarksController {
     @Body() updateBookmarkDto: UpdateBookmarkDto,
   ) {
     return this.bookmarksService.updateBookmark(userId, id, updateBookmarkDto);
+  }
+
+  @Patch(':id/category')
+  updateBookmarkCategory(
+    @ActiveUser('id') userId: string,
+    @Param('id') id: string,
+    @Body('categoryId') categoryId: string,
+  ) {
+    return this.bookmarksService.updateBookmarkCategory(userId, id, categoryId);
   }
 
   @Delete(':id')

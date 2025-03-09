@@ -1,10 +1,15 @@
 "use client";
 
-import { CopyIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { CopyIcon, FolderIcon, PencilIcon, TrashIcon } from "lucide-react";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "~/app/_core/components/context-menu";
 import { useBookmarkDelete } from "../_hooks/use-bookmark-delete";
@@ -12,6 +17,7 @@ import React from "react";
 import { useBookmarkCopy } from "../_hooks/use-bookmark-copy";
 import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
 import { useBookmarkStore } from "../_state/store/use-bookmark-store";
+import { BookmarkContextMenuCategoryList } from "./bookmark-context-menu-category-list";
 
 export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {
   const { handleDelete } = useBookmarkDelete();
@@ -63,6 +69,19 @@ export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {
           {item.label}
         </ContextMenuItem>
       ))}
+      <ContextMenuSeparator />
+      <ContextMenuSub>
+        <ContextMenuSubTrigger className="cursor-pointer font-medium text-muted-foreground">
+          <FolderIcon className="mr-2 h-4 w-4" />
+          Category
+        </ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-fit text-muted-foreground">
+          <BookmarkContextMenuCategoryList
+            selectedCategory={bookmark.category?.name}
+            bookmarkId={bookmark.id}
+          />
+        </ContextMenuSubContent>
+      </ContextMenuSub>
     </ContextMenuContent>
   );
 };

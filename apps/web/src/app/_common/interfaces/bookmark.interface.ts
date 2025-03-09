@@ -1,3 +1,5 @@
+import { Category } from "./category.interface";
+
 export interface Bookmark {
   id: string;
   url: string;
@@ -6,4 +8,5 @@ export interface Bookmark {
   faviconUrl?: string;
   createdAt: Date;
   updatedAt: Date;
+  category?: Category;
 }

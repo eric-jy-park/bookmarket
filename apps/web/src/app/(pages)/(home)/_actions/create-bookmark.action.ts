@@ -16,6 +16,7 @@ const validateUrl = (input: string) => {
 export const createBookmarkAction = async (
   previousState: { error: string; success: string },
   formData: FormData,
+  category?: string,
 ) => {
   const url = formData.get("url") as string;
 
@@ -39,6 +40,7 @@ export const createBookmarkAction = async (
       title: data.title,
       description: data.description,
       url: fullUrl,
+      category: category,
     });
 
     return { success: "Bookmark created", error: "" };

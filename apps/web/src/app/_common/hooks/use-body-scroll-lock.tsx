@@ -1,19 +1,17 @@
 import React from "react";
 import { useBookmarkStore } from "~/app/(pages)/(home)/_state/store/use-bookmark-store";
 
-export const useBodyScrollLock = () => {
-  const activeBookmarkId = useBookmarkStore((state) => state.activeBookmarkId);
-
+export const useBodyScrollLock = ({ isDisabled }: { isDisabled?: boolean }) => {
   React.useEffect(() => {
     const body = document.body;
-    if (activeBookmarkId) {
-      body.style.overflow = "hidden";
-    } else {
+    if (isDisabled) {
       body.style.overflow = "visible";
+    } else {
+      body.style.overflow = "hidden";
     }
 
     return () => {
       body.style.overflow = "visible";
     };
-  }, [activeBookmarkId]);
+  }, [isDisabled]);
 };

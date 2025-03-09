@@ -8,24 +8,42 @@ import { Bookmark } from './entities/bookmark.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { Category } from 'src/categories/entities/category.entity';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class BookmarksService {
   constructor(
     @InjectRepository(Bookmark)
     private bookmarksRepository: Repository<Bookmark>,
+    private categoriesService: CategoriesService,
   ) {}
 
-  createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
+  async createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
+    const category = await this.categoriesService.findOneByName(
+      createBookmarkDto.category,
+      userId,
+    );
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
     return this.bookmarksRepository.save({
       ...createBookmarkDto,
+      category,
       user: { id: userId },
     });
   }
 
-  findAllBookmarks(userId: string) {
+  findAllBookmarks(userId: string, categoryName?: Category['name']) {
     return this.bookmarksRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        user: { id: userId },
+        category: {
+          name: categoryName,
+        },
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -56,6 +74,31 @@ export class BookmarksService {
     return this.bookmarksRepository.update(id, {
       ...updateBookmarkDto,
       user: { id: userId },
+      category: { id: updateBookmarkDto.category ?? bookmark.category.id },
+    });
+  }
+
+  async updateBookmarkCategory(
+    userId: string,
+    id: string,
+    categoryId?: string,
+  ) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    if (categoryId) {
+      const category = await this.categoriesService.findOne(categoryId);
+
+      if (category.user.id !== userId) {
+        throw new ForbiddenException();
+      }
+    }
+
+    return this.bookmarksRepository.update(id, {
+      category: categoryId ? { id: categoryId } : null,
     });
   }
 

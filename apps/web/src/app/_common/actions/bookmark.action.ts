@@ -28,11 +28,13 @@ export const createBookmark = async ({
   description,
   faviconUrl,
   url,
+  category,
 }: {
   title: string;
+  url: string;
   description?: string;
   faviconUrl?: string;
-  url: string;
+  category?: string;
 }) => {
   const response: Bookmark = await http
     .post("bookmarks", {
@@ -41,6 +43,7 @@ export const createBookmark = async ({
         description,
         faviconUrl,
         url,
+        category,
       },
       headers: {
         Cookie: await getAuthCookie(),
@@ -57,15 +60,47 @@ export const updateBookmark = async ({
   description,
   faviconUrl,
   url,
-}: Partial<Omit<Bookmark, "userId" | "createdAt" | "updatedAt">>) => {
+  category,
+}: {
+  id: string;
+  title?: string;
+  description?: string;
+  faviconUrl?: string;
+  url?: string;
+  category?: string;
+}) => {
+  try {
+    const response: Bookmark = await http
+      .patch(`bookmarks/${id}`, {
+        json: {
+          title,
+          description,
+          faviconUrl,
+          url,
+          category,
+        },
+        headers: {
+          Cookie: await getAuthCookie(),
+        },
+      })
+      .json();
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateBookmarkCategory = async ({
+  id,
+  categoryId,
+}: {
+  id: string;
+  categoryId?: string;
+}) => {
   const response: Bookmark = await http
-    .patch(`bookmarks/${id}`, {
-      json: {
-        title,
-        description,
-        faviconUrl,
-        url,
-      },
+    .patch(`bookmarks/${id}/category`, {
+      json: { categoryId },
       headers: {
         Cookie: await getAuthCookie(),
       },

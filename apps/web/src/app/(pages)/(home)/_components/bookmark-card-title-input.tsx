@@ -35,15 +35,22 @@ export const BookmarkCardTitleInput = ({
       return;
     }
 
-    toast.promise(updateBookmark({ ...bookmark, title: inputValue }), {
-      loading: "Updating bookmark...",
-      success: "Bookmark updated!",
-      error: "Failed to update bookmark",
-      finally: () => {
-        setActiveBookmarkId(null);
-        router.refresh();
+    toast.promise(
+      updateBookmark({
+        ...bookmark,
+        category: bookmark.category?.id,
+        title: inputValue,
+      }),
+      {
+        loading: "Updating bookmark...",
+        success: "Bookmark updated!",
+        error: "Failed to update bookmark",
+        finally: () => {
+          setActiveBookmarkId(null);
+          router.refresh();
+        },
       },
-    });
+    );
   };
 
   return (
