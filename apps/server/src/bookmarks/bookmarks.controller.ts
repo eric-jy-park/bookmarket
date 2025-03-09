@@ -13,6 +13,7 @@ import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Controller('bookmarks')
 @Auth(AuthType.Cookie)
@@ -28,8 +29,11 @@ export class BookmarksController {
   }
 
   @Get()
-  findAllBookmarks(@ActiveUser('id') userId: string) {
-    return this.bookmarksService.findAllBookmarks(userId);
+  findAllBookmarks(
+    @ActiveUser('id') userId: string,
+    @Param('category') categoryName?: Category['name'],
+  ) {
+    return this.bookmarksService.findAllBookmarks(userId, categoryName);
   }
 
   @Get(':id')

@@ -1,3 +1,4 @@
+import { Category } from 'src/categories/entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -33,4 +34,7 @@ export class Bookmark {
 
   @ManyToOne(() => User, (user) => user.bookmarks, { eager: true })
   user: User;
+
+  @ManyToOne(() => Category, (category) => category.bookmarks, { eager: true })
+  category: Category;
 }

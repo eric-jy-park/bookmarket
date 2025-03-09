@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IamModule } from './iam/iam.module';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 import { APP_FILTER } from '@nestjs/core';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -24,11 +25,12 @@ import { APP_FILTER } from '@nestjs/core';
       autoLoadEntities: true,
       // FIXME: Should be set to false on prod
       synchronize: process.env.NODE_ENV !== 'production',
-      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-      migrationsTableName: 'migrations',
-      migrationsRun: true,
+      // migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      // migrationsTableName: 'migrations',
+      // migrationsRun: true,
     }),
     IamModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [

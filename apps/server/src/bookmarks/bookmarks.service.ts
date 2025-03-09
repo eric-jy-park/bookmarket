@@ -8,6 +8,7 @@ import { Bookmark } from './entities/bookmark.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Injectable()
 export class BookmarksService {
@@ -23,9 +24,14 @@ export class BookmarksService {
     });
   }
 
-  findAllBookmarks(userId: string) {
+  findAllBookmarks(userId: string, categoryName?: Category['name']) {
     return this.bookmarksRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        user: { id: userId },
+        category: {
+          name: categoryName,
+        },
+      },
       order: { createdAt: 'DESC' },
     });
   }

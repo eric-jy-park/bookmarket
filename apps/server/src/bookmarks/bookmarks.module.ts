@@ -6,6 +6,7 @@ import { jwtConfig } from 'src/iam/config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { Bookmark } from './entities/bookmark.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Module({
   controllers: [BookmarksController],
@@ -13,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
-    TypeOrmModule.forFeature([Bookmark]),
+    TypeOrmModule.forFeature([Bookmark, Category]),
   ],
   exports: [BookmarksService],
 })
