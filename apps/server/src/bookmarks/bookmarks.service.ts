@@ -89,6 +89,14 @@ export class BookmarksService {
       throw new ForbiddenException();
     }
 
+    if (categoryId) {
+      const category = await this.categoriesService.findOne(categoryId);
+
+      if (category.user.id !== userId) {
+        throw new ForbiddenException();
+      }
+    }
+
     return this.bookmarksRepository.update(id, {
       category: categoryId ? { id: categoryId } : null,
     });

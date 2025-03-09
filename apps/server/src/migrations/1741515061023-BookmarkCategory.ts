@@ -10,7 +10,7 @@ export class BookmarkCategory1741515061023 implements MigrationInterface {
         "userId" uuid,
         "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-        CONSTRAINT "UQ_category_name" UNIQUE ("name"),
+        CONSTRAINT "UQ_category_name_userId" UNIQUE ("name", "userId"),
         CONSTRAINT "FK_category_user" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE
       )
     `);

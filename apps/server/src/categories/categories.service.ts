@@ -52,7 +52,7 @@ export class CategoriesService {
     const category = await this.findOne(id);
 
     if (category.user.id !== userId) {
-      return new ForbiddenException();
+      throw new ForbiddenException();
     }
 
     return this.categoryRepository.update(id, {
@@ -64,7 +64,7 @@ export class CategoriesService {
     const category = await this.findOne(id);
 
     if (category.user.id !== userId) {
-      return new ForbiddenException();
+      throw new ForbiddenException();
     }
 
     return this.categoryRepository.delete(id);

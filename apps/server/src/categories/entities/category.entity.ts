@@ -4,9 +4,11 @@ import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 
 @Entity()
@@ -14,7 +16,9 @@ export class Category extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
+  @Index()
+  @Unique(['name', 'user'])
   name: string;
 
   @ManyToOne(() => User, (user) => user.categories)

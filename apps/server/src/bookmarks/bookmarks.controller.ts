@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -31,7 +32,7 @@ export class BookmarksController {
   @Get()
   findAllBookmarks(
     @ActiveUser('id') userId: string,
-    @Param('category') categoryName?: Category['name'],
+    @Query('category') categoryName?: Category['name'],
   ) {
     return this.bookmarksService.findAllBookmarks(userId, categoryName);
   }
