@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -14,6 +18,19 @@ export class CategoriesService {
   ) {}
 
   async create(id: User['id'], createCategoryDto: CreateCategoryDto) {
+    const existingCategory = await this.categoryRepository.findOne({
+      where: {
+        name: createCategoryDto.name,
+        user: { id },
+      },
+    });
+
+    if (existingCategory) {
+      throw new ConflictException(
+        `Category with name ${createCategoryDto.name} already exists`,
+      );
+    }
+
     return this.categoryRepository.save({
       ...createCategoryDto,
       user: { id },
