@@ -38,6 +38,12 @@ export class CategoriesService {
     });
   }
 
+  async findOneByName(name: Category['name'], userId: User['id']) {
+    return this.categoryRepository.findOneOrFail({
+      where: { name, user: { id: userId } },
+    });
+  }
+
   async update(
     userId: User['id'],
     id: Category['id'],

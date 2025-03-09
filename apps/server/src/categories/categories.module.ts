@@ -15,5 +15,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ConfigModule.forFeature(jwtConfig),
     TypeOrmModule.forFeature([Category]),
   ],
+  exports: [CategoriesService],
 })
 export class CategoriesModule {}

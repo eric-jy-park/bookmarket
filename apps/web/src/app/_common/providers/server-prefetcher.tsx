@@ -8,14 +8,17 @@ import { getQueryClient } from "~/app/_core/utils/get-query-client";
 
 export const ServerPrefetcher = async ({
   children,
-  query,
+  queries,
 }: {
   children: React.ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query: UseQueryOptions<any, any, any, any>;
+  queries: UseQueryOptions<any, any, any, any>[];
 }) => {
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(query);
+
+  for (const q of queries) {
+    await queryClient.prefetchQuery(q);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

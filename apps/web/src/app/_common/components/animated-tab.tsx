@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDownIcon, FolderIcon } from "lucide-react";
+import { FolderIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import {
   DropdownMenu,
@@ -11,40 +11,35 @@ import {
   DropdownMenuTrigger,
 } from "~/app/_core/components/dropdown-menu";
 import { TextMorph } from "./text-morph";
+import React from "react";
+import { AddCategoryButton } from "./add-category-button";
+import { Category } from "../interfaces/category.interface";
 
-const tabs = [
-  { label: "UI/UX", value: "ui-ux" },
-  { label: "Web", value: "web" },
-  { label: "Mobile", value: "mobile" },
-  { label: "Design", value: "design" },
-  { label: "Marketing", value: "marketing" },
-  { label: "Other", value: "other" },
-];
+export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
+  const [category, setCategory] = useQueryState("c", parseAsString);
 
-export const AnimatedTab = () => {
-  const [category, setCategory] = useQueryState("category", parseAsString);
-
-  const activeTab = tabs.find((tab) => tab.value === category);
+  const activeTab = categories.find((tab) => tab.name === category);
 
   const handleClick = (value: string) => {
-    if (activeTab?.value === value) return setCategory(null);
+    if (activeTab?.name === value) return setCategory(null);
     setCategory(value);
   };
 
   return (
     <>
-      <div className="absolute left-1/2 hidden -translate-x-1/2 gap-2 bg-background sm:flex">
-        {tabs.map((tab) => (
+      {/* Desktop */}
+      <div className="absolute left-1/2 hidden h-8 -translate-x-1/2 gap-2 bg-background sm:flex">
+        {categories.map((category) => (
           <button
             className="relative cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium"
-            key={tab.value}
-            onClick={() => handleClick(tab.value)}
+            key={category.id}
+            onClick={() => handleClick(category.name)}
             style={{
               WebkitTapHighlightColor: "transparent",
             }}
           >
             <AnimatePresence>
-              {activeTab?.value === tab.value && (
+              {activeTab?.name === category.name && (
                 <motion.span
                   className="absolute inset-0 bg-black"
                   layoutId="active-category"
@@ -56,30 +51,33 @@ export const AnimatedTab = () => {
                 />
               )}
             </AnimatePresence>
-            <span className="relative z-10 text-white mix-blend-exclusion transition-opacity duration-300 hover:opacity-60">
-              {tab.label}
+            <span className="relative z-10 truncate text-white mix-blend-exclusion transition-opacity duration-300 hover:opacity-60">
+              {category.name}
             </span>
           </button>
         ))}
+        {categories.length <= 5 && <AddCategoryButton />}
       </div>
+
+      {/* Mobile */}
       <div className="flex w-full flex-col items-center justify-center gap-2 bg-background sm:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex w-fit items-center justify-center gap-2 rounded-xl bg-black px-4 py-1.5 text-sm font-medium text-white">
-              <TextMorph className="text-sm font-medium">
-                {activeTab?.label ?? "All"}
-              </TextMorph>
               <FolderIcon size={16} />
+              <TextMorph className="text-sm font-medium">
+                {activeTab?.name ?? "All"}
+              </TextMorph>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="min-w-full">
-            {tabs.map((tab) => (
+            {categories.map((category) => (
               <DropdownMenuCheckboxItem
-                key={tab.value}
-                onClick={() => handleClick(tab.value)}
-                checked={activeTab?.value === tab.value}
+                key={category.id}
+                onClick={() => handleClick(category.name)}
+                checked={activeTab?.name === category.name}
               >
-                {tab.label}
+                {category.name}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>

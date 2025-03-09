@@ -20,6 +20,8 @@ export class Category extends BaseEntity {
   @ManyToOne(() => User, (user) => user.categories)
   user: User;
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.category)
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.category, {
+    cascade: true,
+  })
   bookmarks: Bookmark[];
 }

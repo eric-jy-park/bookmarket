@@ -38,6 +38,7 @@ export class Bookmark {
   @ManyToOne(() => Category, (category) => category.bookmarks, {
     eager: true,
     nullable: true,
+    onDelete: 'SET NULL',
   })
   category?: Category;
 }

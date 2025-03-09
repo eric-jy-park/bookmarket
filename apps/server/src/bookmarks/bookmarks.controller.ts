@@ -50,6 +50,15 @@ export class BookmarksController {
     return this.bookmarksService.updateBookmark(userId, id, updateBookmarkDto);
   }
 
+  @Patch(':id/category')
+  updateBookmarkCategory(
+    @ActiveUser('id') userId: string,
+    @Param('id') id: string,
+    @Body('categoryId') categoryId: string,
+  ) {
+    return this.bookmarksService.updateBookmarkCategory(userId, id, categoryId);
+  }
+
   @Delete(':id')
   removeBookmark(@ActiveUser('id') userId: string, @Param('id') id: string) {
     return this.bookmarksService.removeBookmark(userId, id);

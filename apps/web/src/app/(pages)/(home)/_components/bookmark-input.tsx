@@ -7,14 +7,21 @@ import BlurFade from "~/app/_core/components/blur-fade";
 import { UrlInput } from "./url-input";
 import { ProgressiveBlur } from "~/app/_core/components/progressive-blur";
 import { useRouter } from "next/navigation";
+import { parseAsString, useQueryState } from "nuqs";
+
 export function BookmarkInput() {
   const router = useRouter();
+  const [category] = useQueryState("c", parseAsString);
 
   const handleCreateBookmark = async (
     previousState: { error: string; success: string },
     formData: FormData,
   ) => {
-    const result = await createBookmarkAction(previousState, formData);
+    const result = await createBookmarkAction(
+      previousState,
+      formData,
+      category ?? undefined,
+    );
     if (result.success) {
       router.refresh();
     }
