@@ -86,7 +86,7 @@ export const BookmarkCard = ({
     console.log("endLongPress");
     if (longPressTimer.current) {
       const pressDuration = Date.now() - longPressStartTime.current;
-      if (pressDuration < 250) {
+      if (pressDuration > 50 && pressDuration < 250) {
         handleClick();
       }
       clearTimeout(longPressTimer.current);
