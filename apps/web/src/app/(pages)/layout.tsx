@@ -68,7 +68,12 @@ export default function RootLayout({
         <GlobalProvider>
           <main className="mx-auto flex w-full min-w-0 flex-auto select-none flex-col px-5 antialiased sm:select-text sm:px-4">
             {children}
-            <Toaster position="bottom-center" />
+            <Toaster position="bottom-center" className="hidden sm:block" />
+            <Toaster
+              position="top-center"
+              className="block sm:hidden"
+              duration={2000}
+            />
             <Analytics />
             <SpeedInsights />
           </main>

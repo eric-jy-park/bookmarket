@@ -26,16 +26,20 @@ import {
   DrawerDescription,
 } from "~/app/_core/components/drawer";
 import { cn } from "~/app/_core/utils/cn";
+import { CategoryDrawerContent } from "~/app/(pages)/(home)/_components/category-drawer-content";
 
 export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
   const [category, setCategory] = useQueryState("c", parseAsString);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
   const activeTab = categories.find((tab) => tab.name === category);
 
-  const handleClick = (value: string) => {
-    if (activeTab?.name === value) return setCategory(null);
-    setCategory(value);
-  };
+  const handleCategoryClick = React.useCallback(
+    (category: Category) => {
+      if (activeTab?.name === category.name) return setCategory(null);
+      setCategory(category.name);
+    },
+    [activeTab?.name, setCategory],
+  );
 
   return (
     <>
@@ -45,7 +49,7 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
           <button
             className="relative cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium"
             key={category.id}
-            onClick={() => handleClick(category.name)}
+            onClick={() => handleCategoryClick(category)}
             style={{
               WebkitTapHighlightColor: "transparent",
             }}
@@ -82,31 +86,12 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
               </TextMorph>
             </div>
           </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Categories</DrawerTitle>
-            </DrawerHeader>
-            <hr className="my-2" />
-            <div className="flex flex-col gap-2 pb-4">
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant="ghost"
-                  className={cn(
-                    "h-12 justify-between",
-                    activeTab?.name === category.name && "bg-muted",
-                  )}
-                  onClick={() => {
-                    handleClick(category.name);
-                    setIsMobileDrawerOpen(false);
-                  }}
-                >
-                  {category.name}
-                  {activeTab?.name === category.name && <CheckIcon size={16} />}
-                </Button>
-              ))}
-            </div>
-          </DrawerContent>
+          <CategoryDrawerContent
+            categories={categories}
+            activeTab={activeTab}
+            handleClick={handleCategoryClick}
+            setIsMobileDrawerOpen={setIsMobileDrawerOpen}
+          />
         </Drawer>
       </div>
     </>

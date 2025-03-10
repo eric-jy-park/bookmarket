@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { LinkPreview } from "~/app/_core/components/link-preview";
-import { motion } from "framer-motion";
+import { animationControls, motion, useAnimation } from "framer-motion";
 import {
   BookmarkContextMenu,
   BookmarkContextMenuProvider,
@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fixBrokenFavicon } from "../_actions/fix-broken-favicon.action";
 import { useRouter } from "next/navigation";
 import { Logo } from "~/app/_common/components/logo";
-import { TextMorph } from "~/app/_common/components/text-morph";
+import { BookmarkContextMenuDrawer } from "./bookmark-context-menu-drawer";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -28,6 +28,12 @@ export const BookmarkCard = ({
   isBlurred,
 }: BookmarkCardProps) => {
   const router = useRouter();
+
+  const [isLongPressing, setIsLongPressing] = React.useState(false);
+  const longPressTimer = React.useRef<number | null>(null);
+  const longPressStartTime = React.useRef<number>(0);
+  const animationControls = useAnimation();
+
   const { mutate } = useMutation({
     mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
     onSuccess: () => router.refresh(),
@@ -54,8 +60,43 @@ export const BookmarkCard = ({
     return bookmark.faviconUrl;
   }, [bookmark.faviconUrl]);
 
+  const handleClick = React.useCallback(() => {
+    router.push(bookmark.url);
+  }, [bookmark.url, router]);
+
+  const startLongPress = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      console.log("startLongPress");
+      e.preventDefault();
+      longPressStartTime.current = Date.now();
+
+      animationControls.start({
+        scale: 1.05,
+        transition: { duration: 0.5, ease: "linear" },
+      });
+
+      longPressTimer.current = window.setTimeout(() => {
+        setIsLongPressing(true);
+      }, 500);
+    },
+    [bookmark.url, handleClick, router],
+  );
+
+  const endLongPress = React.useCallback(() => {
+    console.log("endLongPress");
+    if (longPressTimer.current) {
+      const pressDuration = Date.now() - longPressStartTime.current;
+      if (pressDuration < 250) {
+        handleClick();
+      }
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, [bookmark.url, handleClick, router]);
+
   return (
     <>
+      {/* Desktop */}
       <span className="hidden sm:block">
         <BookmarkContextMenuProvider>
           <BookmarkContextMenuTrigger>
@@ -67,13 +108,8 @@ export const BookmarkCard = ({
                   isActive && "bg-muted",
                   isBlurred && "pointer-events-none blur-sm",
                 )}
-                animate={{
-                  scale: isActive ? 1.05 : 1,
-                }}
-                transition={{
-                  duration: 0.05,
-                  ease: "linear",
-                }}
+                animate={animationControls}
+                initial={{ scale: isActive ? 1.05 : 1 }}
               >
                 {faviconUrl ? (
                   <Image
@@ -115,11 +151,20 @@ export const BookmarkCard = ({
           <BookmarkContextMenu bookmark={bookmark} />
         </BookmarkContextMenuProvider>
       </span>
-      <div
+
+      {/* Mobile */}
+      <motion.div
         key={bookmark.id}
         className={cn(
           "flex w-full cursor-pointer select-none items-center gap-3 rounded-md p-2 transition-all sm:hidden",
+          isLongPressing && "bg-muted",
         )}
+        animate={animationControls}
+        initial={{ scale: isActive ? 1.05 : 1 }}
+        onPointerDown={startLongPress}
+        onPointerUp={endLongPress}
+        onPointerLeave={endLongPress}
+        onPointerCancel={endLongPress}
       >
         {faviconUrl ? (
           <Image
@@ -155,7 +200,20 @@ export const BookmarkCard = ({
             day: "numeric",
           })}
         </span>
-      </div>
+      </motion.div>
+      <BookmarkContextMenuDrawer
+        bookmark={bookmark}
+        isOpen={isLongPressing}
+        onClose={() => {
+          setIsLongPressing(false);
+          animationControls.start({
+            scale: isActive ? 1.05 : 1,
+            transition: { duration: 0.2 },
+          });
+          clearTimeout(longPressTimer.current!);
+          longPressTimer.current = null;
+        }}
+      />
     </>
   );
 };

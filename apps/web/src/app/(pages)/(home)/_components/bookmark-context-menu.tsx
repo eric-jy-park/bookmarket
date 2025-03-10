@@ -12,49 +12,12 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "~/app/_core/components/context-menu";
-import { useBookmarkDelete } from "../_hooks/use-bookmark-delete";
-import React from "react";
-import { useBookmarkCopy } from "../_hooks/use-bookmark-copy";
 import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
-import { useBookmarkStore } from "../_state/store/use-bookmark-store";
 import { BookmarkContextMenuCategoryList } from "./bookmark-context-menu-category-list";
+import { useBookmarkContext } from "../_hooks/use-bookmark-context";
 
 export const BookmarkContextMenu = ({ bookmark }: { bookmark: Bookmark }) => {
-  const { handleDelete } = useBookmarkDelete();
-  const { handleCopy } = useBookmarkCopy();
-
-  const { setActiveBookmarkId, activeBookmarkId } = useBookmarkStore();
-
-  const menuItems = [
-    {
-      icon: CopyIcon,
-      label: "Copy",
-      onClick: async () => {
-        await handleCopy(bookmark.url);
-      },
-      disabled: false,
-    },
-    {
-      icon: PencilIcon,
-      label: "Rename",
-      onClick: () => {
-        if (activeBookmarkId !== bookmark.id) {
-          setActiveBookmarkId(bookmark.id);
-        } else {
-          setActiveBookmarkId(null);
-        }
-      },
-      disabled: false,
-    },
-    {
-      icon: TrashIcon,
-      label: "Delete",
-      onClick: async () => {
-        await handleDelete(bookmark.id);
-      },
-      disabled: false,
-    },
-  ];
+  const { menuItems } = useBookmarkContext({ bookmark });
 
   return (
     <ContextMenuContent>
