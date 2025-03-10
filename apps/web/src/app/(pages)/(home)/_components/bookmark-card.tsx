@@ -55,62 +55,107 @@ export const BookmarkCard = ({
   }, [bookmark.faviconUrl]);
 
   return (
-    <BookmarkContextMenuProvider>
-      <BookmarkContextMenuTrigger>
-        <LinkPreview url={bookmark.url} isDisabled={isActive || isBlurred}>
-          <motion.div
-            key={bookmark.id}
-            className={cn(
-              "flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted",
-              isActive && "bg-muted",
-              isBlurred && "pointer-events-none blur-sm",
-            )}
-            animate={{
-              scale: isActive ? 1.05 : 1,
-            }}
-            transition={{
-              duration: 0.05,
-              ease: "linear",
-            }}
-          >
-            {faviconUrl ? (
-              <Image
-                src={faviconUrl}
-                alt={bookmark.title ?? ""}
-                width={16}
-                height={16}
-                className="shrink-0 overflow-hidden"
-                unoptimized={true}
-                style={{
-                  maxWidth: "100%",
-                  height: "auto",
+    <>
+      <span className="hidden sm:block">
+        <BookmarkContextMenuProvider>
+          <BookmarkContextMenuTrigger>
+            <LinkPreview url={bookmark.url} isDisabled={isActive || isBlurred}>
+              <motion.div
+                key={bookmark.id}
+                className={cn(
+                  "flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted",
+                  isActive && "bg-muted",
+                  isBlurred && "pointer-events-none blur-sm",
+                )}
+                animate={{
+                  scale: isActive ? 1.05 : 1,
                 }}
-              />
-            ) : (
-              <Logo className="h-4 w-4 shrink-0" includeText={false} />
-            )}
-            <div className="flex min-w-0 flex-1 flex-col">
-              {isActive ? (
-                <BookmarkCardTitleInput bookmark={bookmark} />
-              ) : (
-                <p className="truncate text-sm font-medium">
-                  {bookmark.title ?? ""}
-                </p>
-              )}
-              <span className="truncate text-xs text-muted-foreground">
-                {new URL(bookmark.url).hostname.replace("www.", "")}
-              </span>
-            </div>
-            <span className="shrink-0 text-xs text-muted-foreground">
-              {new Date(bookmark.createdAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-          </motion.div>
-        </LinkPreview>
-      </BookmarkContextMenuTrigger>
-      <BookmarkContextMenu bookmark={bookmark} />
-    </BookmarkContextMenuProvider>
+                transition={{
+                  duration: 0.05,
+                  ease: "linear",
+                }}
+              >
+                {faviconUrl ? (
+                  <Image
+                    src={faviconUrl}
+                    alt={bookmark.title ?? ""}
+                    width={16}
+                    height={16}
+                    className="shrink-0 overflow-hidden"
+                    unoptimized={true}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                    }}
+                  />
+                ) : (
+                  <Logo className="h-4 w-4 shrink-0" includeText={false} />
+                )}
+                <div className="flex min-w-0 flex-1 flex-col">
+                  {isActive ? (
+                    <BookmarkCardTitleInput bookmark={bookmark} />
+                  ) : (
+                    <p className="truncate text-sm font-medium">
+                      {bookmark.title ?? ""}
+                    </p>
+                  )}
+                  <span className="truncate text-xs text-muted-foreground">
+                    {new URL(bookmark.url).hostname.replace("www.", "")}
+                  </span>
+                </div>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {new Date(bookmark.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+              </motion.div>
+            </LinkPreview>
+          </BookmarkContextMenuTrigger>
+          <BookmarkContextMenu bookmark={bookmark} />
+        </BookmarkContextMenuProvider>
+      </span>
+      <div
+        key={bookmark.id}
+        className={cn(
+          "flex w-full cursor-pointer select-none items-center gap-3 rounded-md p-2 transition-all sm:hidden",
+        )}
+      >
+        {faviconUrl ? (
+          <Image
+            src={faviconUrl}
+            alt={bookmark.title ?? ""}
+            width={16}
+            height={16}
+            className="shrink-0 overflow-hidden"
+            unoptimized={true}
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
+          />
+        ) : (
+          <Logo className="h-4 w-4 shrink-0" includeText={false} />
+        )}
+        <div className="flex min-w-0 flex-1 flex-col">
+          {isActive ? (
+            <BookmarkCardTitleInput bookmark={bookmark} />
+          ) : (
+            <p className="truncate text-sm font-medium">
+              {bookmark.title ?? ""}
+            </p>
+          )}
+          <span className="truncate text-xs text-muted-foreground">
+            {new URL(bookmark.url).hostname.replace("www.", "")}
+          </span>
+        </div>
+        <span className="shrink-0 text-xs text-muted-foreground">
+          {new Date(bookmark.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+      </div>
+    </>
   );
 };

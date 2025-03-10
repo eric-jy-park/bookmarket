@@ -197,4 +197,10 @@ table {
   }
 }
 
-
+* {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  user-select: none;
+}

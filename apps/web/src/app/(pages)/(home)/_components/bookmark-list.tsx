@@ -26,7 +26,7 @@ export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
   return (
     <div className="relative flex flex-col gap-2">
       {filteredBookmarks?.map((bookmark, index) => (
-        <BlurFade key={bookmark.id} duration={0.2} delay={0.05 + index * 0.05}>
+        <BlurFade key={bookmark.id} duration={0.2} delay={0.05 + index * 0.025}>
           <BookmarkCard
             bookmark={bookmark}
             isActive={activeBookmarkId === bookmark.id}
