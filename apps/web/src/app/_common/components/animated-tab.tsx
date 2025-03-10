@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderIcon } from "lucide-react";
+import { CheckIcon, FolderIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import {
   DropdownMenu,
@@ -14,10 +14,22 @@ import { TextMorph } from "./text-morph";
 import React from "react";
 import { AddCategoryButton } from "./add-category-button";
 import { Category } from "../interfaces/category.interface";
+import { DrawerClose } from "~/app/_core/components/drawer";
+import { Button } from "~/app/_core/components/button";
+import {
+  Drawer,
+  DrawerTitle,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTrigger,
+  DrawerFooter,
+  DrawerDescription,
+} from "~/app/_core/components/drawer";
+import { cn } from "~/app/_core/utils/cn";
 
 export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
   const [category, setCategory] = useQueryState("c", parseAsString);
-
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
   const activeTab = categories.find((tab) => tab.name === category);
 
   const handleClick = (value: string) => {
@@ -51,9 +63,9 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
                 />
               )}
             </AnimatePresence>
-            <span className="relative z-10 truncate text-white mix-blend-exclusion transition-opacity duration-300 hover:opacity-60">
+            <p className="relative z-10 max-w-16 truncate text-white mix-blend-exclusion transition-opacity duration-300">
               {category.name}
-            </span>
+            </p>
           </button>
         ))}
         {categories.length <= 5 && <AddCategoryButton />}
@@ -61,27 +73,41 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
 
       {/* Mobile */}
       <div className="flex w-full flex-col items-center justify-center gap-2 bg-background sm:hidden">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="flex w-fit items-center justify-center gap-2 rounded-xl bg-black px-4 py-1.5 text-sm font-medium text-white">
+        <Drawer open={isMobileDrawerOpen} onOpenChange={setIsMobileDrawerOpen}>
+          <DrawerTrigger asChild>
+            <div className="flex w-fit max-w-32 items-center justify-center gap-2 rounded-xl bg-black px-4 py-1.5 text-sm font-medium text-white">
               <FolderIcon size={16} />
-              <TextMorph className="text-sm font-medium">
+              <TextMorph className="truncate text-sm font-medium">
                 {activeTab?.name ?? "All"}
               </TextMorph>
             </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-full">
-            {categories.map((category) => (
-              <DropdownMenuCheckboxItem
-                key={category.id}
-                onClick={() => handleClick(category.name)}
-                checked={activeTab?.name === category.name}
-              >
-                {category.name}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Categories</DrawerTitle>
+            </DrawerHeader>
+            <hr className="my-2" />
+            <div className="flex flex-col gap-2 pb-4">
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant="ghost"
+                  className={cn(
+                    "h-12 justify-between",
+                    activeTab?.name === category.name && "bg-muted",
+                  )}
+                  onClick={() => {
+                    handleClick(category.name);
+                    setIsMobileDrawerOpen(false);
+                  }}
+                >
+                  {category.name}
+                  {activeTab?.name === category.name && <CheckIcon size={16} />}
+                </Button>
+              ))}
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </>
   );

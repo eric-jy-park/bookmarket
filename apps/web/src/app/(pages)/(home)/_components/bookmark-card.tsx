@@ -93,9 +93,9 @@ export const BookmarkCard = ({
               {isActive ? (
                 <BookmarkCardTitleInput bookmark={bookmark} />
               ) : (
-                <TextMorph className="truncate text-sm font-medium">
+                <p className="truncate text-sm font-medium">
                   {bookmark.title ?? ""}
-                </TextMorph>
+                </p>
               )}
               <span className="truncate text-xs text-muted-foreground">
                 {new URL(bookmark.url).hostname.replace("www.", "")}
