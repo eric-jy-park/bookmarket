@@ -33,6 +33,10 @@ export const BookmarkCard = ({
   const longPressTimer = React.useRef<number | null>(null);
   const longPressStartTime = React.useRef<number>(0);
   const animationControls = useAnimation();
+  const [tapStartPosition, setTapStartPosition] = React.useState({
+    x: 0,
+    y: 0,
+  });
 
   const { mutate } = useMutation({
     mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
@@ -66,9 +70,9 @@ export const BookmarkCard = ({
 
   const startLongPress = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      console.log("startLongPress");
       e.preventDefault();
       longPressStartTime.current = Date.now();
+      setTapStartPosition({ x: e.clientX, y: e.clientY });
 
       animationControls.start({
         scale: 1.05,
@@ -76,23 +80,33 @@ export const BookmarkCard = ({
       });
 
       longPressTimer.current = window.setTimeout(() => {
-        setIsLongPressing(true);
+        if (longPressTimer.current) {
+          setIsLongPressing(true);
+        }
       }, 500);
     },
-    [bookmark.url, handleClick, router],
+    [animationControls],
   );
 
-  const endLongPress = React.useCallback(() => {
-    console.log("endLongPress");
-    if (longPressTimer.current) {
-      const pressDuration = Date.now() - longPressStartTime.current;
-      if (pressDuration > 50 && pressDuration < 250) {
-        handleClick();
+  const onPointerMove = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (longPressTimer.current) {
+        const deltaX = e.clientX - tapStartPosition.x;
+        const deltaY = e.clientY - tapStartPosition.y;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        if (distance > 5) {
+          clearTimeout(longPressTimer.current);
+          longPressTimer.current = null;
+          animationControls.start({
+            scale: 1,
+            transition: { duration: 0.2 },
+          });
+        }
       }
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
-  }, [bookmark.url, handleClick, router]);
+    },
+    [animationControls, tapStartPosition],
+  );
 
   return (
     <>
@@ -162,9 +176,7 @@ export const BookmarkCard = ({
         animate={animationControls}
         initial={{ scale: isActive ? 1.05 : 1 }}
         onPointerDown={startLongPress}
-        onPointerUp={endLongPress}
-        onPointerLeave={endLongPress}
-        onPointerCancel={endLongPress}
+        onPointerMove={onPointerMove}
       >
         {faviconUrl ? (
           <Image
