@@ -108,6 +108,17 @@ export const BookmarkCard = ({
     [animationControls, tapStartPosition],
   );
 
+  const endLongPress = React.useCallback(() => {
+    if (longPressTimer.current) {
+      const pressDuration = Date.now() - longPressStartTime.current;
+      if (pressDuration < 500) {
+        handleClick();
+      }
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, [bookmark.url, handleClick, router]);
+
   return (
     <>
       {/* Desktop */}
@@ -177,6 +188,9 @@ export const BookmarkCard = ({
         initial={{ scale: isActive ? 1.05 : 1 }}
         onPointerDown={startLongPress}
         onPointerMove={onPointerMove}
+        onPointerUp={endLongPress}
+        onPointerLeave={endLongPress}
+        onPointerCancel={endLongPress}
       >
         {faviconUrl ? (
           <Image

@@ -43,7 +43,7 @@ export const BookmarkContextMenuDrawer = ({
       <DrawerContent>
         <DrawerHeader className="relative flex flex-col items-start justify-center gap-3 px-6">
           <div className="flex w-full items-center justify-between gap-2">
-            <DrawerTitle className="text-balance text-left">
+            <DrawerTitle className="w-full truncate text-balance text-left">
               {bookmark.title}
             </DrawerTitle>
             {bookmark.faviconUrl && (
@@ -53,10 +53,11 @@ export const BookmarkContextMenuDrawer = ({
                 width={32}
                 height={32}
                 unoptimized={true}
+                className="shrink-0"
               />
             )}
           </div>
-          <DrawerDescription className="text-balance text-left">
+          <DrawerDescription className="w-full truncate text-balance text-left">
             {bookmark.url}
           </DrawerDescription>
         </DrawerHeader>
@@ -65,13 +66,13 @@ export const BookmarkContextMenuDrawer = ({
           {menuItems.map((item) => (
             <div
               key={item.label}
-              className="flex cursor-pointer items-center gap-3 rounded-md px-6 py-4 hover:bg-muted"
+              className="flex cursor-pointer items-center gap-2.5 rounded-md px-6 py-4 text-sm hover:bg-muted"
               onClick={() => {
                 item.onClick();
                 onClose();
               }}
             >
-              <item.icon />
+              <item.icon size={16} />
               {item.label}
             </div>
           ))}
@@ -80,8 +81,8 @@ export const BookmarkContextMenuDrawer = ({
             onOpenChange={setIsCategoryDrawerOpen}
           >
             <DrawerTrigger>
-              <div className="flex cursor-pointer items-center gap-3 rounded-md px-6 py-4 hover:bg-muted">
-                <FolderIcon />
+              <div className="flex cursor-pointer items-center gap-3 rounded-md px-6 py-4 text-sm hover:bg-muted">
+                <FolderIcon size={16} />
                 Category
               </div>
             </DrawerTrigger>
