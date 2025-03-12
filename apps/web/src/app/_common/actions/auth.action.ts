@@ -75,6 +75,7 @@ export const getMe = async (): Promise<User | null> => {
         .json();
       return user;
     } catch (retryError) {
+      signOut();
       Sentry.captureException(retryError);
       return null;
     }
@@ -129,7 +130,7 @@ export const isAuthenticated = async () => {
     const user = await getMe();
     return user !== null;
   } catch (error) {
-    console.error(error);
+    Sentry.captureException(error);
     return false;
   }
 };
