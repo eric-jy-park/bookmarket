@@ -10,7 +10,7 @@ import * as Sentry from "@sentry/nextjs";
 const ACCESS_TOKEN_COOKIE_NAME = "access_token";
 const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
-const refreshNewAccessToken = async (): Promise<TokenResponse | null> => {
+export const refreshNewAccessToken = async (): Promise<TokenResponse | null> => {
   try {
     const refreshToken = await getRefreshToken();
 
@@ -29,23 +29,12 @@ const refreshNewAccessToken = async (): Promise<TokenResponse | null> => {
     return tokens;
   } catch (error) {
     console.error("Failed to refresh token:", error);
+    signOut();
     return null;
   }
 };
 
 export const getMe = async (): Promise<User | null> => {
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    const tokens = await refreshNewAccessToken();
-    if (!tokens) {
-      return null;
-    }
-
-    await setAccessToken(tokens.accessToken);
-    await setRefreshToken(tokens.refreshToken);
-  }
-
   try {
     const user: User = await http
       .get("users/me", {
@@ -54,31 +43,10 @@ export const getMe = async (): Promise<User | null> => {
         },
       })
       .json();
-
     return user;
   } catch (error) {
-    const tokens = await refreshNewAccessToken();
-    if (!tokens) {
-      return null;
-    }
-
-    await setAccessToken(tokens.accessToken);
-    await setRefreshToken(tokens.refreshToken);
-
-    try {
-      const user: User = await http
-        .get("users/me", {
-          headers: {
-            Cookie: await getAuthCookie(),
-          },
-        })
-        .json();
-      return user;
-    } catch (retryError) {
-      signOut();
-      Sentry.captureException(retryError);
-      return null;
-    }
+    Sentry.captureException(error);
+    return null;
   }
 };
 

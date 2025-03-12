@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
-import { getMe } from "~/app/_common/actions/auth.action";
+import { getMe, refreshNewAccessToken } from "~/app/_common/actions/auth.action";
 import { unauthenticatedRoutes } from "~/path";
+import * as Sentry from "@sentry/nextjs";
 
 export async function middleware(request: NextRequest) {
   const auth = await getMe();
@@ -11,7 +12,13 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith(route)
     )
   ) {
-    return Response.redirect(new URL("/login", request.url));
+    try{
+      refreshNewAccessToken();
+      return Response.redirect(new URL("/login", request.url));
+    } catch(e){
+      Sentry.captureException(e);
+    }
+
   }
 }
 
