@@ -14,9 +14,9 @@ export async function middleware(request: NextRequest) {
   ) {
     try{
       refreshNewAccessToken();
-      return Response.redirect(new URL("/login", request.url));
     } catch(e){
       Sentry.captureException(e);
+      return Response.redirect(new URL("/login", request.url));
     }
 
   }
