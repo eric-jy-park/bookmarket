@@ -84,13 +84,25 @@ export const getMe = async (): Promise<User | null> => {
 export const setAccessToken = async (accessToken: string) => {
   "use server";
   const cookieStore = await cookies();
-  cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken);
+  cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+    maxAge: 604800,
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
 };
 
 export const setRefreshToken = async (refreshToken: string) => {
   "use server";
   const cookieStore = await cookies();
-  cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
+  cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
+    maxAge: 3024000,
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
 };
 
 export const getAccessToken = async () => {

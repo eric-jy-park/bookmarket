@@ -1,6 +1,6 @@
 "use server";
 import ky from "ky";
-import { refreshToken } from "~/app/(pages)/(auth)/_actions/refresh-token.action";
+import * as Sentry from "@sentry/nextjs";
 
 const options = {
   timeout: 30000,
@@ -10,11 +10,9 @@ const options = {
     "Content-Type": "application/json",
     credentials: "include",
   },
-  onError: (error: { status: number }) => {
-    if (error.status === 401) {
-      void refreshToken();
-    }
-  },
+  onError: (e: any) => {
+    Sentry.captureException(JSON.stringify(e));
+  }
 };
 
 export const http = ky.create({
