@@ -118,12 +118,12 @@ export const getRefreshToken = async () => {
 };
 
 export const isAuthenticated = async () => {
-  const accessToken = await getAccessToken();
-  const refreshToken = await getRefreshToken();
+  // const accessToken = await getAccessToken();
+  // const refreshToken = await getRefreshToken();
 
-  if (accessToken !== undefined && refreshToken !== undefined) {
-    return true;
-  }
+  // if (accessToken !== undefined && refreshToken !== undefined) {
+  //   return true;
+  // }
 
   try {
     const user = await getMe();
