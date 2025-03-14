@@ -1,13 +1,7 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { HashingService } from '../hashing/hashing.service';
 import { SignUpDto } from './dto/sign-up.dto';
-import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConfig } from '../config/jwt.config';
@@ -29,21 +23,16 @@ export class AuthenticationService {
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
-    try {
-      const user = await this.usersService.create({
-        email: signUpDto.email,
-        password: await this.hashingService.hash(signUpDto.password),
-        auth_provider: AuthProvider.EMAIL,
-        picture: signUpDto.picture,
-      });
+    const hashedPassword = await this.hashingService.hash(signUpDto.password);
 
-      return await this.generateTokens(user);
-    } catch (err) {
-      if (err.code === pgUniqueViolationErrorCode) {
-        throw new ConflictException();
-      }
-      throw err;
-    }
+    const user = await this.usersService.create({
+      email: signUpDto.email,
+      password: hashedPassword,
+      picture: signUpDto.picture,
+      auth_provider: AuthProvider.EMAIL,
+    });
+
+    return await this.generateTokens(user);
   }
 
   async signIn(signInDto: SignInDto) {
@@ -70,9 +59,7 @@ export class AuthenticationService {
 
   async generateTokens(user: User) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(user.id, this.jwtConfiguration.accessTokenTtl, {
-        id: user.id,
-      }),
+      this.signToken(user.id, this.jwtConfiguration.accessTokenTtl),
       this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
     ]);
 
@@ -84,11 +71,16 @@ export class AuthenticationService {
 
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
-      const { sub } = await this.jwtService.verifyAsync(
+      const { id: userId } = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
+        {
+          audience: this.jwtConfiguration.audience,
+          issuer: this.jwtConfiguration.issuer,
+          secret: this.jwtConfiguration.secret,
+        },
       );
 
-      const user = await this.usersService.findOneById(sub);
+      const user = await this.usersService.findOneById(userId);
 
       return await this.generateTokens(user);
     } catch (error) {
@@ -97,16 +89,17 @@ export class AuthenticationService {
   }
 
   private async signToken<T>(userId: string, expiresIn: number, payload?: T) {
-    return await this.jwtService.signAsync(
+    return this.jwtService.signAsync(
       {
         sub: userId,
+        id: userId,
         ...payload,
       },
       {
+        expiresIn,
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
-        expiresIn,
       },
     );
   }

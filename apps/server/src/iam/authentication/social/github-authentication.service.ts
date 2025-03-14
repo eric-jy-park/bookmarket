@@ -1,14 +1,8 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { AuthenticationService } from '../authentication.service';
-import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
 import { UsersService } from 'src/users/users.service';
-import * as Sentry from '@sentry/nestjs';
 
 @Injectable()
 export class GithubAuthenticationService {
@@ -18,35 +12,20 @@ export class GithubAuthenticationService {
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
-    try {
-      let user = await this.usersService.findOne(
-        oauthTokenDto.email,
-        AuthProvider.GITHUB,
-      );
+    let user = await this.usersService.findOne(
+      oauthTokenDto.email,
+      AuthProvider.GITHUB,
+    );
 
-      if (!user) {
-        user = await this.usersService.findOne(
-          oauthTokenDto.id,
-          AuthProvider.GITHUB,
-        );
-      }
-
-      if (!user) {
-        user = await this.usersService.create({
-          email: oauthTokenDto.email,
-          github_id: oauthTokenDto.id,
-          auth_provider: AuthProvider.GITHUB,
-          picture: oauthTokenDto.picture,
-        });
-      }
-
-      return await this.authenticationService.generateTokens(user);
-    } catch (error) {
-      Sentry.captureException(error);
-      if (error.code === pgUniqueViolationErrorCode) {
-        throw new ConflictException('User already exists');
-      }
-      throw new UnauthorizedException('Invalid token', error);
+    if (!user) {
+      user = await this.usersService.create({
+        email: oauthTokenDto.email,
+        github_id: oauthTokenDto.id,
+        picture: oauthTokenDto.picture,
+        auth_provider: AuthProvider.GITHUB,
+      });
     }
+
+    return await this.authenticationService.generateTokens(user);
   }
 }

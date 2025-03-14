@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUrl,
 } from 'class-validator';
 import { AuthProvider } from '../enums/auth-provider.enum';
 
@@ -12,13 +13,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @IsString()
-  @IsOptional()
-  password?: string;
-
   @IsEnum(AuthProvider)
   @IsNotEmpty()
   auth_provider: AuthProvider;
+
+  @IsString()
+  @IsOptional()
+  password?: string;
 
   @IsString()
   @IsOptional()
@@ -28,7 +29,7 @@ export class CreateUserDto {
   @IsOptional()
   google_id?: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   picture?: string;
 }

@@ -75,7 +75,7 @@ export class BookmarksService {
     const bookmark = await this.findOneBookmark(userId, id);
 
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
     }
 
     let category: Category | null = null;
@@ -100,8 +100,9 @@ export class BookmarksService {
     categoryId?: string,
   ) {
     const bookmark = await this.findOneBookmark(userId, id);
+
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
     }
 
     let category: Category | null = null;
@@ -110,7 +111,9 @@ export class BookmarksService {
       category = await this.categoriesService.findOne(categoryId);
 
       if (category.user.id !== userId) {
-        throw new ForbiddenException();
+        throw new ForbiddenException(
+          `This category doesn't belong to the user`,
+        );
       }
     }
 
@@ -123,7 +126,7 @@ export class BookmarksService {
     const bookmark = await this.findOneBookmark(userId, id);
 
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
     }
 
     return this.bookmarksRepository.delete(id);

@@ -1,11 +1,6 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { AuthenticationService } from '../authentication.service';
-import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
 import { UsersService } from 'src/users/users.service';
 
@@ -17,27 +12,20 @@ export class GoogleAuthenticationService {
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
-    try {
-      let user = await this.usersService.findOne(
-        oauthTokenDto.email,
-        AuthProvider.GOOGLE,
-      );
+    let user = await this.usersService.findOne(
+      oauthTokenDto.email,
+      AuthProvider.GOOGLE,
+    );
 
-      if (!user) {
-        user = await this.usersService.create({
-          email: oauthTokenDto.email,
-          google_id: oauthTokenDto.id,
-          auth_provider: AuthProvider.GOOGLE,
-          picture: oauthTokenDto.picture,
-        });
-      }
-
-      return await this.authenticationService.generateTokens(user);
-    } catch (error) {
-      if (error.code === pgUniqueViolationErrorCode) {
-        throw new ConflictException('User already exists');
-      }
-      throw new UnauthorizedException('Invalid token', error);
+    if (!user) {
+      user = await this.usersService.create({
+        email: oauthTokenDto.email,
+        google_id: oauthTokenDto.id,
+        picture: oauthTokenDto.picture,
+        auth_provider: AuthProvider.GOOGLE,
+      });
     }
+
+    return await this.authenticationService.generateTokens(user);
   }
 }

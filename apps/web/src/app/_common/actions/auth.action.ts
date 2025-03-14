@@ -7,10 +7,11 @@ import { type User } from "~/app/(pages)/(auth)/types";
 import { redirect } from "next/navigation";
 import { type TokenResponse } from "../interfaces/token.interface";
 import * as Sentry from "@sentry/nextjs";
+
 const ACCESS_TOKEN_COOKIE_NAME = "access_token";
 const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
-export const refreshNewAccessToken = async (): Promise<TokenResponse | null> => {
+export const refreshNewAccessToken = async () => {
   try {
     const refreshToken = await getRefreshToken();
 
@@ -26,11 +27,10 @@ export const refreshNewAccessToken = async (): Promise<TokenResponse | null> => 
       })
       .json();
 
-    return tokens;
+    setAccessToken(tokens.accessToken);
   } catch (error) {
     console.error("Failed to refresh token:", error);
     signOut();
-    return null;
   }
 };
 
@@ -55,10 +55,10 @@ export const setAccessToken = async (accessToken: string) => {
   const cookieStore = await cookies();
   cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
     maxAge: 604800,
-    path: '/',
+    path: "/",
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: true,
+    sameSite: "strict",
   });
 };
 
@@ -67,10 +67,10 @@ export const setRefreshToken = async (refreshToken: string) => {
   const cookieStore = await cookies();
   cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
     maxAge: 3024000,
-    path: '/',
+    path: "/",
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: true,
+    sameSite: "strict",
   });
 };
 
@@ -98,9 +98,15 @@ export const isAuthenticated = async () => {
 
 export const signOut = async () => {
   "use server";
-  const cookieStore = await cookies();
-  cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
-  cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
 
-  redirect("/login");
+  try {
+    const cookieStore = await cookies();
+
+    cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
+    cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
+  } catch (e) {
+    Sentry.captureException(e);
+  } finally {
+    redirect("/login");
+  }
 };

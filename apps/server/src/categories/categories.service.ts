@@ -17,11 +17,11 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async create(id: User['id'], createCategoryDto: CreateCategoryDto) {
+  async create(userId: User['id'], createCategoryDto: CreateCategoryDto) {
     const existingCategory = await this.categoryRepository.findOne({
       where: {
         name: createCategoryDto.name,
-        user: { id },
+        user: { id: userId },
       },
     });
 
@@ -33,57 +33,57 @@ export class CategoriesService {
 
     return this.categoryRepository.save({
       ...createCategoryDto,
-      user: { id },
+      user: { id: userId },
     });
   }
 
-  async findAll(id: User['id']) {
+  async findAll(userId: User['id']) {
     return this.categoryRepository.find({
       where: {
         user: {
-          id,
+          id: userId,
         },
       },
     });
   }
 
-  async findOne(id: Category['id']) {
+  async findOne(categoryId: Category['id']) {
     return this.categoryRepository.findOneOrFail({
       where: {
-        id,
+        id: categoryId,
       },
     });
   }
 
-  async findOneByName(name: Category['name'], userId: User['id']) {
+  async findOneByName(categoryName: Category['name'], userId: User['id']) {
     return this.categoryRepository.findOneOrFail({
-      where: { name, user: { id: userId } },
+      where: { name: categoryName, user: { id: userId } },
     });
   }
 
   async update(
     userId: User['id'],
-    id: Category['id'],
+    categoryId: Category['id'],
     updateCategoryDto: UpdateCategoryDto,
   ) {
-    const category = await this.findOne(id);
+    const category = await this.findOne(categoryId);
 
     if (category.user.id !== userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`This category doesn't belong to this user`);
     }
 
-    return this.categoryRepository.update(id, {
+    return this.categoryRepository.update(categoryId, {
       ...updateCategoryDto,
     });
   }
 
-  async remove(userId: User['id'], id: Category['id']) {
-    const category = await this.findOne(id);
+  async remove(userId: User['id'], categoryId: Category['id']) {
+    const category = await this.findOne(categoryId);
 
     if (category.user.id !== userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`This category doesn't belong to this user`);
     }
 
-    return this.categoryRepository.delete(id);
+    return this.categoryRepository.delete(categoryId);
   }
 }
