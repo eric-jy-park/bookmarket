@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 
 @Injectable()
 export class CookieAuthGuard implements CanActivate {
@@ -17,14 +18,14 @@ export class CookieAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromCookie(request);
+    const token = this.extractAccessTokenFromCookie(request);
 
     if (!token) {
       throw new UnauthorizedException('No access token provided in cookies');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload: ActiveUserData = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get('JWT_SECRET'),
       });
 
@@ -36,7 +37,7 @@ export class CookieAuthGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromCookie(request: Request): string | undefined {
+  private extractAccessTokenFromCookie(request: Request): string | undefined {
     return request.cookies?.access_token;
   }
 }
