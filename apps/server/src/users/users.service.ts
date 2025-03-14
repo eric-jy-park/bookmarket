@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   findOne(email: string, auth_provider: AuthProvider) {
-    return this.usersRepository.findOneByOrFail({ email, auth_provider });
+    return this.usersRepository.findOneBy({ email, auth_provider });
   }
 
   findOneById(id: string) {

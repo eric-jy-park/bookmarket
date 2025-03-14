@@ -5,7 +5,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConfig } from '../config/jwt.config';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { UsersService } from 'src/users/users.service';
@@ -17,7 +17,6 @@ export class AuthenticationService {
 
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
 
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
@@ -72,7 +71,7 @@ export class AuthenticationService {
 
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
-      const { sub: userId } = await this.jwtService.verifyAsync(
+      const { id: userId } = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
         {
           audience: this.jwtConfiguration.audience,
@@ -93,6 +92,7 @@ export class AuthenticationService {
     return this.jwtService.signAsync(
       {
         sub: userId,
+        id: userId,
         ...payload,
       },
       {
