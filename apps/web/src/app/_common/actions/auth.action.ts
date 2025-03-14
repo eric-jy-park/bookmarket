@@ -102,8 +102,6 @@ export const signOut = async () => {
   try {
     const cookieStore = await cookies();
 
-    // console.log(JSON.stringify(cookieStore));
-
     cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
     cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
   } catch (e) {
