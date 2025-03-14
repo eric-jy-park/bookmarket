@@ -22,8 +22,14 @@ export class UsersController {
   }
 
   @Get('me')
-  findMe(@ActiveUser('id') id: string) {
-    return this.usersService.findOneById(id);
+  async findMe(@ActiveUser('id') userId: string) {
+    const { email, id, picture } = await this.usersService.findOneById(userId);
+
+    return {
+      id,
+      email,
+      picture,
+    };
   }
 
   @Get(':id')
