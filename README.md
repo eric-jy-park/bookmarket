@@ -1,78 +1,160 @@
-# Bookmarket
-
-### This Readme is obsolete. Will be updated soon
-
-Bookmarket is a modern web application for managing and organizing your bookmarks. Built with Next.js, TypeScript, and leveraging cutting-edge technologies, Bookmarket offers a seamless and intuitive bookmarking experience.
+# BookMarket
 
 ## Diagram
+
 <img width="1527" alt="image" src="https://github.com/user-attachments/assets/636e1398-cf05-4b06-a9f2-97420479c18c" />
 
+## 🚀 Features
 
-## Features
+- User authentication with JWT and Google OAuth
+- Book listing and management
+- Search and filter functionality
+- Responsive design for all devices
+- Error monitoring and reporting
 
-- ✅ User Authentication (Clerk)
-- ✅ Database Integration (Neon, Drizzle)
-- ✅ CI/CD Pipeline (Vercel)
-- ✅ URL Metadata Fetching
-- ✅ Bookmark Management (Add, List, Delete)
-- ✅ Link Preview
-- ✅ Sticky Header
-- ✅ Context Menu for Bookmarks
-- ✅ Animated Vanishing Input for URL Entry
-- ✅ Bookmark Editing
+## 📦 Project Structure
 
-## Upcoming Features
+This project is a monorepo managed with Turborepo and pnpm, containing:
 
-- [ ] Bookmark Categories
-- [ ] Landing Page
-- [ ] Loading Skeletons for Metadata Fetching
+- **Frontend (Web)**: Next.js application with TypeScript and Tailwind CSS
+- **Backend (Server)**: NestJS application with TypeScript, TypeORM, and
+  PostgreSQL
+- **Shared Packages**: Common utilities and configurations
 
-## Tech Stack
+## 🛠️ Tech Stack
+
+### Frontend
 
 - Next.js
 - TypeScript
 - Tailwind CSS
-- Drizzle ORM
-- Clerk Authentication
-- Tanstack Query (React Query)
-- Framer Motion
-- Radix UI
+- Sentry for error monitoring
 
-## Getting Started
+### Backend
 
-1. Clone the repository
+- NestJS
+- TypeScript
+- TypeORM with PostgreSQL
+- JWT Authentication
+- Google Auth integration
+- Sentry for error monitoring
+
+## 🏗️ Installation
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- pnpm (v9.0.0 or higher)
+- PostgreSQL
+
+### Setup
+
+1. Clone the repository:
+
+   ```
+   git clone https://github.com/yourusername/bookmarket.git
+   cd bookmarket
+   ```
+
 2. Install dependencies:
+
    ```
    pnpm install
    ```
-3. Set up environment variables (see `.env.example`)
-4. Start the development server:
+
+3. Configure environment variables:
+
+   - Copy `.env.example` to `.env` in both `/apps/web` and `/apps/server`
+     directories
+   - Update the values in the `.env` files with your configuration
+
+4. Setup the database:
    ```
-   pnpm dev
+   cd apps/server
+   pnpm run migration:run
    ```
 
-## Project Structure
+## 🚀 Development
 
-- `/src/app`: Next.js app router structure
-- `/src/server`: Server-side code and database queries
-- `/src/styles`: Global styles and Tailwind configuration
-- `/src/types`: TypeScript type definitions
-- `/src/app/_core`: Core components and utilities
-- `/src/app/_common`: Common components and providers
+To run the project in development mode:
 
-## API Routes
+pnpm dev
 
-- `/api/bookmarks`: CRUD operations for bookmarks
-- `/api/metadata`: Fetches metadata for given URLs
+This will start both the frontend and backend applications in parallel.
 
-## Styling
+### Frontend Only
 
-This project uses Tailwind CSS for styling. Custom styles and theme configurations can be found in:
+```
+pnpm --filter bookmarket-web dev
+```
 
-## Contributing
+### Backend Only
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```
+pnpm --filter bookmarket-server dev
+```
 
-## License
+## 🧪 Testing
 
-[MIT License](LICENSE)
+Run tests across all packages:
+
+```
+pnpm test
+```
+
+## 🏭 Building for Production
+
+Build all applications:
+
+```
+pnpm build
+```
+
+## 🧹 Code Quality
+
+This project uses ESLint, Prettier, and TypeScript for code quality:
+
+- Run linting: `pnpm lint`
+- Format code: `pnpm format`
+- Type checking: `pnpm check-types`
+
+## 🔄 Database Migrations
+
+Generate a new migration:
+
+```
+cd apps/server
+pnpm run migration:generate migration-name
+```
+
+Run migrations:
+
+```
+cd apps/server
+pnpm run migration:run
+```
+
+Revert the last migration:
+
+```
+cd apps/server
+pnpm run migration:revert
+```
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 📧 Contact
+
+If you have any questions, feel free to reach out!
+
+---
