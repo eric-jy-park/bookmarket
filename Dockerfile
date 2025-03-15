@@ -23,16 +23,32 @@ RUN pnpm install
 COPY apps/server ./apps/server
 COPY packages ./packages
 
-# Move to server directory
+# Debug: Check tsconfig files
 WORKDIR /app/apps/server
+RUN echo "=== tsconfig.json content ===" && cat tsconfig.json
+RUN echo "=== tsconfig.build.json content ===" && cat tsconfig.build.json
 
-# Build using the standard NestJS build command
-RUN pnpm build
+# Try building with verbose output
+RUN echo "=== Building with verbose output ===" && \
+    pnpm exec nest build --debug
 
-# Verify build output
-RUN ls -la && ls -la dist || echo "dist directory not found after build"
+# Check for build output in different potential locations
+RUN echo "=== Server directory structure after build ===" && \
+    ls -la && \
+    echo "=== Looking for dist directories in the project ===" && \
+    find /app -name dist -type d | grep -v "node_modules" || echo "No dist directories found outside node_modules"
 
-# Production stage
+# Try a more direct build approach using tsc
+RUN echo "=== Attempting direct TypeScript build ===" && \
+    pnpm exec tsc -p tsconfig.build.json && \
+    ls -la && \
+    ls -la dist || echo "dist directory still not found"
+
+# Check where turbo might be storing build outputs
+RUN echo "=== Checking turbo cache directories ===" && \
+    find /app -path "*/.turbo*" -type d
+
+# Production stage - only use if build succeeds
 FROM node:18-alpine AS runner
 
 # Install pnpm 8.15.4
@@ -43,7 +59,7 @@ WORKDIR /app
 # Copy workspace configuration
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy server package.json
+# Copy server package.json and necessary files
 COPY apps/server/package.json ./apps/server/
 
 # Copy shared packages package.json
@@ -54,8 +70,7 @@ COPY packages/prettier-config/package.json ./packages/prettier-config/
 # Install only production dependencies
 RUN pnpm install --prod
 
-# Copy built application from builder stage
-COPY --from=builder /app/apps/server/dist /app/apps/server/dist
+# We'll skip copying the build output until we know where it is
 
 # Set environment variables
 ENV NODE_ENV production
@@ -64,5 +79,5 @@ ENV PORT 3000
 # Expose the port
 EXPOSE 3000
 
-# Start the server using the same command from package.json
-CMD ["node", "/app/apps/server/dist/main"]
+# This is just a placeholder - we'll need to update this once we find the build output
+CMD ["echo", "Build output location not yet determined"]
