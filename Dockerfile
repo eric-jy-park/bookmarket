@@ -19,12 +19,14 @@ COPY packages/prettier-config/package.json ./packages/prettier-config/
 # Install dependencies without frozen lockfile
 RUN pnpm install
 
-# Copy only the files needed for the server build
+# Copy all source files
 COPY apps/server ./apps/server
 COPY packages ./packages
 
 # Build the server app
-RUN pnpm --filter bookmarket-server build
+WORKDIR /app/apps/server
+RUN pnpm build
+WORKDIR /app
 
 # Production stage
 FROM node:18-alpine AS runner
@@ -49,13 +51,14 @@ COPY packages/prettier-config/package.json ./packages/prettier-config/
 RUN pnpm install --prod
 
 # Copy built application from builder stage
-COPY --from=builder /app/apps/server/dist ./apps/server/dist
+COPY --from=builder /app/apps/server/dist /app/apps/server/dist
 
 # Set environment variables
 ENV NODE_ENV production
+ENV PORT 3000
 
-# Expose the port your NestJS app runs on (adjust if needed)
+# Expose the port
 EXPOSE 3000
 
 # Start the server
-CMD ["node", "apps/server/dist/main.js"]
+CMD ["node", "/app/apps/server/dist/main.js"]
