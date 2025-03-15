@@ -1,7 +1,7 @@
 FROM node:18-alpine AS builder
 
-# Install pnpm
-RUN npm install -g pnpm@9.0.0
+# Install pnpm 8.15.4
+RUN npm install -g pnpm@8.15.4
 
 WORKDIR /app
 
@@ -16,8 +16,8 @@ COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/prettier-config/package.json ./packages/prettier-config/
 
-# Install dependencies for server (and shared packages)
-RUN pnpm install --frozen-lockfile
+# Install dependencies without frozen lockfile
+RUN pnpm install
 
 # Copy only the files needed for the server build
 COPY apps/server ./apps/server
@@ -29,8 +29,8 @@ RUN pnpm --filter bookmarket-server build
 # Production stage
 FROM node:18-alpine AS runner
 
-# Install pnpm
-RUN npm install -g pnpm@9.0.0
+# Install pnpm 8.15.4
+RUN npm install -g pnpm@8.15.4
 
 WORKDIR /app
 
@@ -46,7 +46,7 @@ COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/prettier-config/package.json ./packages/prettier-config/
 
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --prod
 
 # Copy built application from builder stage
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
