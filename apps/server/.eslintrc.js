@@ -26,6 +26,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     'no-empty-function': 'off',
     'class-methods-use-this': 'off',
-    'no-shadow': 'off'
+    'no-shadow': 'off',
+    'import/extensions': 'off'
   },
 };
