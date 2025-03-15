@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { Bookmark } from "~/app/_common/interfaces/bookmark.interface";
+import Image from 'next/image';
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import {
   Drawer,
   DrawerHeader,
@@ -8,12 +8,12 @@ import {
   DrawerDescription,
   DrawerTrigger,
   DrawerNestedRoot,
-} from "~/app/_core/components/drawer";
-import { useBookmarkContext } from "../_hooks/use-bookmark-context";
-import { FolderIcon } from "lucide-react";
-import { useBookmarkCategory } from "../_hooks/use-bookmark-category";
-import { CategoryDrawerContent } from "./category-drawer-content";
-import React from "react";
+} from '~/app/_core/components/drawer';
+import { useBookmarkContext } from '../_hooks/use-bookmark-context';
+import { FolderIcon } from 'lucide-react';
+import { useBookmarkCategory } from '../_hooks/use-bookmark-category';
+import { CategoryDrawerContent } from './category-drawer-content';
+import React from 'react';
 
 export const BookmarkContextMenuDrawer = ({
   bookmark,
@@ -41,32 +41,28 @@ export const BookmarkContextMenuDrawer = ({
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <DrawerContent>
-        <DrawerHeader className="relative flex flex-col items-start justify-center gap-3 px-6">
-          <div className="flex w-full items-center justify-between gap-2">
-            <DrawerTitle className="w-full truncate text-balance text-left">
-              {bookmark.title}
-            </DrawerTitle>
+        <DrawerHeader className='relative flex flex-col items-start justify-center gap-3 px-6'>
+          <div className='flex w-full items-center justify-between gap-2'>
+            <DrawerTitle className='w-full truncate text-balance text-left'>{bookmark.title}</DrawerTitle>
             {bookmark.faviconUrl && (
               <Image
                 src={bookmark.faviconUrl}
-                alt={bookmark.title ?? ""}
+                alt={bookmark.title ?? ''}
                 width={32}
                 height={32}
                 unoptimized={true}
-                className="shrink-0"
+                className='shrink-0'
               />
             )}
           </div>
-          <DrawerDescription className="w-full truncate text-balance text-left">
-            {bookmark.url}
-          </DrawerDescription>
+          <DrawerDescription className='w-full truncate text-balance text-left'>{bookmark.url}</DrawerDescription>
         </DrawerHeader>
-        <hr className="my-2" />
-        <div className="flex flex-col gap-1 pb-2">
-          {menuItems.map((item) => (
+        <hr className='my-2' />
+        <div className='flex flex-col gap-1 pb-2'>
+          {menuItems.map(item => (
             <div
               key={item.label}
-              className="flex cursor-pointer items-center gap-2.5 rounded-md px-6 py-4 text-sm hover:bg-muted"
+              className='flex cursor-pointer items-center gap-2.5 rounded-md px-6 py-4 text-sm hover:bg-muted'
               onClick={() => {
                 item.onClick();
                 onClose();
@@ -76,12 +72,9 @@ export const BookmarkContextMenuDrawer = ({
               {item.label}
             </div>
           ))}
-          <DrawerNestedRoot
-            open={isCategoryDrawerOpen}
-            onOpenChange={setIsCategoryDrawerOpen}
-          >
+          <DrawerNestedRoot open={isCategoryDrawerOpen} onOpenChange={setIsCategoryDrawerOpen}>
             <DrawerTrigger>
-              <div className="flex cursor-pointer items-center gap-3 rounded-md px-6 py-4 text-sm hover:bg-muted">
+              <div className='flex cursor-pointer items-center gap-3 rounded-md px-6 py-4 text-sm hover:bg-muted'>
                 <FolderIcon size={16} />
                 Category
               </div>

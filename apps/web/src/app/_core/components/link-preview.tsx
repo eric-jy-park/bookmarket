@@ -1,11 +1,11 @@
-"use client";
-import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
-import Image from "next/image";
-import { encode } from "qss";
-import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { cn } from "../utils/cn";
+'use client';
+import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
+import Image from 'next/image';
+import { encode } from 'qss';
+import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { cn } from '../utils/cn';
 
 type LinkPreviewProps = {
   children: React.ReactNode;
@@ -16,22 +16,19 @@ type LinkPreviewProps = {
   quality?: number;
   layout?: string;
   isDisabled?: boolean;
-} & (
-  | { isStatic: true; imageSrc: string }
-  | { isStatic?: false; imageSrc?: never }
-);
+} & ({ isStatic: true; imageSrc: string } | { isStatic?: false; imageSrc?: never });
 
 const getMicrolinkSrc = (url: string) => {
   const params = encode({
     url,
     screenshot: true,
     meta: false,
-    embed: "screenshot.url",
-    colorScheme: "light",
-    "viewport.isMobile": false,
-    "viewport.deviceScaleFactor": 1,
-    "viewport.width": 1280,
-    "viewport.height": 720,
+    embed: 'screenshot.url',
+    colorScheme: 'light',
+    'viewport.isMobile': false,
+    'viewport.deviceScaleFactor': 1,
+    'viewport.width': 1280,
+    'viewport.height': 720,
   });
   return `https://api.microlink.io/?${params}`;
 };
@@ -43,9 +40,9 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   width = 160,
   height = 90,
   quality = 50,
-  layout = "fixed",
+  layout = 'fixed',
   isStatic = false,
-  imageSrc = "",
+  imageSrc = '',
   isDisabled = false,
 }) => {
   const [isOpen, setOpen] = useState(false);
@@ -55,22 +52,14 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   }
 
   return (
-    <HoverCardPrimitive.Root
-      openDelay={50}
-      closeDelay={50}
-      onOpenChange={setOpen}
-    >
-      <HoverCardPrimitive.Trigger
-        className={cn("text-black dark:text-white", className)}
-        href={url}
-        target="_blank"
-      >
+    <HoverCardPrimitive.Root openDelay={50} closeDelay={50} onOpenChange={setOpen}>
+      <HoverCardPrimitive.Trigger className={cn('text-black dark:text-white', className)} href={url} target='_blank'>
         {children}
       </HoverCardPrimitive.Trigger>
       <HoverCardPrimitive.Content
-        className="z-50 hidden [transform-origin:var(--radix-hover-card-content-transform-origin)] lg:block"
-        side="left"
-        align="center"
+        className='z-50 hidden [transform-origin:var(--radix-hover-card-content-transform-origin)] lg:block'
+        side='left'
+        align='center'
         sideOffset={10}
         collisionPadding={20}
       >
@@ -82,15 +71,15 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                 opacity: 1,
                 x: 0,
                 scale: 1,
-                transition: { type: "spring", stiffness: 260, damping: 20 },
+                transition: { type: 'spring', stiffness: 260, damping: 20 },
               }}
               exit={{ opacity: 0, x: 20, scale: 0.6 }}
-              className="rounded-md shadow-md"
+              className='rounded-md shadow-md'
             >
               <Link
-                target="_blank"
+                target='_blank'
                 href={url}
-                className="block rounded-lg border-2 border-transparent bg-white p-1 shadow-sm"
+                className='block rounded-lg border-2 border-transparent bg-white p-1 shadow-sm'
                 style={{ fontSize: 0 }}
               >
                 <Image
@@ -100,12 +89,13 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                   quality={quality}
                   layout={layout}
                   priority={true}
-                  className="rounded-md"
-                  alt="preview image"
+                  className='rounded-md'
+                  alt='preview image'
                   style={{
-                    maxWidth: "100%",
-                    height: "auto"
-                  }} />
+                    maxWidth: '100%',
+                    height: 'auto',
+                  }}
+                />
               </Link>
             </motion.div>
           )}

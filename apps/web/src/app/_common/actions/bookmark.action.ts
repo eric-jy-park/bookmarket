@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { type Bookmark } from "~/app/_common/interfaces/bookmark.interface";
-import { http } from "~/app/_common/utils/http";
-import { getAuthCookie } from "~/app/_common/utils/get-auth-cookie";
-import { isAuthenticated } from "~/app/_common/actions/auth.action";
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { http } from '~/app/_common/utils/http';
+import { getAuthCookie } from '~/app/_common/utils/get-auth-cookie';
+import { isAuthenticated } from '~/app/_common/actions/auth.action';
 
 export const getBookmarks = async () => {
   const isAuth = await isAuthenticated();
@@ -13,7 +13,7 @@ export const getBookmarks = async () => {
   }
 
   const response: Bookmark[] = await http
-    .get("bookmarks", {
+    .get('bookmarks', {
       headers: {
         Cookie: await getAuthCookie(),
       },
@@ -37,7 +37,7 @@ export const createBookmark = async ({
   category?: string;
 }) => {
   const response: Bookmark = await http
-    .post("bookmarks", {
+    .post('bookmarks', {
       json: {
         title,
         description,
@@ -91,13 +91,7 @@ export const updateBookmark = async ({
   }
 };
 
-export const updateBookmarkCategory = async ({
-  id,
-  categoryId,
-}: {
-  id: string;
-  categoryId?: string;
-}) => {
+export const updateBookmarkCategory = async ({ id, categoryId }: { id: string; categoryId?: string }) => {
   const response: Bookmark = await http
     .patch(`bookmarks/${id}/category`, {
       json: { categoryId },

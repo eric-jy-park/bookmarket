@@ -1,17 +1,14 @@
-"use server";
+'use server';
 
-import ky from "ky";
-import { redirect } from "next/navigation";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "~/app/_common/actions/auth.action";
-import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
-import { http } from "~/app/_common/utils/http";
+import ky from 'ky';
+import { redirect } from 'next/navigation';
+import { setAccessToken, setRefreshToken } from '~/app/_common/actions/auth.action';
+import { type TokenResponse } from '~/app/_common/interfaces/token.interface';
+import { http } from '~/app/_common/utils/http';
 
 export const loginUser = async (state: null, formData: FormData) => {
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const email = formData.get('email');
+  const password = formData.get('password');
 
   try {
     const response: TokenResponse = await http
@@ -25,6 +22,6 @@ export const loginUser = async (state: null, formData: FormData) => {
   } catch (error) {
     throw new Error(JSON.stringify(error));
   } finally {
-    redirect("/");
+    redirect('/');
   }
 };

@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { BookmarksService } from './bookmarks.service';
-import { BookmarksController } from './bookmarks.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConfig } from 'src/iam/config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
-import { Bookmark } from './entities/bookmark.entity';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Category } from 'src/categories/entities/category.entity';
 import { CategoriesModule } from 'src/categories/categories.module';
+import { Category } from 'src/categories/entities/category.entity';
+import { jwtConfig } from 'src/iam/config/jwt.config';
+import { BookmarksController } from './bookmarks.controller';
+import { BookmarksService } from './bookmarks.service';
+import { Bookmark } from './entities/bookmark.entity';
+
 @Module({
   controllers: [BookmarksController],
   providers: [BookmarksService],

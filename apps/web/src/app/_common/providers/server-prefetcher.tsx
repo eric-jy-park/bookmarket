@@ -1,10 +1,6 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  type UseQueryOptions,
-} from "@tanstack/react-query";
-import React from "react";
-import { getQueryClient } from "~/app/_core/utils/get-query-client";
+import { dehydrate, HydrationBoundary, type UseQueryOptions } from '@tanstack/react-query';
+import React from 'react';
+import { getQueryClient } from '~/app/_core/utils/get-query-client';
 
 export const ServerPrefetcher = async ({
   children,
@@ -20,9 +16,5 @@ export const ServerPrefetcher = async ({
     await queryClient.prefetchQuery(q);
   }
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      {children}
-    </HydrationBoundary>
-  );
+  return <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>;
 };

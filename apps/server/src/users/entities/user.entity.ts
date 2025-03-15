@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { AuthProvider } from '../enums/auth-provider.enum';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { AuthProvider } from '../enums/auth-provider.enum';
 
 @Entity()
 export class User {
@@ -26,9 +26,9 @@ export class User {
   @Column({ nullable: true })
   picture?: string;
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @OneToMany(() => Bookmark, bookmark => bookmark.user)
   bookmarks: Bookmark[];
 
-  @OneToMany(() => Category, (category) => category.user)
+  @OneToMany(() => Category, category => category.user)
   categories: Category[];
 }

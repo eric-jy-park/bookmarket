@@ -1,14 +1,14 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { fetchGoogleUserInfo } from "../_actions/fetch-google-user-info.action";
-import * as Sentry from "@sentry/nextjs";
-import React from "react";
+import { useGoogleLogin } from '@react-oauth/google';
+import { fetchGoogleUserInfo } from '../_actions/fetch-google-user-info.action';
+import * as Sentry from '@sentry/nextjs';
+import React from 'react';
 
 export const useOAuth = () => {
   const googleLogin = useGoogleLogin({
-    onSuccess: (codeResponse) => {
+    onSuccess: codeResponse => {
       void fetchGoogleUserInfo(codeResponse);
     },
-    onError: (error) => Sentry.captureException(error),
+    onError: error => Sentry.captureException(error),
   });
 
   const githubLogin = React.useCallback(() => {

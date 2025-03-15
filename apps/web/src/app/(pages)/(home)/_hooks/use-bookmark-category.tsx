@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { updateBookmarkCategory } from "~/app/_common/actions/bookmark.action";
-import { getCategories } from "~/app/_common/actions/category.action";
-import { Category } from "~/app/_common/interfaces/category.interface";
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { updateBookmarkCategory } from '~/app/_common/actions/bookmark.action';
+import { getCategories } from '~/app/_common/actions/category.action';
+import { type Category } from '~/app/_common/interfaces/category.interface';
 
 export const useBookmarkCategory = ({
   selectedCategory,
@@ -15,7 +15,7 @@ export const useBookmarkCategory = ({
   const router = useRouter();
 
   const { data: categories } = useQuery({
-    queryKey: ["categories"],
+    queryKey: ['categories'],
     queryFn: getCategories,
   });
 
@@ -35,9 +35,9 @@ export const useBookmarkCategory = ({
         }
       },
       {
-        loading: "Updating category...",
-        success: "Category updated!",
-        error: "Failed to update category",
+        loading: 'Updating category...',
+        success: 'Category updated!',
+        error: 'Failed to update category',
         finally: () => {
           router.refresh();
         },

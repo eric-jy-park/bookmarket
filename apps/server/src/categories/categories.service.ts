@@ -1,14 +1,10 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
-import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -26,9 +22,7 @@ export class CategoriesService {
     });
 
     if (existingCategory) {
-      throw new ConflictException(
-        `Category with name ${createCategoryDto.name} already exists`,
-      );
+      throw new ConflictException(`Category with name ${createCategoryDto.name} already exists`);
     }
 
     return this.categoryRepository.save({
@@ -61,15 +55,11 @@ export class CategoriesService {
     });
   }
 
-  async update(
-    userId: User['id'],
-    categoryId: Category['id'],
-    updateCategoryDto: UpdateCategoryDto,
-  ) {
+  async update(userId: User['id'], categoryId: Category['id'], updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findOne(categoryId);
 
     if (category.user.id !== userId) {
-      throw new ForbiddenException(`This category doesn't belong to this user`);
+      throw new ForbiddenException("This category doesn't belong to this user");
     }
 
     return this.categoryRepository.update(categoryId, {
@@ -81,7 +71,7 @@ export class CategoriesService {
     const category = await this.findOne(categoryId);
 
     if (category.user.id !== userId) {
-      throw new ForbiddenException(`This category doesn't belong to this user`);
+      throw new ForbiddenException("This category doesn't belong to this user");
     }
 
     return this.categoryRepository.delete(categoryId);

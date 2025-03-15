@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
+import { UsersService } from 'src/users/users.service';
 import { AuthenticationService } from '../authentication.service';
 import { OAuthTokenDto } from '../dto/oauth-token.dto';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class GoogleAuthenticationService {
@@ -12,10 +12,7 @@ export class GoogleAuthenticationService {
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto) {
-    let user = await this.usersService.findOne(
-      oauthTokenDto.email,
-      AuthProvider.GOOGLE,
-    );
+    let user = await this.usersService.findOne(oauthTokenDto.email, AuthProvider.GOOGLE);
 
     if (!user) {
       user = await this.usersService.create({
@@ -26,6 +23,6 @@ export class GoogleAuthenticationService {
       });
     }
 
-    return await this.authenticationService.generateTokens(user);
+    return this.authenticationService.generateTokens(user);
   }
 }
