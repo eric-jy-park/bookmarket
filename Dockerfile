@@ -23,17 +23,13 @@ RUN pnpm install
 COPY apps/server ./apps/server
 COPY packages ./packages
 
-# Move to server directory and display the full server directory structure
+# Move to server directory
 WORKDIR /app/apps/server
-RUN ls -la && cat package.json
 
-# Check the nest-cli.json file for build configuration
-RUN cat nest-cli.json || echo "nest-cli.json file not found"
+# Build using the standard NestJS build command
+RUN pnpm build
 
-# Run build with explicit output directory
-RUN pnpm exec nest build --path tsconfig.build.json --output-path dist
-
-# Check if build created the dist directory
+# Verify build output
 RUN ls -la && ls -la dist || echo "dist directory not found after build"
 
 # Production stage
@@ -58,7 +54,7 @@ COPY packages/prettier-config/package.json ./packages/prettier-config/
 # Install only production dependencies
 RUN pnpm install --prod
 
-# Copy built application from builder stage - using direct copy of all files
+# Copy built application from builder stage
 COPY --from=builder /app/apps/server/dist /app/apps/server/dist
 
 # Set environment variables
@@ -68,5 +64,5 @@ ENV PORT 3000
 # Expose the port
 EXPOSE 3000
 
-# Start the server
-CMD ["node", "/app/apps/server/dist/main.js"]
+# Start the server using the same command from package.json
+CMD ["node", "/app/apps/server/dist/main"]
