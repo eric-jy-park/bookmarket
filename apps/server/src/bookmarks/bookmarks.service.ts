@@ -16,14 +16,14 @@ export class BookmarksService {
   ) {}
 
   async createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
-    let category: Category | null = null;
+    let category: Category | undefined;
 
     if (createBookmarkDto.category) {
       category = await this.categoriesService.findOneByName(createBookmarkDto.category, userId);
-    }
 
-    if (!category) {
-      throw new NotFoundException('Category not found');
+      if (!category) {
+        throw new NotFoundException('Category not found');
+      }
     }
 
     return this.bookmarksRepository.save({

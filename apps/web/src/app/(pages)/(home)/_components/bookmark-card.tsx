@@ -1,15 +1,13 @@
+import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
-import { LinkPreview } from '~/app/_core/components/link-preview';
-import { animationControls, motion, useAnimation } from 'framer-motion';
-import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
-import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
-import { cn } from '~/app/_core/utils/cn';
-import React from 'react';
-import { BookmarkCardTitleInput } from './bookmark-card-title-input';
-import { useMutation } from '@tanstack/react-query';
-import { fixBrokenFavicon } from '../_actions/fix-broken-favicon.action';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { LinkPreview } from '~/app/_core/components/link-preview';
+import { cn } from '~/app/_core/utils/cn';
+import { BookmarkCardTitleInput } from './bookmark-card-title-input';
+import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
 import { BookmarkContextMenuDrawer } from './bookmark-context-menu-drawer';
 
 interface BookmarkCardProps {
@@ -29,26 +27,6 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
     x: 0,
     y: 0,
   });
-
-  const { mutate } = useMutation({
-    mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
-    onSuccess: () => router.refresh(),
-  });
-
-  // FIXME: This is a hack to migrate the favicon url to the new provider
-  React.useEffect(() => {
-    if (!bookmark.faviconUrl || bookmark.faviconUrl.startsWith('https://icon.horse')) {
-      mutate();
-    }
-  }, [bookmark.faviconUrl, mutate]);
-
-  const faviconUrl = React.useMemo(() => {
-    if (!bookmark.faviconUrl || bookmark.faviconUrl.startsWith('https://icon.horse')) {
-      return null;
-    }
-
-    return bookmark.faviconUrl;
-  }, [bookmark.faviconUrl]);
 
   const handleClick = React.useCallback(() => {
     router.push(bookmark.url);
@@ -103,7 +81,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
-  }, [bookmark.url, handleClick, router]);
+  }, [handleClick]);
 
   return (
     <>
@@ -122,9 +100,9 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
                 animate={animationControls}
                 initial={{ scale: isActive ? 1.05 : 1 }}
               >
-                {faviconUrl ? (
+                {bookmark.faviconUrl ? (
                   <Image
-                    src={faviconUrl}
+                    src={bookmark.faviconUrl}
                     alt={bookmark.title ?? ''}
                     width={16}
                     height={16}
@@ -176,9 +154,9 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
         onPointerLeave={endLongPress}
         onPointerCancel={endLongPress}
       >
-        {faviconUrl ? (
+        {bookmark.faviconUrl ? (
           <Image
-            src={faviconUrl}
+            src={bookmark.faviconUrl}
             alt={bookmark.title ?? ''}
             width={16}
             height={16}
