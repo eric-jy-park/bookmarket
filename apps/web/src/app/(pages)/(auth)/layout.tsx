@@ -1,5 +1,3 @@
-import { TopNavbar } from '~/app/_common/components/top-nav-bar';
-
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>

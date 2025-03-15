@@ -1,6 +1,5 @@
 'use server';
 
-import { http } from '~/app/_common/utils/http';
 import urlMetadata from 'url-metadata';
 import * as Sentry from '@sentry/nextjs';
 import { type UrlMetadata } from '~/app/_common/interfaces/metadata.interface';

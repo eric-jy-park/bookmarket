@@ -1,12 +1,11 @@
 'use client';
 
-import { CopyIcon, FolderIcon, PencilIcon, TrashIcon } from 'lucide-react';
+import { FolderIcon } from 'lucide-react';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,

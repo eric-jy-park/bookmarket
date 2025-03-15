@@ -1,31 +1,14 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckIcon, FolderIcon } from 'lucide-react';
+import { FolderIcon } from 'lucide-react';
 import { parseAsString, useQueryState } from 'nuqs';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '~/app/_core/components/dropdown-menu';
+
 import { TextMorph } from './text-morph';
 import React from 'react';
 import { AddCategoryButton } from './add-category-button';
 import { type Category } from '../interfaces/category.interface';
-import { DrawerClose } from '~/app/_core/components/drawer';
-import { Button } from '~/app/_core/components/button';
-import {
-  Drawer,
-  DrawerTitle,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTrigger,
-  DrawerFooter,
-  DrawerDescription,
-} from '~/app/_core/components/drawer';
-import { cn } from '~/app/_core/utils/cn';
+import { Drawer, DrawerTrigger } from '~/app/_core/components/drawer';
 import { CategoryDrawerContent } from '~/app/(pages)/(home)/_components/category-drawer-content';
 
 export const AnimatedTab = ({ categories }: { categories: Category[] }) => {

@@ -1,14 +1,16 @@
 'use client';
 
-import Link from 'next/link';
-import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '~/app/_core/components/avatar';
-import { type User } from '~/app/(pages)/(auth)/types';
 import { LogOutIcon, UserRoundIcon } from 'lucide-react';
-import { DropdownMenuItem, DropdownMenuSeparator } from '~/app/_core/components/dropdown-menu';
-import { DropdownMenuContent, DropdownMenuLabel } from '~/app/_core/components/dropdown-menu';
-import { DropdownMenu } from '~/app/_core/components/dropdown-menu';
-import { DropdownMenuTrigger } from '~/app/_core/components/dropdown-menu';
+import { type User } from '~/app/(pages)/(auth)/types';
+import { Avatar, AvatarFallback, AvatarImage } from '~/app/_core/components/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '~/app/_core/components/dropdown-menu';
 import { signOut } from '../actions/auth.action';
 
 export const UserAvatar = ({ user }: { user: User }) => {

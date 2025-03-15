@@ -1,6 +1,5 @@
 'use server';
 
-import ky from 'ky';
 import { redirect } from 'next/navigation';
 import { setAccessToken, setRefreshToken } from '~/app/_common/actions/auth.action';
 import { type TokenResponse } from '~/app/_common/interfaces/token.interface';

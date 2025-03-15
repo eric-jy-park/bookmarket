@@ -1,5 +1,4 @@
 import React from 'react';
-import { useBookmarkStore } from '~/app/(pages)/(home)/_state/store/use-bookmark-store';
 
 export const useBodyScrollLock = ({ isDisabled }: { isDisabled?: boolean }) => {
   React.useEffect(() => {
