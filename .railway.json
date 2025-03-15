@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "pnpm install && pnpm --filter bookmarket-server run build"
+  },
+  "deploy": {
+    "startCommand": "pnpm --filter bookmarket-server run start:prod"
+  }
+}
