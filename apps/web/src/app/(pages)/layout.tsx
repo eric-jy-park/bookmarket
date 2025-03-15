@@ -13,8 +13,7 @@ export const metadata: Metadata = {
     default: 'Bookmarket',
     template: '%s',
   },
-  description:
-    'Discover expert-curated bookmark collections or monetize your own web resources on BookMarket. Connect with knowledge seekers and share valuable online content.',
+  description: `(Don't) Manage your bookmarks (with Chrome)`,
   keywords: [
     'bookmarks',
     'curated collections',
@@ -37,16 +36,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://bmkt.tech',
-    title: 'BookMarket - Buy and Sell Curated Bookmark Collections',
-    description:
-      'Discover expert-curated bookmark collections or monetize your own web resources on BookMarket. Connect with knowledge seekers and share valuable online content.',
+    title: 'BookMarket',
+    description: `(Don't) Manage your bookmarks (with Chrome)`,
     siteName: 'BookMarket',
     images: [
       {
-        url: 'https://utfs.io/f/xLzQ78o3fSpa5oVbiU4FX9O4zvxkP8oepgE3dacNjwsR7yTY',
-        width: 1200,
-        height: 1200,
-        alt: 'BookMarket - Buy and Sell Curated Bookmark Collections',
+        url: 'https://p7b6whnm9b.ufs.sh/f/xLzQ78o3fSpatx1TZw7KQoHa9kRpM2EX5IhBlwyVWfxPrde0',
+        width: 1600,
+        height: 840,
+        alt: `BookMarket - (Don't) Manage your bookmarks (with Chrome)`,
       },
     ],
   },
