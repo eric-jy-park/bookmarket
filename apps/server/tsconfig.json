@@ -1,10 +1,11 @@
 {
   "extends": "@repo/typescript-config/nestjs",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
-    }
+      "src/*": ["src/*"]
+    },
+    "strictPropertyInitialization": false
   },
   "include": ["src", "**/*.cjs", "**/*.js", "**/*.mjs", "prettier.config.mjs"],
   "exclude": ["node_modules"]

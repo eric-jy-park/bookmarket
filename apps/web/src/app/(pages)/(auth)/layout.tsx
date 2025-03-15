@@ -1,15 +1,9 @@
-import { TopNavbar } from "~/app/_common/components/top-nav-bar";
+import { TopNavbar } from '~/app/_common/components/top-nav-bar';
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <main className="mx-auto flex h-svh w-full max-w-2xl items-center justify-center">
-        {children}
-      </main>
+      <main className='mx-auto flex h-svh w-full max-w-2xl items-center justify-center'>{children}</main>
     </>
   );
 }

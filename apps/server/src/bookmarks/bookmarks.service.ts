@@ -1,15 +1,11 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CategoriesService } from 'src/categories/categories.service';
+import { Category } from 'src/categories/entities/category.entity';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { Category } from 'src/categories/entities/category.entity';
-import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class BookmarksService {
@@ -23,14 +19,11 @@ export class BookmarksService {
     let category: Category | null = null;
 
     if (createBookmarkDto.category) {
-      category = await this.categoriesService.findOneByName(
-        createBookmarkDto.category,
-        userId,
-      );
+      category = await this.categoriesService.findOneByName(createBookmarkDto.category, userId);
+    }
 
-      if (!category) {
-        throw new NotFoundException('Category not found');
-      }
+    if (!category) {
+      throw new NotFoundException('Category not found');
     }
 
     return this.bookmarksRepository.save({
@@ -67,24 +60,17 @@ export class BookmarksService {
     return bookmark;
   }
 
-  async updateBookmark(
-    userId: string,
-    id: string,
-    updateBookmarkDto: UpdateBookmarkDto,
-  ) {
+  async updateBookmark(userId: string, id: string, updateBookmarkDto: UpdateBookmarkDto) {
     const bookmark = await this.findOneBookmark(userId, id);
 
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
+      throw new ForbiddenException("This bookmark doesn't belong to the user");
     }
 
-    let category: Category | null = null;
+    let category: Category | undefined;
 
     if (updateBookmarkDto.category) {
-      category = await this.categoriesService.findOneByName(
-        updateBookmarkDto.category,
-        userId,
-      );
+      category = await this.categoriesService.findOneByName(updateBookmarkDto.category, userId);
     }
 
     return this.bookmarksRepository.update(id, {
@@ -94,26 +80,20 @@ export class BookmarksService {
     });
   }
 
-  async updateBookmarkCategory(
-    userId: string,
-    id: string,
-    categoryId?: string,
-  ) {
+  async updateBookmarkCategory(userId: string, id: string, categoryId?: string) {
     const bookmark = await this.findOneBookmark(userId, id);
 
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
+      throw new ForbiddenException("This bookmark doesn't belong to the user");
     }
 
-    let category: Category | null = null;
+    let category: Category | undefined;
 
     if (categoryId) {
       category = await this.categoriesService.findOne(categoryId);
 
       if (category.user.id !== userId) {
-        throw new ForbiddenException(
-          `This category doesn't belong to the user`,
-        );
+        throw new ForbiddenException("This category doesn't belong to the user");
       }
     }
 
@@ -126,7 +106,7 @@ export class BookmarksService {
     const bookmark = await this.findOneBookmark(userId, id);
 
     if (bookmark.user.id !== userId) {
-      throw new ForbiddenException(`This bookmark doesn't belong to the user`);
+      throw new ForbiddenException("This bookmark doesn't belong to the user");
     }
 
     return this.bookmarksRepository.delete(id);

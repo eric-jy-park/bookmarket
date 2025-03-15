@@ -1,7 +1,7 @@
-import { UrlMetadata } from "~/app/_common/interfaces/metadata.interface";
-import { getMetadata } from "./get-metadata.action";
-import { createBookmark } from "~/app/_common/actions/bookmark.action";
-import * as Sentry from "@sentry/nextjs";
+import { type UrlMetadata } from '~/app/_common/interfaces/metadata.interface';
+import { getMetadata } from './get-metadata.action';
+import { createBookmark } from '~/app/_common/actions/bookmark.action';
+import * as Sentry from '@sentry/nextjs';
 
 const urlRegex = /^(http[s]?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}\.?/;
 
@@ -18,19 +18,19 @@ export const createBookmarkAction = async (
   formData: FormData,
   category?: string,
 ) => {
-  const url = formData.get("url") as string;
+  const url = formData.get('url') as string;
 
   if (!url) {
-    return { error: "URL is required", success: previousState.success };
+    return { error: 'URL is required', success: previousState.success };
   }
 
   let fullUrl = url;
-  if (!fullUrl.startsWith("http")) {
+  if (!fullUrl.startsWith('http')) {
     fullUrl = `https://${fullUrl}`;
   }
 
   if (!validateUrl(fullUrl)) {
-    return { error: "Invalid URL", success: previousState.success };
+    return { error: 'Invalid URL', success: previousState.success };
   }
 
   const data: UrlMetadata = await getMetadata(fullUrl);
@@ -43,9 +43,9 @@ export const createBookmarkAction = async (
       category: category,
     });
 
-    return { success: "Bookmark created", error: "" };
+    return { success: 'Bookmark created', error: '' };
   } catch (error) {
-    Sentry.captureException("Error creating bookmark:", {
+    Sentry.captureException('Error creating bookmark:', {
       extra: {
         url: fullUrl,
         error,
@@ -53,7 +53,7 @@ export const createBookmarkAction = async (
     });
 
     return {
-      error: "Failed to create bookmark. Please try again.",
+      error: 'Failed to create bookmark. Please try again.',
       success: previousState.success,
     };
   }

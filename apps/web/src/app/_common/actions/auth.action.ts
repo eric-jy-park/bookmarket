@@ -1,15 +1,15 @@
-"use server";
+'use server';
 
-import { cookies } from "next/headers";
-import { http } from "../utils/http";
-import { getAuthCookie } from "../utils/get-auth-cookie";
-import { type User } from "~/app/(pages)/(auth)/types";
-import { redirect } from "next/navigation";
-import { type TokenResponse } from "../interfaces/token.interface";
-import * as Sentry from "@sentry/nextjs";
+import { cookies } from 'next/headers';
+import { http } from '../utils/http';
+import { getAuthCookie } from '../utils/get-auth-cookie';
+import { type User } from '~/app/(pages)/(auth)/types';
+import { redirect } from 'next/navigation';
+import { type TokenResponse } from '../interfaces/token.interface';
+import * as Sentry from '@sentry/nextjs';
 
-const ACCESS_TOKEN_COOKIE_NAME = "access_token";
-const REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
+const REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';
 
 export const refreshNewAccessToken = async () => {
   try {
@@ -20,7 +20,7 @@ export const refreshNewAccessToken = async () => {
     }
 
     const tokens: TokenResponse = await http
-      .post("authentication/refresh-token", {
+      .post('authentication/refresh-token', {
         json: {
           refreshToken,
         },
@@ -29,7 +29,7 @@ export const refreshNewAccessToken = async () => {
 
     setAccessToken(tokens.accessToken);
   } catch (error) {
-    console.error("Failed to refresh token:", error);
+    console.error('Failed to refresh token:', error);
     signOut();
   }
 };
@@ -37,7 +37,7 @@ export const refreshNewAccessToken = async () => {
 export const getMe = async (): Promise<User | null> => {
   try {
     const user: User = await http
-      .get("users/me", {
+      .get('users/me', {
         headers: {
           Cookie: await getAuthCookie(),
         },
@@ -51,26 +51,26 @@ export const getMe = async (): Promise<User | null> => {
 };
 
 export const setAccessToken = async (accessToken: string) => {
-  "use server";
+  'use server';
   const cookieStore = await cookies();
   cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
     maxAge: 604800,
-    path: "/",
+    path: '/',
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: 'strict',
   });
 };
 
 export const setRefreshToken = async (refreshToken: string) => {
-  "use server";
+  'use server';
   const cookieStore = await cookies();
   cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
     maxAge: 3024000,
-    path: "/",
+    path: '/',
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: 'strict',
   });
 };
 
@@ -97,7 +97,7 @@ export const isAuthenticated = async () => {
 };
 
 export const signOut = async () => {
-  "use server";
+  'use server';
 
   try {
     const cookieStore = await cookies();
@@ -107,6 +107,6 @@ export const signOut = async () => {
   } catch (e) {
     Sentry.captureException(e);
   } finally {
-    redirect("/login");
+    redirect('/login');
   }
 };

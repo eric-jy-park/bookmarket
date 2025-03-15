@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { Category } from "../interfaces/category.interface";
-import { getAuthCookie } from "../utils/get-auth-cookie";
-import { http } from "../utils/http";
-import { isAuthenticated } from "./auth.action";
+import { type Category } from '../interfaces/category.interface';
+import { getAuthCookie } from '../utils/get-auth-cookie';
+import { http } from '../utils/http';
+import { isAuthenticated } from './auth.action';
 
-export const createCategory = async (categoryName: Category["name"]) => {
+export const createCategory = async (categoryName: Category['name']) => {
   const res: Category = await http
-    .post("categories", {
+    .post('categories', {
       json: {
         name: categoryName,
       },
@@ -28,7 +28,7 @@ export const getCategories = async () => {
   }
 
   const res: Category[] = await http
-    .get("categories", {
+    .get('categories', {
       headers: {
         Cookie: await getAuthCookie(),
       },

@@ -1,11 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { AuthProvider } from './enums/auth-provider.enum';
-import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +19,7 @@ export class UsersService {
       const user = await this.usersRepository.save(createUserDto);
 
       return user;
-    } catch (err) {
+    } catch (err: any) {
       if (err.code === pgUniqueViolationErrorCode) {
         throw new ConflictException('User already exists');
       }
@@ -27,8 +27,11 @@ export class UsersService {
     }
   }
 
-  findOne(email: string, auth_provider: AuthProvider) {
-    return this.usersRepository.findOneBy({ email, auth_provider });
+  findOne(email: string, authProvider: AuthProvider) {
+    return this.usersRepository.findOneBy({
+      email,
+      auth_provider: authProvider,
+    });
   }
 
   findOneById(id: string) {

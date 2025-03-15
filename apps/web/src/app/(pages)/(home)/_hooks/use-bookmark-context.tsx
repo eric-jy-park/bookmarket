@@ -1,12 +1,12 @@
-import { useBookmarkDelete } from "./use-bookmark-delete";
+import { useBookmarkDelete } from './use-bookmark-delete';
 
-import { CopyIcon, TrashIcon } from "lucide-react";
+import { CopyIcon, TrashIcon } from 'lucide-react';
 
-import { PencilIcon } from "lucide-react";
-import { useBookmarkCopy } from "./use-bookmark-copy";
-import { useBookmarkStore } from "../_state/store/use-bookmark-store";
-import { Bookmark } from "~/app/_common/interfaces/bookmark.interface";
-import React from "react";
+import { PencilIcon } from 'lucide-react';
+import React from 'react';
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { useBookmarkStore } from '../_state/store/use-bookmark-store';
+import { useBookmarkCopy } from './use-bookmark-copy';
 export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
   const { handleDelete } = useBookmarkDelete();
   const { handleCopy } = useBookmarkCopy();
@@ -17,15 +17,15 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
     () => [
       {
         icon: CopyIcon,
-        label: "Copy",
-        onClick: async () => {
-          await handleCopy(bookmark.url);
+        label: 'Copy',
+        onClick: () => {
+          void handleCopy(bookmark.url);
         },
         disabled: false,
       },
       {
         icon: PencilIcon,
-        label: "Rename",
+        label: 'Rename',
         onClick: () => {
           if (activeBookmarkId !== bookmark.id) {
             setActiveBookmarkId(bookmark.id);
@@ -37,20 +37,14 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
       },
       {
         icon: TrashIcon,
-        label: "Delete",
-        onClick: async () => {
-          await handleDelete(bookmark.id);
+        label: 'Delete',
+        onClick: () => {
+          void handleDelete(bookmark.id);
         },
         disabled: false,
       },
     ],
-    [
-      activeBookmarkId,
-      bookmark.id,
-      handleCopy,
-      handleDelete,
-      setActiveBookmarkId,
-    ],
+    [activeBookmarkId, bookmark.id, bookmark.url, handleCopy, handleDelete, setActiveBookmarkId],
   );
 
   return { menuItems };

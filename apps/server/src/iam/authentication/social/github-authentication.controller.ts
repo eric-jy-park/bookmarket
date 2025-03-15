@@ -8,9 +8,7 @@ import { GithubAuthenticationService } from './github-authentication.service';
 @Controller('authentication/github')
 @Auth(AuthType.None)
 export class GithubAuthenticationController {
-  constructor(
-    private readonly githubAuthenticationService: GithubAuthenticationService,
-  ) {}
+  constructor(private readonly githubAuthenticationService: GithubAuthenticationService) {}
 
   @Post()
   authenticate(@Body() oauthTokenDto: OAuthTokenDto) {

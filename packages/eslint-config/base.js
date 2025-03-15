@@ -11,6 +11,7 @@ module.exports = {
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
+    'prettier'
   ],
   rules: {
     // Place any base-level rules here

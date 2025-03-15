@@ -1,14 +1,14 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ['@repo/eslint-config/next-js'],
+  extends: ['@repo/eslint-config/next-js', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true,
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',

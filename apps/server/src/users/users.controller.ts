@@ -1,16 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -23,12 +15,14 @@ export class UsersController {
 
   @Get('me')
   async findMe(@ActiveUser('id') userId: string) {
-    const { email, id, picture } = await this.usersService.findOneById(userId);
+    const user = await this.usersService.findOneById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
 
     return {
-      id,
-      email,
-      picture,
+      id: user.id,
+      email: user.email,
+      picture: user.picture,
     };
   }
 

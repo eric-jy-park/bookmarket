@@ -1,4 +1,4 @@
-import { Category } from "./category.interface";
+import { type Category } from './category.interface';
 
 export interface Bookmark {
   id: string;

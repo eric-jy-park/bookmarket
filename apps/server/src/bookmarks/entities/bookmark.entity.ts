@@ -32,10 +32,10 @@ export class Bookmark {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.bookmarks, { eager: true })
+  @ManyToOne(() => User, user => user.bookmarks, { eager: true })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.bookmarks, {
+  @ManyToOne(() => Category, category => category.bookmarks, {
     eager: true,
     nullable: true,
     onDelete: 'SET NULL',

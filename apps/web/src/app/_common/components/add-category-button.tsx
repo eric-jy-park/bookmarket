@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import { Loader2, PlusIcon } from "lucide-react";
+import { Loader2, PlusIcon } from 'lucide-react';
 
-import { Input } from "~/app/_core/components/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "~/app/_core/components/sheet";
-import { createCategory } from "../actions/category.action";
-import React, { useActionState } from "react";
-import { useRouter } from "next/navigation";
+import { Input } from '~/app/_core/components/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/app/_core/components/sheet';
+import { createCategory } from '../actions/category.action';
+import React, { useActionState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export const AddCategoryButton = () => {
   const router = useRouter();
@@ -20,59 +14,48 @@ export const AddCategoryButton = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [state, formAction, isPending] = useActionState(
     async (_: { error: string }, formData: FormData) => {
-      const categoryName = formData.get("categoryName");
-      if (typeof categoryName !== "string") {
-        return { error: "Invalid category name" };
+      const categoryName = formData.get('categoryName');
+      if (typeof categoryName !== 'string') {
+        return { error: 'Invalid category name' };
       }
       try {
         await createCategory(categoryName);
         setOpen(false);
-        return { error: "" };
+        return { error: '' };
       } catch (error) {
-        return { error: "Failed to create category" };
+        return { error: 'Failed to create category' };
       } finally {
         router.refresh();
       }
     },
-    { error: "" },
+    { error: '' },
   );
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div className="relative ml-4 flex cursor-pointer items-center justify-center rounded-lg bg-black px-2 py-1 text-white transition-colors hover:bg-black/80">
+        <div className='relative ml-4 flex cursor-pointer items-center justify-center rounded-lg bg-black px-2 py-1 text-white transition-colors hover:bg-black/80'>
           <PlusIcon size={16} />
         </div>
       </SheetTrigger>
       <SheetContent
-        side="top"
-        className="flex w-full justify-center border-none bg-transparent shadow-none"
+        side='top'
+        className='flex w-full justify-center border-none bg-transparent shadow-none'
         style={{
-          pointerEvents: "none",
+          pointerEvents: 'none',
         }}
       >
         <form
-          style={{ pointerEvents: "auto" }}
-          className="flex w-[400px] flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-lg"
+          style={{ pointerEvents: 'auto' }}
+          className='flex w-[400px] flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-lg'
           action={formAction}
         >
           <SheetHeader>
-            <SheetTitle className="flex items-center gap-2 text-base">
-              Create New Category
-            </SheetTitle>
+            <SheetTitle className='flex items-center gap-2 text-base'>Create New Category</SheetTitle>
           </SheetHeader>
-          <div className="relative">
-            <Input
-              ref={inputRef}
-              name="categoryName"
-              placeholder="Category Name"
-              disabled={isPending}
-            />
-            {isPending && (
-              <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
-            )}
-            {state.error && (
-              <p className="mt-1 text-sm text-red-500">{state.error}</p>
-            )}
+          <div className='relative'>
+            <Input ref={inputRef} name='categoryName' placeholder='Category Name' disabled={isPending} />
+            {isPending && <Loader2 className='absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground' />}
+            {state.error && <p className='mt-1 text-sm text-red-500'>{state.error}</p>}
           </div>
         </form>
       </SheetContent>

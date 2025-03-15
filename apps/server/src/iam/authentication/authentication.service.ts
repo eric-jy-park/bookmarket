@@ -1,14 +1,14 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
-import { HashingService } from '../hashing/hashing.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
-import { JwtService } from '@nestjs/jwt';
-import { jwtConfig } from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { UsersService } from 'src/users/users.service';
+import { jwtConfig } from '../config/jwt.config';
+import { HashingService } from '../hashing/hashing.service';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -32,14 +32,11 @@ export class AuthenticationService {
       auth_provider: AuthProvider.EMAIL,
     });
 
-    return await this.generateTokens(user);
+    return this.generateTokens(user);
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findOne(
-      signInDto.email,
-      AuthProvider.EMAIL,
-    );
+    const user = await this.usersService.findOne(signInDto.email, AuthProvider.EMAIL);
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -47,14 +44,15 @@ export class AuthenticationService {
 
     const isPasswordCorrect = await this.hashingService.compare(
       signInDto.password,
-      user.password,
+      // if a user is signing in with this method, password always exists
+      user.password!,
     );
 
     if (!isPasswordCorrect) {
       throw new UnauthorizedException('Incorrect credentials provided');
     }
 
-    return await this.generateTokens(user);
+    return this.generateTokens(user);
   }
 
   async generateTokens(user: User) {
@@ -71,20 +69,19 @@ export class AuthenticationService {
 
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
-      const { id: userId } = await this.jwtService.verifyAsync(
-        refreshTokenDto.refreshToken,
-        {
-          audience: this.jwtConfiguration.audience,
-          issuer: this.jwtConfiguration.issuer,
-          secret: this.jwtConfiguration.secret,
-        },
-      );
+      const { id: userId } = await this.jwtService.verifyAsync(refreshTokenDto.refreshToken, {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+      });
 
       const user = await this.usersService.findOneById(userId);
 
-      return await this.generateTokens(user);
+      if (!user) throw new UnauthorizedException('User not found');
+
+      return this.generateTokens(user);
     } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token', error);
+      throw new UnauthorizedException('Invalid refresh token');
     }
   }
 

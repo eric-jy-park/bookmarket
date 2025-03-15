@@ -1,17 +1,14 @@
-"use server";
+'use server';
 
-import { redirect } from "next/navigation";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "~/app/_common/actions/auth.action";
-import { type TokenResponse } from "~/app/_common/interfaces/token.interface";
-import { http } from "~/app/_common/utils/http";
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
+import { redirect } from 'next/navigation';
+import { setAccessToken, setRefreshToken } from '~/app/_common/actions/auth.action';
+import { type TokenResponse } from '~/app/_common/interfaces/token.interface';
+import { http } from '~/app/_common/utils/http';
 
 export const createUser = async (state: null, formData: FormData) => {
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const email = formData.get('email');
+  const password = formData.get('password');
 
   try {
     const response: TokenResponse = await http
@@ -26,6 +23,6 @@ export const createUser = async (state: null, formData: FormData) => {
     Sentry.captureException(error);
     throw new Error(JSON.stringify(error));
   } finally {
-    redirect("/");
+    redirect('/');
   }
 };

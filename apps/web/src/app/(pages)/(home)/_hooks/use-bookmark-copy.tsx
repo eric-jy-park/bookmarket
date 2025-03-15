@@ -1,5 +1,5 @@
-import { useCopyToClipboard } from "@uidotdev/usehooks";
-import { toast } from "sonner";
+import { useCopyToClipboard } from '@uidotdev/usehooks';
+import { toast } from 'sonner';
 
 export const useBookmarkCopy = () => {
   const [_, copyToClipboard] = useCopyToClipboard();
@@ -7,10 +7,10 @@ export const useBookmarkCopy = () => {
   const handleCopy = async (url: string) => {
     try {
       await copyToClipboard(url);
-      toast.success("Copied to clipboard");
+      toast.success('Copied to clipboard');
     } catch (error) {
       console.error(error);
-      toast.error("Failed to copy to clipboard");
+      toast.error('Failed to copy to clipboard');
     }
   };
 

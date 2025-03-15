@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
 
 @Controller('categories')
@@ -22,10 +14,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(
-    @Body() createCategoryDto: CreateCategoryDto,
-    @ActiveUser() user: User,
-  ) {
+  create(@Body() createCategoryDto: CreateCategoryDto, @ActiveUser() user: User) {
     return this.categoriesService.create(user.id, createCategoryDto);
   }
 
@@ -35,11 +24,7 @@ export class CategoriesController {
   }
 
   @Patch(':id')
-  update(
-    @ActiveUser() user: User,
-    @Param('id') id: Category['id'],
-    @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
+  update(@ActiveUser() user: User, @Param('id') id: Category['id'], @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(user.id, id, updateCategoryDto);
   }
 
