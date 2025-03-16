@@ -42,12 +42,14 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
   }, [bookmark.faviconUrl, mutate]);
 
   const handleClick = React.useCallback(() => {
+    if (isActive) return;
     window.open(bookmark.url, '_blank');
-  }, [bookmark.url]);
+  }, [bookmark.url, isActive]);
 
   const startLongPress = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       e.preventDefault();
+      if (isActive) return;
       longPressStartTime.current = Date.now();
       setTapStartPosition({ x: e.clientX, y: e.clientY });
 
@@ -62,7 +64,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
         }
       }, 500);
     },
-    [animationControls],
+    [animationControls, isActive],
   );
 
   const onPointerMove = React.useCallback(

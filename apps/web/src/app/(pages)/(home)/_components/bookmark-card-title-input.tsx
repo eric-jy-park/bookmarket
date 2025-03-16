@@ -12,26 +12,8 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
   const router = useRouter();
   const { setActiveBookmarkId } = useBookmarkStore();
   const [inputValue, setInputValue] = React.useState(bookmark.title);
-  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-        inputRef.current.click();
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleUpdateBookmark = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputValue === bookmark.title) {
-      setActiveBookmarkId(null);
-      return;
-    }
-
+  const handleUpdateBookmark = React.useCallback(async () => {
     toast.promise(
       updateBookmark({
         ...bookmark,
@@ -48,17 +30,35 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
         },
       },
     );
-  };
+  }, [bookmark, inputValue, router, setActiveBookmarkId]);
+
+  const handleFormSubmit = React.useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (inputValue === bookmark.title) {
+        setActiveBookmarkId(null);
+        return;
+      }
+      handleUpdateBookmark();
+    },
+    [bookmark.title, handleUpdateBookmark, inputValue, setActiveBookmarkId],
+  );
 
   return (
-    <form onSubmit={handleUpdateBookmark}>
+    <form onSubmit={handleFormSubmit}>
       <input
-        ref={inputRef}
+        ref={node => {
+          // for mobile
+          node?.focus();
+
+          // for desktop
+          setTimeout(() => node?.focus(), 0);
+        }}
+        onBlur={handleUpdateBookmark}
         type='text'
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
         className='w-full bg-transparent text-sm font-medium text-foreground/50 focus-visible:outline-none'
-        autoFocus
       />
     </form>
   );
