@@ -1,8 +1,7 @@
-# BookMarket
+# Bookmarket
 
-## Diagram
+![screenshot-with-background (2)](https://github.com/user-attachments/assets/a59c0c27-e4be-4226-a708-8d2dda4471f7)
 
-<img width="1527" alt="image" src="https://github.com/user-attachments/assets/636e1398-cf05-4b06-a9f2-97420479c18c" />
 
 ## 🚀 Features
 
