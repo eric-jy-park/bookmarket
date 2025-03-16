@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
-import { toast } from 'sonner';
-import { useBookmarkStore } from '../_state/store/use-bookmark-store';
-import { updateBookmark } from '~/app/_common/actions/bookmark.action';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { updateBookmark } from '~/app/_common/actions/bookmark.action';
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { useBookmarkStore } from '../_state/store/use-bookmark-store';
 
 export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => {
   const router = useRouter();
@@ -18,6 +18,7 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
     const timer = setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
+        inputRef.current.click();
       }
     }, 100);
 

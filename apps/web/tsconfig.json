@@ -30,5 +30,11 @@
     "next.config.mjs",
     "prettier.config.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/public/sw.js",
+    "**/public/sw.js.map",
+    "**/public/workbox-*.js",
+    "**/public/workbox-*.js.map"
+  ]
 }

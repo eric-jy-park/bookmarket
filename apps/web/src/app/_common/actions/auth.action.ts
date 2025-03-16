@@ -1,12 +1,12 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { http } from '../utils/http';
-import { getAuthCookie } from '../utils/get-auth-cookie';
-import { type User } from '~/app/(pages)/(auth)/types';
-import { redirect } from 'next/navigation';
-import { type TokenResponse } from '../interfaces/token.interface';
 import * as Sentry from '@sentry/nextjs';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { type User } from '~/app/(pages)/(auth)/types';
+import { type TokenResponse } from '../interfaces/token.interface';
+import { getAuthCookie } from '../utils/get-auth-cookie';
+import { http } from '../utils/http';
 
 const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
 const REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';
@@ -28,9 +28,20 @@ export const refreshNewAccessToken = async () => {
       .json();
 
     setAccessToken(tokens.accessToken);
-  } catch (error) {
-    console.error('Failed to refresh token:', error);
-    signOut();
+    setRefreshToken(tokens.refreshToken);
+    return tokens;
+  } catch (error: any) {
+    Sentry.captureException('Failed to refresh token:', error);
+
+    if (error instanceof TypeError || error.name === 'AbortError') {
+      return null;
+    }
+
+    if (error.status === 401 || error.status === 403) {
+      await signOut();
+    }
+
+    return null;
   }
 };
 
