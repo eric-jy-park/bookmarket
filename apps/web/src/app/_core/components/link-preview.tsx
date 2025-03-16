@@ -1,10 +1,10 @@
 'use client';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { encode } from 'qss';
 import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
 import { cn } from '../utils/cn';
 
 type LinkPreviewProps = {

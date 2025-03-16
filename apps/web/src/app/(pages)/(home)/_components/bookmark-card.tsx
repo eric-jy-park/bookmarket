@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
-import { LinkPreview } from '~/app/_core/components/link-preview';
 import { cn } from '~/app/_core/utils/cn';
 import { fixBrokenFavicon } from '../_actions/fix-broken-favicon.action';
 import { BookmarkCardTitleInput } from './bookmark-card-title-input';
@@ -108,7 +108,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       <span className='hidden sm:block'>
         <BookmarkContextMenuProvider>
           <BookmarkContextMenuTrigger>
-            <LinkPreview url={bookmark.url} isDisabled={isActive || isBlurred}>
+            <Link href={bookmark.url} target='_blank'>
               <motion.div
                 key={bookmark.id}
                 className={cn(
@@ -152,7 +152,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
                   })}
                 </span>
               </motion.div>
-            </LinkPreview>
+            </Link>
           </BookmarkContextMenuTrigger>
           <BookmarkContextMenu bookmark={bookmark} />
         </BookmarkContextMenuProvider>
