@@ -68,8 +68,6 @@ export const setAccessToken = async (accessToken: string) => {
     maxAge: 604800,
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
   });
 };
 
@@ -80,8 +78,6 @@ export const setRefreshToken = async (refreshToken: string) => {
     maxAge: 3024000,
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
   });
 };
 

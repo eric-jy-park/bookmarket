@@ -1,10 +1,13 @@
+import { useMutation } from '@tanstack/react-query';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import { LinkPreview } from '~/app/_core/components/link-preview';
 import { cn } from '~/app/_core/utils/cn';
+import { fixBrokenFavicon } from '../_actions/fix-broken-favicon.action';
 import { BookmarkCardTitleInput } from './bookmark-card-title-input';
 import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
 import { BookmarkContextMenuDrawer } from './bookmark-context-menu-drawer';
@@ -16,6 +19,7 @@ interface BookmarkCardProps {
 }
 
 export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProps) => {
+  const router = useRouter();
   const [isLongPressing, setIsLongPressing] = React.useState(false);
   const longPressTimer = React.useRef<number | null>(null);
   const longPressStartTime = React.useRef<number>(0);
@@ -24,6 +28,18 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
     x: 0,
     y: 0,
   });
+
+  const { mutate } = useMutation({
+    mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
+    onSuccess: () => router.refresh(),
+  });
+
+  // FIXME: This is a hack to migrate the favicon url to the new provider
+  React.useEffect(() => {
+    if (!bookmark.faviconUrl || bookmark.faviconUrl.startsWith('https://icon.horse')) {
+      mutate();
+    }
+  }, [bookmark.faviconUrl, mutate]);
 
   const handleClick = React.useCallback(() => {
     window.open(bookmark.url, '_blank');
@@ -74,11 +90,15 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       const pressDuration = Date.now() - longPressStartTime.current;
       if (pressDuration < 500) {
         handleClick();
+        animationControls.start({
+          scale: 1,
+          transition: { duration: 0.2 },
+        });
       }
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
-  }, [handleClick]);
+  }, [animationControls, handleClick]);
 
   return (
     <>

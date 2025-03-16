@@ -10,8 +10,8 @@ import { useBookmarkStore } from '../_state/store/use-bookmark-store';
 
 export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => {
   const router = useRouter();
-  const [inputValue, setInputValue] = React.useState(bookmark.title);
   const { setActiveBookmarkId } = useBookmarkStore();
+  const [inputValue, setInputValue] = React.useState(bookmark.title);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -20,7 +20,7 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
         inputRef.current.focus();
         inputRef.current.click();
       }
-    }, 100);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -58,6 +58,7 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
         className='w-full bg-transparent text-sm font-medium text-foreground/50 focus-visible:outline-none'
+        autoFocus
       />
     </form>
   );

@@ -52,7 +52,9 @@ export class AuthenticationService {
       throw new UnauthorizedException('Incorrect credentials provided');
     }
 
-    return this.generateTokens(user);
+    const tokens = await this.generateTokens(user);
+
+    return tokens;
   }
 
   async generateTokens(user: User) {
