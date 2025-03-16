@@ -60,7 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta name='apple-mobile-web-app-status-bar-style' content='default' />
         <meta name='apple-mobile-web-app-title' content='Bookmarket' />
-        <meta name='theme-color' content='#000000' />
+        <meta name='theme-color' content='#d2d4d7' />
         <link rel='manifest' href='/manifest.json' />
         <link rel='apple-touch-icon' href='/logos/logo-base-256x256.png' />
         <link rel='icon' href='/favicon.ico' />
