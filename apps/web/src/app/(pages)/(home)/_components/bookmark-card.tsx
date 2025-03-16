@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
@@ -41,10 +40,10 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
     }
   }, [bookmark.faviconUrl, mutate]);
 
-  const handleClick = React.useCallback(() => {
-    if (isActive) return;
+  const handleCardClick = React.useCallback(() => {
+    if (isActive || isBlurred) return;
     window.open(bookmark.url, '_blank');
-  }, [bookmark.url, isActive]);
+  }, [bookmark.url, isActive, isBlurred]);
 
   const startLongPress = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
@@ -91,7 +90,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
     if (longPressTimer.current) {
       const pressDuration = Date.now() - longPressStartTime.current;
       if (pressDuration < 500) {
-        handleClick();
+        handleCardClick();
         animationControls.start({
           scale: 1,
           transition: { duration: 0.2 },
@@ -100,7 +99,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
-  }, [animationControls, handleClick]);
+  }, [animationControls, handleCardClick]);
 
   return (
     <>
@@ -108,51 +107,50 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       <span className='hidden sm:block'>
         <BookmarkContextMenuProvider>
           <BookmarkContextMenuTrigger>
-            <Link href={bookmark.url} target='_blank'>
-              <motion.div
-                key={bookmark.id}
-                className={cn(
-                  'flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted',
-                  isActive && 'bg-muted',
-                  isBlurred && 'pointer-events-none blur-sm',
-                )}
-                animate={animationControls}
-                initial={{ scale: isActive ? 1.05 : 1 }}
-              >
-                {bookmark.faviconUrl ? (
-                  <Image
-                    src={bookmark.faviconUrl}
-                    alt={bookmark.title ?? ''}
-                    width={16}
-                    height={16}
-                    className='shrink-0 overflow-hidden'
-                    unoptimized={true}
-                    style={{
-                      maxWidth: '100%',
-                      height: 'auto',
-                    }}
-                  />
+            <motion.div
+              onClick={handleCardClick}
+              key={bookmark.id}
+              className={cn(
+                'flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted',
+                isActive && 'bg-muted',
+                isBlurred && 'pointer-events-none blur-sm',
+              )}
+              animate={animationControls}
+              initial={{ scale: isActive ? 1.05 : 1 }}
+            >
+              {bookmark.faviconUrl ? (
+                <Image
+                  src={bookmark.faviconUrl}
+                  alt={bookmark.title ?? ''}
+                  width={16}
+                  height={16}
+                  className='shrink-0 overflow-hidden'
+                  unoptimized={true}
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                  }}
+                />
+              ) : (
+                <Logo className='h-4 w-4 shrink-0' includeText={false} />
+              )}
+              <div className='flex min-w-0 flex-1 flex-col'>
+                {isActive ? (
+                  <BookmarkCardTitleInput bookmark={bookmark} />
                 ) : (
-                  <Logo className='h-4 w-4 shrink-0' includeText={false} />
+                  <p className='truncate text-sm font-medium'>{bookmark.title ?? ''}</p>
                 )}
-                <div className='flex min-w-0 flex-1 flex-col'>
-                  {isActive ? (
-                    <BookmarkCardTitleInput bookmark={bookmark} />
-                  ) : (
-                    <p className='truncate text-sm font-medium'>{bookmark.title ?? ''}</p>
-                  )}
-                  <span className='truncate text-xs text-muted-foreground'>
-                    {new URL(bookmark.url).hostname.replace('www.', '')}
-                  </span>
-                </div>
-                <span className='shrink-0 text-xs text-muted-foreground'>
-                  {new Date(bookmark.createdAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                <span className='truncate text-xs text-muted-foreground'>
+                  {new URL(bookmark.url).hostname.replace('www.', '')}
                 </span>
-              </motion.div>
-            </Link>
+              </div>
+              <span className='shrink-0 text-xs text-muted-foreground'>
+                {new Date(bookmark.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
+            </motion.div>
           </BookmarkContextMenuTrigger>
           <BookmarkContextMenu bookmark={bookmark} />
         </BookmarkContextMenuProvider>

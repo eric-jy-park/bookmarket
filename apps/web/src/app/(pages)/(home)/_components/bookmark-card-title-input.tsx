@@ -48,11 +48,7 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
     <form onSubmit={handleFormSubmit}>
       <input
         ref={node => {
-          // for mobile
-          node?.focus();
-
-          // for desktop
-          setTimeout(() => node?.focus(), 0);
+          setTimeout(() => node?.focus(), 250);
         }}
         onBlur={handleUpdateBookmark}
         type='text'
