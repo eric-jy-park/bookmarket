@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { getMe } from '../actions/auth.action';
+import { getCategories } from '../actions/category.action';
+import { AnimatedTab } from './animated-tab';
 import { Logo } from './logo';
 import { UserAvatar } from './user-avatar';
-import { AnimatedTab } from './animated-tab';
-import { getCategories } from '../actions/category.action';
 
 export async function TopNavbar() {
   const user = await getMe();

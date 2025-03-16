@@ -1,6 +1,5 @@
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
@@ -17,8 +16,6 @@ interface BookmarkCardProps {
 }
 
 export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProps) => {
-  const router = useRouter();
-
   const [isLongPressing, setIsLongPressing] = React.useState(false);
   const longPressTimer = React.useRef<number | null>(null);
   const longPressStartTime = React.useRef<number>(0);
@@ -29,8 +26,8 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
   });
 
   const handleClick = React.useCallback(() => {
-    router.push(bookmark.url);
-  }, [bookmark.url, router]);
+    window.open(bookmark.url, '_blank');
+  }, [bookmark.url]);
 
   const startLongPress = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {

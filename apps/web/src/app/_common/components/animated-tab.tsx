@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FolderIcon } from 'lucide-react';
 import { parseAsString, useQueryState } from 'nuqs';
 
-import { TextMorph } from './text-morph';
 import React from 'react';
-import { AddCategoryButton } from './add-category-button';
-import { type Category } from '../interfaces/category.interface';
-import { Drawer, DrawerTrigger } from '~/app/_core/components/drawer';
 import { CategoryDrawerContent } from '~/app/(pages)/(home)/_components/category-drawer-content';
+import { Drawer, DrawerTrigger } from '~/app/_core/components/drawer';
+import { type Category } from '../interfaces/category.interface';
+import { AddCategoryButton } from './add-category-button';
+import { TextMorph } from './text-morph';
 
 export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
   const [category, setCategory] = useQueryState('c', parseAsString);
@@ -50,7 +50,7 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
                 />
               )}
             </AnimatePresence>
-            <p className='relative z-10 max-w-16 truncate text-white mix-blend-exclusion transition-opacity duration-300'>
+            <p className='relative z-10 max-w-20 truncate text-white mix-blend-exclusion transition-opacity duration-300'>
               {category.name}
             </p>
           </button>
