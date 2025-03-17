@@ -23,9 +23,9 @@ export const UserAvatar = ({ user }: { user: User }) => {
   const handleSettingsClick = React.useCallback(() => {
     openModal({
       id: modalIds.userSettings,
-      content: <UserSettingsDialog onCloseClick={() => closeModal({ id: modalIds.userSettings })} />,
+      content: <UserSettingsDialog onCloseClick={() => closeModal({ id: modalIds.userSettings })} initialUser={user} />,
     });
-  }, [closeModal, openModal]);
+  }, [closeModal, openModal, user]);
 
   return (
     <DropdownMenu>

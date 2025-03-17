@@ -1,14 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { UserRoundIcon } from 'lucide-react';
 import React from 'react';
+import { type User } from '~/app/(pages)/(auth)/types';
+import { Avatar, AvatarFallback, AvatarImage } from '~/app/_core/components/avatar';
 import { Button } from '~/app/_core/components/button';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/app/_core/components/dialog';
+import { DialogFooter, DialogHeader, DialogTitle } from '~/app/_core/components/dialog';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
 import { Switch } from '~/app/_core/components/switch';
 
-export default function UserSettingsDialog({ onCloseClick }: { onCloseClick: () => void }) {
+export default function UserSettingsDialog({
+  onCloseClick,
+  initialUser,
+}: {
+  onCloseClick: () => void;
+  initialUser: User;
+}) {
+  const [user, setUser] = React.useState(() => initialUser);
+
   const handleCancelClick = React.useCallback(() => {
     onCloseClick();
   }, [onCloseClick]);
@@ -31,10 +42,22 @@ export default function UserSettingsDialog({ onCloseClick }: { onCloseClick: () 
       <DialogHeader className='contents space-y-0 text-left'>
         <DialogTitle className='border-b px-6 py-4 text-base'>Edit profile</DialogTitle>
       </DialogHeader>
-      <DialogDescription className='sr-only'>
-        Make changes to your profile here. You can change your photo and set a username.
-      </DialogDescription>
       <div className='overflow-y-auto'>
+        <div className='flex w-full items-center justify-start px-6 py-4'>
+          <div className='flex items-center gap-3'>
+            <Avatar className='rounded-md'>
+              <AvatarImage src={user.picture} alt={user.email} />
+              <AvatarFallback>
+                <UserRoundIcon size={16} className='opacity-60' aria-hidden='true' />
+              </AvatarFallback>
+            </Avatar>
+            <div className='flex min-w-0 flex-col'>
+              <span className='truncate text-sm font-medium text-foreground'>{user.id}</span>
+              <p className='truncate text-xs font-normal text-muted-foreground'>{user.email}</p>
+            </div>
+          </div>
+        </div>
+        <hr />
         <div className='px-6 pb-6 pt-4'>
           <form className='space-y-5'>
             <div className='flex flex-col gap-4 sm:flex-row'>
@@ -47,7 +70,7 @@ export default function UserSettingsDialog({ onCloseClick }: { onCloseClick: () 
                 <Input id={`lastName`} placeholder='Park' defaultValue='Park' type='text' required />
               </div>
             </div>
-            <div className='*:not-first:mt-2'>
+            <div className='*:not-first:mt-2 space-y-2'>
               <Label htmlFor={`userName`}>Personal Subdomain</Label>
               <div className='shadow-xs flex rounded-md'>
                 <span className='inline-flex items-center rounded-s-md border border-input bg-background px-3 text-sm text-muted-foreground'>
