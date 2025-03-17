@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { Repository } from 'typeorm';
@@ -38,8 +38,20 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
+  }
+
+  async checkIsUsernameAvailable(userId: string, username: string) {
+    const user = await this.findOneById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    if (user.username === username) return true;
+
+    const usernameCount = await this.usersRepository.count({ where: { username } });
+
+    return usernameCount === 0;
   }
 
   remove(id: string) {

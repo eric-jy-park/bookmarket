@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -32,8 +33,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(id, updateUserDto);
+  }
+
+  @Get('check-username')
+  async checkIsUsernameAvailable(@ActiveUser('id') id: User['id'], @Query('username') username: string) {
+    const isAvailable = await this.usersService.checkIsUsernameAvailable(id, username);
+    return { isAvailable };
   }
 
   @Delete(':id')
