@@ -1,7 +1,9 @@
 'use client';
 
-import { LogOutIcon, UserRoundIcon } from 'lucide-react';
+import { LogOutIcon, SettingsIcon, UserRoundIcon } from 'lucide-react';
+import React from 'react';
 import { type User } from '~/app/(pages)/(auth)/types';
+import { useAppState } from '~/app/(pages)/(home)/_state/store/use-app-state-store';
 import { Avatar, AvatarFallback, AvatarImage } from '~/app/_core/components/avatar';
 import {
   DropdownMenu,
@@ -12,8 +14,19 @@ import {
   DropdownMenuTrigger,
 } from '~/app/_core/components/dropdown-menu';
 import { signOut } from '../actions/auth.action';
+import { modalIds } from '../constants/modal-id.constants';
+import UserSettingsDialog from './user-settings-dialog';
 
 export const UserAvatar = ({ user }: { user: User }) => {
+  const { openModal, closeModal } = useAppState();
+
+  const handleSettingsClick = React.useCallback(() => {
+    openModal({
+      id: modalIds.userSettings,
+      content: <UserSettingsDialog onCloseClick={() => closeModal({ id: modalIds.userSettings })} />,
+    });
+  }, [closeModal, openModal]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,6 +50,11 @@ export const UserAvatar = ({ user }: { user: User }) => {
             <p className='truncate text-xs font-normal text-muted-foreground'>{user.email}</p>
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className='cursor-pointer' onClick={handleSettingsClick}>
+          <SettingsIcon size={16} className='opacity-60' aria-hidden='true' />
+          <span>Settings</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='cursor-pointer' onClick={() => signOut()}>
           <LogOutIcon size={16} className='opacity-60' aria-hidden='true' />
