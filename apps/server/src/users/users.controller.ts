@@ -24,6 +24,9 @@ export class UsersController {
       id: user.id,
       email: user.email,
       picture: user.picture,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
     };
   }
 
