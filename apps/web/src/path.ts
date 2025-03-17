@@ -1,1 +1,1 @@
-export const unauthenticatedRoutes = ['/signup', '/login'];
+export const unauthenticatedRoutes = ['/signup', '/login', '/oauth/github'];
