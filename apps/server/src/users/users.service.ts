@@ -38,7 +38,7 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
-  updateUser(id: string, updateUserDto: UpdateUserDto) {
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
   }
 
