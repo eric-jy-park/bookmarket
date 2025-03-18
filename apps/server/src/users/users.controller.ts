@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Q
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -30,6 +29,12 @@ export class UsersController {
     };
   }
 
+  @Get('check-username')
+  async checkIsUsernameAvailable(@ActiveUser('id') id: string, @Query('username') username: string) {
+    const isAvailable = await this.usersService.checkIsUsernameAvailable(id, username);
+    return { isAvailable };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOneById(id);
@@ -38,12 +43,6 @@ export class UsersController {
   @Patch()
   async updateUser(@ActiveUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
-  }
-
-  @Get('check-username')
-  async checkIsUsernameAvailable(@ActiveUser('id') id: User['id'], @Query('username') username: string) {
-    const isAvailable = await this.usersService.checkIsUsernameAvailable(id, username);
-    return { isAvailable };
   }
 
   @Delete(':id')

@@ -17,7 +17,7 @@ export const getMe = async (): Promise<User | null> => {
     return user;
   } catch (error) {
     Sentry.captureException(error);
-    return null;
+    throw new Error(JSON.stringify(error));
   }
 };
 
@@ -39,19 +39,20 @@ export const updateUserProfile = async (updatedUserInfo: Pick<User, 'username' |
   }
 };
 
-export const checkUsernameAvailable = async () => {
+export const checkUsernameAvailable = async (username: string) => {
   try {
-    const isAvailable = await http
+    const isAvailable: { isAvailable: boolean } = await http
       .get('users/check-username', {
         headers: {
           Cookie: await getAuthCookie(),
         },
+        searchParams: { username },
       })
       .json();
 
     return isAvailable;
   } catch (error) {
     Sentry.captureException(error);
-    return false;
+    throw new Error(JSON.stringify(error));
   }
 };

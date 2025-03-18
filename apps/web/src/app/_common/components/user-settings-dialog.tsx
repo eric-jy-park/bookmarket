@@ -1,17 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LoaderCircleIcon } from 'lucide-react';
+import { CheckIcon, Loader2Icon, LoaderCircleIcon, XIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { type User } from '~/app/(pages)/(auth)/types';
 import { updateUserProfileAction } from '~/app/(pages)/(home)/_actions/update-user.action';
 
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '~/app/_core/components/button';
 import { DialogFooter, DialogHeader, DialogTitle } from '~/app/_core/components/dialog';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
+import { checkUsernameAvailable } from '../actions/user.action';
 import { useBodyScrollLock } from '../hooks/use-body-scroll-lock';
 import { UserProfile } from './user-profile';
 
@@ -26,6 +28,12 @@ export default function UserSettingsDialog({
   const router = useRouter();
   const formRef = React.useRef<HTMLFormElement>(null);
   const [user, setUser] = React.useState(() => initialUser);
+
+  const { data: usernameCheck, isLoading: isUsernameChecking } = useQuery({
+    queryFn: () => checkUsernameAvailable(user.username!),
+    queryKey: ['username', user.username],
+    enabled: !!user.username && user.username !== initialUser.username,
+  });
 
   const handleFormAction = React.useCallback(
     async (_: any, formData: FormData) => {
@@ -60,6 +68,34 @@ export default function UserSettingsDialog({
       [key]: e.target.value,
     }));
   }, []);
+
+  const subdomainStatus = React.useMemo(() => {
+    if (isUsernameChecking) return 'loading';
+    if (user.username === initialUser.username) return 'idle';
+
+    if (usernameCheck?.isAvailable) return 'available';
+    return 'taken';
+  }, [initialUser.username, isUsernameChecking, user.username, usernameCheck?.isAvailable]);
+
+  const subdomainStatusIcon = React.useMemo(() => {
+    switch (subdomainStatus) {
+      case 'available':
+        return <CheckIcon className='text-green-300' />;
+      case 'taken':
+        return <XIcon className='text-red-300' />;
+      case 'loading':
+        return <Loader2Icon className='animate-spin text-gray-300' />;
+      case 'idle':
+      default:
+        return null;
+    }
+  }, [subdomainStatus]);
+
+  const isProfileSaveable = React.useMemo(() => {
+    if (user.username?.length === 0) return false;
+    if (subdomainStatus !== 'available') return false;
+    return true;
+  }, [subdomainStatus, user.username]);
 
   return (
     <motion.div
@@ -110,7 +146,7 @@ export default function UserSettingsDialog({
             </div>
             <div className='*:not-first:mt-2 space-y-2'>
               <Label htmlFor={`username`}>Personal Subdomain</Label>
-              <div className='shadow-xs flex rounded-md'>
+              <div className='shadow-xs relative flex rounded-md'>
                 <span className='inline-flex items-center rounded-s-md border border-input bg-background px-3 text-sm text-muted-foreground'>
                   https://
                 </span>
@@ -122,11 +158,15 @@ export default function UserSettingsDialog({
                   onChange={handleInputChange}
                   className='mr-px rounded-none border-x-0'
                 />
+                <div className='absolute right-[100px] top-1/2 -translate-y-1/2'>{subdomainStatusIcon}</div>
                 <span className='inline-flex items-center rounded-e-md border border-input bg-background px-3 text-sm text-muted-foreground'>
                   .bmkt.tech
                 </span>
               </div>
               {state.error.username && <p className='mt-1 text-sm text-red-500'>{state.error.username}</p>}
+              {usernameCheck?.isAvailable === false && (
+                <p className='mt-1 text-sm text-red-500'>Username already taken</p>
+              )}
             </div>
             {/* @FIXME: Uncomment when public/private planning and implementation is done */}
             {/* <div className='mt-2 flex items-center justify-end gap-2'>
@@ -143,7 +183,7 @@ export default function UserSettingsDialog({
         <Button type='button' variant='outline' onClick={handleCancelClick} disabled={isPending}>
           Cancel
         </Button>
-        <Button type='submit' disabled={isPending} onClick={handleSaveClick}>
+        <Button type='submit' disabled={!isProfileSaveable} onClick={handleSaveClick}>
           {isPending && <LoaderCircleIcon className='-ms-1 animate-spin' size={16} aria-hidden='true' />}
           Save changes
         </Button>
