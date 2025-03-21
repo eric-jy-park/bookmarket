@@ -1,7 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { Repository } from 'typeorm';
+import { UNALLOWED_USERNAMES } from './constants/invalid-username.constant';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -53,7 +54,9 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    if (user.username === username) return true;
+    if (UNALLOWED_USERNAMES.includes(username)) throw new ForbiddenException('This username is not allowed');
+
+    if (username) if (user.username === username) return true;
 
     const usernameCount = await this.usersRepository.count({ where: { username } });
 
