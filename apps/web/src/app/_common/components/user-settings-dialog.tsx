@@ -127,7 +127,6 @@ export default function UserSettingsDialog({
                   value={user.firstName}
                   onChange={handleInputChange}
                   type='text'
-                  required
                 />
                 {state.error.firstName && <p className='mt-1 text-sm text-red-500'>{state.error.firstName}</p>}
               </div>
@@ -139,7 +138,6 @@ export default function UserSettingsDialog({
                   value={user.lastName}
                   onChange={handleInputChange}
                   type='text'
-                  required
                 />
                 {state.error.lastName && <p className='mt-1 text-sm text-red-500'>{state.error.lastName}</p>}
               </div>

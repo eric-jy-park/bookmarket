@@ -1,6 +1,6 @@
 'use server';
 
-import Sentry from '@sentry/nextjs';
+import * as Sentry from '@sentry/nextjs';
 import { type User } from '~/app/(pages)/(auth)/types';
 import { getAuthCookie } from '../utils/get-auth-cookie';
 import { http } from '../utils/http';
@@ -17,7 +17,7 @@ export const getMe = async (): Promise<User | null> => {
     return user;
   } catch (error) {
     Sentry.captureException(error);
-    throw new Error(JSON.stringify(error));
+    return null;
   }
 };
 

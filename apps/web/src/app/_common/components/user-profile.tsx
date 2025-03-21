@@ -15,7 +15,7 @@ export const UserProfile = React.memo(({ user }: { user: User }) => {
       </Avatar>
       <div className='flex min-w-0 flex-col'>
         <TextMorph className='truncate text-sm font-medium text-foreground'>
-          {`${user.firstName} ${user.lastName}`}
+          {[user.firstName, user.lastName].join(' ')}
         </TextMorph>
         <p className='truncate text-xs font-normal text-muted-foreground'>{user.email}</p>
       </div>
