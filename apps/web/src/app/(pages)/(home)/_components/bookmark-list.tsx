@@ -1,15 +1,15 @@
 'use client';
 
-import { BookmarkCard } from './bookmark-card';
 import BlurFade from '~/app/_core/components/blur-fade';
 import { useBookmarkStore } from '../_state/store/use-bookmark-store';
+import { BookmarkCard } from './bookmark-card';
 
-import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
-import { useBodyScrollLock } from '~/app/_common/hooks/use-body-scroll-lock';
-import { useQueryState, parseAsString } from 'nuqs';
+import { parseAsString, useQueryState } from 'nuqs';
 import React from 'react';
+import { useBodyScrollLock } from '~/app/_common/hooks/use-body-scroll-lock';
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 
-export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
+export function BookmarkList({ bookmarks, isViewOnly }: { bookmarks: Bookmark[]; isViewOnly: boolean }) {
   const { activeBookmarkId } = useBookmarkStore();
   useBodyScrollLock({ isDisabled: activeBookmarkId === null });
   const [category] = useQueryState('c', parseAsString);
@@ -31,6 +31,7 @@ export function BookmarkList({ bookmarks }: { bookmarks: Bookmark[] }) {
             bookmark={bookmark}
             isActive={activeBookmarkId === bookmark.id}
             isBlurred={activeBookmarkId !== null && activeBookmarkId !== bookmark.id}
+            isViewOnly={isViewOnly}
           />
         </BlurFade>
       ))}

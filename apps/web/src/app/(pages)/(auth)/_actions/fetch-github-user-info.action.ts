@@ -1,11 +1,10 @@
 'use server';
 
+import * as Sentry from '@sentry/nextjs';
 import ky from 'ky';
 import { redirect } from 'next/navigation';
-import { setAccessToken } from '~/app/_common/actions/auth.action';
-import { setRefreshToken } from '~/app/_common/actions/auth.action';
+import { setAccessToken, setRefreshToken } from '~/app/_common/actions/auth.action';
 import { type TokenResponse } from '~/app/_common/interfaces/token.interface';
-import * as Sentry from '@sentry/nextjs';
 import { http } from '~/app/_common/utils/http';
 
 export const fetchGithubUserInfo = async (code: string) => {
@@ -24,7 +23,7 @@ export const fetchGithubUserInfo = async (code: string) => {
       })
       .json();
 
-    const user: { id: string; email?: string; avatar_url: string } = await ky
+    const user: { id: string; email?: string; avatar_url: string; name?: string } = await ky
       .get('https://api.github.com/user', {
         headers: {
           Authorization: `Bearer ${data.access_token}`,
@@ -55,6 +54,7 @@ export const fetchGithubUserInfo = async (code: string) => {
       id: String(user.id),
       email: primaryEmail?.email ?? verifiedEmail?.email ?? `${user.id}@github.com`,
       picture: user.avatar_url,
+      firstName: user.name,
     };
 
     const response: TokenResponse = await http

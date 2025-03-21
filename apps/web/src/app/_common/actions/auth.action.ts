@@ -3,10 +3,9 @@
 import * as Sentry from '@sentry/nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { type User } from '~/app/(pages)/(auth)/types';
 import { type TokenResponse } from '../interfaces/token.interface';
-import { getAuthCookie } from '../utils/get-auth-cookie';
 import { http } from '../utils/http';
+import { getMe } from './user.action';
 
 const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
 const REFRESH_TOKEN_COOKIE_NAME = 'refresh_token';
@@ -45,22 +44,6 @@ export const refreshNewAccessToken = async () => {
   }
 };
 
-export const getMe = async (): Promise<User | null> => {
-  try {
-    const user: User = await http
-      .get('users/me', {
-        headers: {
-          Cookie: await getAuthCookie(),
-        },
-      })
-      .json();
-    return user;
-  } catch (error) {
-    Sentry.captureException(error);
-    return null;
-  }
-};
-
 export const setAccessToken = async (accessToken: string) => {
   'use server';
   const cookieStore = await cookies();
@@ -68,6 +51,7 @@ export const setAccessToken = async (accessToken: string) => {
     maxAge: 604800,
     path: '/',
     httpOnly: true,
+    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
   });
 };
 
@@ -78,6 +62,7 @@ export const setRefreshToken = async (refreshToken: string) => {
     maxAge: 3024000,
     path: '/',
     httpOnly: true,
+    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
   });
 };
 

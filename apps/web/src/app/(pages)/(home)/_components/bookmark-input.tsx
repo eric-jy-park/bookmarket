@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
 import { Loader2, Search } from 'lucide-react';
-import { createBookmarkAction } from '../_actions/create-bookmark.action';
-import BlurFade from '~/app/_core/components/blur-fade';
-import { UrlInput } from './url-input';
-import { ProgressiveBlur } from '~/app/_core/components/progressive-blur';
 import { useRouter } from 'next/navigation';
 import { parseAsString, useQueryState } from 'nuqs';
+import React from 'react';
+import BlurFade from '~/app/_core/components/blur-fade';
+import { ProgressiveBlur } from '~/app/_core/components/progressive-blur';
+import { createBookmarkAction } from '../_actions/create-bookmark.action';
+import { UrlInput } from './url-input';
 
 export function BookmarkInput() {
   const router = useRouter();

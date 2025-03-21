@@ -1,10 +1,12 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { randomAlphaStringGenerator } from 'src/common/utils/random-alpha-string-generator';
 import { User } from 'src/users/entities/user.entity';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { UsersService } from 'src/users/users.service';
 import { jwtConfig } from '../config/jwt.config';
+import { USERNAME_MAX_LENGTH } from '../constants/username';
 import { HashingService } from '../hashing/hashing.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -29,6 +31,9 @@ export class AuthenticationService {
       email: signUpDto.email,
       password: hashedPassword,
       picture: signUpDto.picture,
+      firstName: 'Bookmarket',
+      lastName: 'User',
+      username: randomAlphaStringGenerator(USERNAME_MAX_LENGTH),
       auth_provider: AuthProvider.EMAIL,
     });
 
@@ -52,9 +57,7 @@ export class AuthenticationService {
       throw new UnauthorizedException('Incorrect credentials provided');
     }
 
-    const tokens = await this.generateTokens(user);
-
-    return tokens;
+    return this.generateTokens(user);
   }
 
   async generateTokens(user: User) {

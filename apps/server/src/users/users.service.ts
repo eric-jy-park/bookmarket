@@ -1,7 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { Repository } from 'typeorm';
+import { UNALLOWED_USERNAMES } from './constants/invalid-username.constant';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -38,8 +39,28 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  findOneByUsername(username: User['username']) {
+    return this.usersRepository.findOneBy({
+      username,
+    });
+  }
+
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
+  }
+
+  async checkIsUsernameAvailable(userId: string, username: string) {
+    const user = await this.findOneById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    if (UNALLOWED_USERNAMES.includes(username)) throw new ForbiddenException('This username is not allowed');
+
+    if (username) if (user.username === username) return true;
+
+    const usernameCount = await this.usersRepository.count({ where: { username } });
+
+    return usernameCount === 0;
   }
 
   remove(id: string) {

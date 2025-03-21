@@ -12,4 +12,12 @@ export class OAuthTokenDto {
   @IsUrl()
   @IsOptional()
   picture?: string;
+
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  lastName?: string;
 }
