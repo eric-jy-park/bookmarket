@@ -14,6 +14,11 @@ await import("./src/env.mjs");
 
 
 const nextConfig = {
+  // experimental: {
+  //   serverActions: {
+  //     allowedOrigins: ['bmkt.tech', '*.bmkt.tech', 'localhost:3000', "*.localhost:3000"],
+  //   },
+  // },
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
