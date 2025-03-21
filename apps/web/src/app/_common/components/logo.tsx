@@ -1,9 +1,18 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { cn } from '~/app/_core/utils/cn';
 
-export const Logo = ({ className, includeText = true }: { className?: string; includeText?: boolean }) => {
+export const Logo = ({
+  className,
+  includeText = true,
+  sharedUsername,
+}: {
+  className?: string;
+  includeText?: boolean;
+  sharedUsername?: string;
+}) => {
   return (
-    <div className='flex cursor-pointer items-center gap-1'>
+    <Link className='flex cursor-pointer items-center gap-1' href='/'>
       <Image
         src='/images/logo.png'
         alt='logo'
@@ -15,7 +24,7 @@ export const Logo = ({ className, includeText = true }: { className?: string; in
           height: 'auto',
         }}
       />
-      {includeText && <h1 className='text-lg font-black'>Bookmarket</h1>}
-    </div>
+      {includeText && <h1 className='text-lg font-black'>{sharedUsername ?? 'Bookmarket'}</h1>}
+    </Link>
   );
 };

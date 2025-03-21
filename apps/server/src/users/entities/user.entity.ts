@@ -24,6 +24,9 @@ export class User {
   @Column({ nullable: true })
   password?: string;
 
+  @Column({ default: true })
+  isPublic: boolean;
+
   @Column({ enum: AuthProvider })
   auth_provider: AuthProvider;
 
