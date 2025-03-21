@@ -1,3 +1,4 @@
+import { tryCatch } from '~/app/_common/utils/try-catch';
 import { getSharedUsersCategories } from '../../_actions/shared.actions';
 import { SharedTopNavBar } from '../../_components/shared-top-nav-bar';
 
@@ -9,7 +10,10 @@ export default async function SharedLayout({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const categories = await getSharedUsersCategories(username);
+  const { data: categories, error } = await tryCatch(getSharedUsersCategories(username));
+
+  if (error) return null;
+
   return (
     <>
       <SharedTopNavBar categories={categories} sharedUsername={username} />
