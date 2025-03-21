@@ -1,5 +1,6 @@
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { USERNAME_MAX_LENGTH } from 'src/iam/constants/username';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AuthProvider } from '../enums/auth-provider.enum';
 
@@ -11,7 +12,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true, unique: true, length: USERNAME_MAX_LENGTH })
   username: string;
 
   @Column({ nullable: true })
