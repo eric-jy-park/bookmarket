@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -41,12 +41,14 @@ export class CategoriesService {
           id: userId,
         },
       },
+      order: { createdAt: 'ASC' },
     });
   }
 
   async findAllByUsername(username: User['username']) {
     const user = await this.usersService.findOneByUsername(username);
 
+    if (!user) throw new NotFoundException('User does not exist');
     if (!user?.isPublic) throw new ForbiddenException("This user's profile is private");
 
     return this.categoryRepository.find({
@@ -55,6 +57,7 @@ export class CategoriesService {
           username,
         },
       },
+      order: { createdAt: 'ASC' },
     });
   }
 

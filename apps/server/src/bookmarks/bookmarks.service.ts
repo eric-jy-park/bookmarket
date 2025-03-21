@@ -2,6 +2,8 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { Category } from 'src/categories/entities/category.entity';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
@@ -13,6 +15,8 @@ export class BookmarksService {
     @InjectRepository(Bookmark)
     private bookmarksRepository: Repository<Bookmark>,
     private categoriesService: CategoriesService,
+
+    private readonly usersService: UsersService,
   ) {}
 
   async createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
@@ -36,6 +40,26 @@ export class BookmarksService {
   findAllBookmarks(userId: string, categoryName?: Category['name']) {
     const where: FindOptionsWhere<Bookmark> = {
       user: { id: userId },
+    };
+
+    if (categoryName) {
+      where.category = { name: categoryName };
+    }
+
+    return this.bookmarksRepository.find({
+      where,
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findAllBookmarksByUsername(username: User['username'], categoryName?: Category['name']) {
+    const user = await this.usersService.findOneByUsername(username);
+
+    if (!user) throw new NotFoundException('User does not exist');
+    if (!user?.isPublic) throw new ForbiddenException("This user's profile is private");
+
+    const where: FindOptionsWhere<Bookmark> = {
+      user: { username },
     };
 
     if (categoryName) {
@@ -87,19 +111,19 @@ export class BookmarksService {
       throw new ForbiddenException("This bookmark doesn't belong to the user");
     }
 
-    let category: Category | undefined;
-
     if (categoryId) {
-      category = await this.categoriesService.findOne(categoryId);
+      const category = await this.categoriesService.findOne(categoryId);
 
       if (category.user.id !== userId) {
         throw new ForbiddenException("This category doesn't belong to the user");
       }
+
+      bookmark.category = category;
+    } else {
+      bookmark.category = undefined;
     }
 
-    return this.bookmarksRepository.update(id, {
-      category,
-    });
+    return this.bookmarksRepository.save(bookmark);
   }
 
   async removeBookmark(userId: string, id: string) {

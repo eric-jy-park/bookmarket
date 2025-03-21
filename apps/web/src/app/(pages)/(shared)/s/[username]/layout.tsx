@@ -13,7 +13,7 @@ export default async function SharedLayout({
   return (
     <>
       <SharedTopNavBar categories={categories} sharedUsername={username} />
-      <main className='mx-auto flex w-full max-w-2xl flex-col gap-4 pb-10'>{children}</main>
+      <main className='mx-auto flex w-full max-w-2xl flex-col gap-4 py-4 pb-10'>{children}</main>
     </>
   );
 }

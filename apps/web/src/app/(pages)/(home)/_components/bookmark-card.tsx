@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
@@ -11,13 +12,16 @@ import { BookmarkCardTitleInput } from './bookmark-card-title-input';
 import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
 import { BookmarkContextMenuDrawer } from './bookmark-context-menu-drawer';
 
+const MotionLink = motion(Link);
+
 interface BookmarkCardProps {
   bookmark: Bookmark;
   isActive: boolean;
   isBlurred: boolean;
+  isViewOnly: boolean;
 }
 
-export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProps) => {
+export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: BookmarkCardProps) => {
   const router = useRouter();
   const [isLongPressing, setIsLongPressing] = React.useState(false);
   const longPressTimer = React.useRef<number | null>(null);
@@ -100,6 +104,10 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
       longPressTimer.current = null;
     }
   }, [animationControls, handleCardClick]);
+
+  if (isViewOnly) {
+    return <ViewOnlyBookmarkCard bookmark={bookmark} />;
+  }
 
   return (
     <>
@@ -220,3 +228,47 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred }: BookmarkCardProp
     </>
   );
 };
+
+const ViewOnlyBookmarkCard = React.memo(({ bookmark }: { bookmark: Bookmark }) => {
+  const animationControls = useAnimation();
+  return (
+    <MotionLink
+      href={bookmark.url}
+      target='_blank'
+      key={bookmark.id}
+      className={cn('flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted')}
+      animate={animationControls}
+    >
+      {bookmark.faviconUrl ? (
+        <Image
+          src={bookmark.faviconUrl}
+          alt={bookmark.title ?? ''}
+          width={16}
+          height={16}
+          className='shrink-0 overflow-hidden'
+          unoptimized={true}
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+          }}
+        />
+      ) : (
+        <Logo className='h-4 w-4 shrink-0' includeText={false} />
+      )}
+      <div className='flex min-w-0 flex-1 flex-col'>
+        <p className='truncate text-sm font-medium'>{bookmark.title ?? ''}</p>
+        <span className='truncate text-xs text-muted-foreground'>
+          {new URL(bookmark.url).hostname.replace('www.', '')}
+        </span>
+      </div>
+      <span className='shrink-0 text-xs text-muted-foreground'>
+        {new Date(bookmark.createdAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        })}
+      </span>
+    </MotionLink>
+  );
+});
+
+ViewOnlyBookmarkCard.displayName = 'ViewOnlyBookmarkCard';

@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { jwtConfig } from 'src/iam/config/jwt.config';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from 'src/categories/categories.module';
 import { Category } from 'src/categories/entities/category.entity';
+import { jwtConfig } from 'src/iam/config/jwt.config';
+import { UsersModule } from 'src/users/users.module';
 import { BookmarksController } from './bookmarks.controller';
-import { Bookmark } from './entities/bookmark.entity';
 import { BookmarksService } from './bookmarks.service';
+import { Bookmark } from './entities/bookmark.entity';
 
 @Module({
   controllers: [BookmarksController],
@@ -17,6 +18,7 @@ import { BookmarksService } from './bookmarks.service';
     ConfigModule.forFeature(jwtConfig),
     TypeOrmModule.forFeature([Bookmark, Category]),
     CategoriesModule,
+    UsersModule,
   ],
   exports: [BookmarksService],
 })

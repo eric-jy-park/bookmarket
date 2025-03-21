@@ -1,8 +1,8 @@
-import { BookmarkInput } from './_components/bookmark-input';
-import { BookmarkList } from './_components/bookmark-list';
 import { getBookmarks } from '~/app/_common/actions/bookmark.action';
 import { getCategories } from '~/app/_common/actions/category.action';
 import { ServerPrefetcher } from '~/app/_common/providers/server-prefetcher';
+import { BookmarkInput } from './_components/bookmark-input';
+import { BookmarkList } from './_components/bookmark-list';
 
 export const viewport = {
   width: 'device-width',
@@ -28,7 +28,7 @@ export default async function HomePage() {
     >
       <h1 className='sr-only'>{`Bookmarket - Buy and Sell Expert's Bookmark Collections`}</h1>
       <BookmarkInput />
-      <BookmarkList bookmarks={bookmarks} />
+      <BookmarkList bookmarks={bookmarks} isViewOnly={false} />
     </ServerPrefetcher>
   );
 }
