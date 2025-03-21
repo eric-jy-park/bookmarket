@@ -4,6 +4,28 @@ import { isAuthenticated, refreshNewAccessToken } from '~/app/_common/actions/au
 import { unauthenticatedRoutes } from '~/path';
 
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get('host');
+  const mainDomain = process.env.NEXT_PUBLIC_DOMAIN!;
+
+  if (
+    host &&
+    host.includes('.') &&
+    host.endsWith(mainDomain) &&
+    (!host.startsWith('www.') || !host.startsWith('api.'))
+  ) {
+    const subdomain = host.split('.')[0];
+
+    const protocol = request.nextUrl.protocol;
+    const newUrl = new URL(`/s/${subdomain}`, `${protocol}//${mainDomain}`);
+
+    newUrl.search = request.nextUrl.search;
+    if (request.nextUrl.pathname !== '/') {
+      newUrl.pathname = `${newUrl.pathname}${request.nextUrl.pathname}`;
+    }
+
+    return NextResponse.rewrite(newUrl);
+  }
+
   if (unauthenticatedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) return NextResponse.next();
 
   const auth = await isAuthenticated();
@@ -23,5 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  matcher: ['/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)'],
 };
