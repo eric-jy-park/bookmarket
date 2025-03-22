@@ -45,24 +45,26 @@ export const refreshNewAccessToken = async () => {
 };
 
 export const setAccessToken = async (accessToken: string) => {
-  'use server';
   const cookieStore = await cookies();
   cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
     maxAge: 604800,
     path: '/',
     httpOnly: true,
-    // domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
   });
 };
 
 export const setRefreshToken = async (refreshToken: string) => {
-  'use server';
   const cookieStore = await cookies();
   cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
     maxAge: 3024000,
     path: '/',
     httpOnly: true,
-    // domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
   });
 };
 
@@ -94,8 +96,16 @@ export const signOut = async () => {
   try {
     const cookieStore = await cookies();
 
-    cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
-    cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
+    cookieStore.delete({
+      name: ACCESS_TOKEN_COOKIE_NAME,
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    });
+    cookieStore.delete({
+      name: REFRESH_TOKEN_COOKIE_NAME,
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    });
   } catch (e) {
     Sentry.captureException(e);
   } finally {
