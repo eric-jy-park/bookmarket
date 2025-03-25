@@ -92,10 +92,23 @@ export default function UserSettingsDialog({
   }, [subdomainStatus]);
 
   const isProfileSaveable = React.useMemo(() => {
+    if (subdomainStatus === 'loading' || subdomainStatus === 'taken') return false;
     if (user.username?.length === 0) return false;
-    if (subdomainStatus !== 'available') return false;
+    if (
+      user.firstName === initialUser.firstName &&
+      user.lastName === initialUser.lastName &&
+      subdomainStatus === 'idle'
+    )
+      return false;
     return true;
-  }, [subdomainStatus, user.username]);
+  }, [
+    initialUser.firstName,
+    initialUser.lastName,
+    subdomainStatus,
+    user.firstName,
+    user.lastName,
+    user.username?.length,
+  ]);
 
   return (
     <motion.div
