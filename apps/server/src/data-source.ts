@@ -1,5 +1,5 @@
-import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
+import { DataSource } from 'typeorm';
 
 // Load environment variables from .env file
 config();
@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   // Use hardcoded relative paths for entity discovery
   entities: ['./dist/**/*.entity.js'],
   // FIXME: Should be set to false on prod
-  synchronize: process.env.NODE_ENV !== 'production',
+  synchronize: false,
   migrations: ['./dist/migrations/**/*.js'],
   migrationsTableName: 'migrations',
   migrationsRun: true,

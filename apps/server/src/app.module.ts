@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
-import { APP_FILTER } from '@nestjs/core';
-import { IamModule } from './iam/iam.module';
-import { UsersModule } from './users/users.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { CategoriesModule } from './categories/categories.module';
+import { IamModule } from './iam/iam.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { CategoriesModule } from './categories/categories.module';
       ssl: true,
       autoLoadEntities: true,
       // FIXME: Should be set to false on prod
-      synchronize: process.env.NODE_ENV !== 'production',
+      synchronize: false,
       migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
       migrationsTableName: 'migrations',
       migrationsRun: true,
