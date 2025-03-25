@@ -6,9 +6,21 @@ import { unauthenticatedRoutes } from '~/path';
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host');
   const mainDomain = process.env.NEXT_PUBLIC_DOMAIN!;
+  const pathname = request.nextUrl.pathname;
 
   // Log for debugging in production
-  console.log(`Middleware processing: Host=${host}, MainDomain=${mainDomain}`);
+  console.log(`Middleware processing: Host=${host}, MainDomain=${mainDomain}, Path=${pathname}`);
+
+  // Skip subdomain rewriting for static assets and images
+  const isStaticAsset =
+    pathname.match(/\.(jpe?g|png|gif|svg|webp|avif|ico|bmp|css|js)$/i) ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/_vercel/');
+
+  // Static assets should always be accessible
+  if (isStaticAsset) {
+    return NextResponse.next();
+  }
 
   if (
     host &&
