@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   // Log for debugging in production
   console.log(`Middleware processing: Host=${host}, MainDomain=${mainDomain}`);
 
-  if (host && host.includes('.') && host.endsWith(mainDomain) && !host.startsWith('www.') && !host.startsWith('api.')) {
+  if (host && host.includes('.') && host.endsWith(mainDomain) && !host.startsWith('www.') && !host.startsWith('api.') && !host.startsWith('bmkt.')) {
     // Logic for handling subdomains
     const subdomain = host.split('.')[0];
     console.log(`Detected subdomain: ${subdomain}`);
