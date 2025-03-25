@@ -36,7 +36,7 @@ export class CategoriesController {
     return this.categoriesService.remove(user.id, id);
   }
 
-  @Get('/s/:id')
+  @Get('/s/:username')
   @Auth(AuthType.None)
   findAllByUsername(@Param('username') username: User['username']) {
     return this.categoriesService.findAllByUsername(username);

@@ -23,7 +23,7 @@ export const SharedTopNavBar = async ({
         <span className='block md:hidden'>
           <Logo includeText={false} />
         </span>
-        <AnimatedTab categories={categories} />
+        <AnimatedTab categories={categories} isShared={true} />
         {user ? <UserAvatar user={user} /> : <Link href='/login'>Login</Link>}
       </nav>
     </aside>

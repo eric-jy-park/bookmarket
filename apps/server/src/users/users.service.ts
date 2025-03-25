@@ -1,4 +1,10 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { pgUniqueViolationErrorCode } from 'src/common/constants/error-code';
 import { Repository } from 'typeorm';
@@ -40,8 +46,12 @@ export class UsersService {
   }
 
   findOneByUsername(username: User['username']) {
-    return this.usersRepository.findOneBy({
-      username,
+    if (!username) throw new BadRequestException('Username is not provided');
+
+    return this.usersRepository.findOne({
+      where: {
+        username,
+      },
     });
   }
 

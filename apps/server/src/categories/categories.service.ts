@@ -54,7 +54,7 @@ export class CategoriesService {
     return this.categoryRepository.find({
       where: {
         user: {
-          username,
+          id: user.id,
         },
       },
       order: { createdAt: 'ASC' },

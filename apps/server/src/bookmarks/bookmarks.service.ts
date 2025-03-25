@@ -59,7 +59,7 @@ export class BookmarksService {
     if (!user?.isPublic) throw new ForbiddenException("This user's profile is private");
 
     const where: FindOptionsWhere<Bookmark> = {
-      user: { username },
+      user: { id: user.id },
     };
 
     if (categoryName) {

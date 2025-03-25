@@ -11,7 +11,7 @@ import { type Category } from '../interfaces/category.interface';
 import { AddCategoryButton } from './add-category-button';
 import { TextMorph } from './text-morph';
 
-export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
+export const AnimatedTab = ({ categories, isShared }: { categories: Category[]; isShared?: boolean }) => {
   const [category, setCategory] = useQueryState('c', parseAsString);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
   const activeTab = categories.find(tab => tab.name === category);
@@ -55,7 +55,7 @@ export const AnimatedTab = ({ categories }: { categories: Category[] }) => {
             </p>
           </button>
         ))}
-        {categories.length <= 5 && <AddCategoryButton />}
+        {!isShared && categories.length <= 5 && <AddCategoryButton />}
       </div>
 
       {/* Mobile */}
