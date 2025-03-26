@@ -8,7 +8,6 @@ export async function fixBrokenFavicon({ id, url }: Pick<Bookmark, 'id' | 'url'>
     await updateBookmark({
       id,
       faviconUrl: metadata.logo,
-      url: metadata.url,
       title: metadata.title,
       description: metadata.description,
     });
