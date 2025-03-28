@@ -3,7 +3,7 @@
 import { LogOutIcon, SettingsIcon, UserRoundIcon } from 'lucide-react';
 import React from 'react';
 import { type User } from '~/app/(pages)/(auth)/types';
-import { useAppState } from '~/app/(pages)/(home)/_state/store/use-app-state-store';
+import { useAppState } from '~/app/(pages)/(home)/home/_state/store/use-app-state-store';
 import { Avatar, AvatarFallback, AvatarImage } from '~/app/_core/components/avatar';
 import {
   DropdownMenu,

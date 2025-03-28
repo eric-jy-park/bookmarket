@@ -68,6 +68,6 @@ export const fetchGithubUserInfo = async (code: string) => {
   } catch (error) {
     Sentry.captureException(error);
   } finally {
-    redirect('/');
+    redirect('/home');
   }
 };
