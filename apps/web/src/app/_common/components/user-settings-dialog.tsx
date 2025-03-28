@@ -5,7 +5,7 @@ import { CheckIcon, Loader2Icon, LoaderCircleIcon, XIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { type User } from '~/app/(pages)/(auth)/types';
-import { updateUserProfileAction } from '~/app/(pages)/(home)/_actions/update-user.action';
+import { updateUserProfileAction } from '~/app/(pages)/(home)/home/_actions/update-user.action';
 
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';

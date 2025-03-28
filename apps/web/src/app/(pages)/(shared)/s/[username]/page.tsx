@@ -1,4 +1,4 @@
-import { BookmarkList } from '~/app/(pages)/(home)/_components/bookmark-list';
+import { BookmarkList } from '~/app/(pages)/(home)/home/_components/bookmark-list';
 import { getSharedUsersBookmarks } from '../../_actions/shared.actions';
 
 const SharedUserPage = async ({ params }: { params: Promise<{ username: string }> }) => {

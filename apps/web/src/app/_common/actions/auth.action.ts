@@ -99,6 +99,6 @@ export const signOut = async () => {
   } catch (e) {
     Sentry.captureException(e);
   } finally {
-    redirect('/login');
+    redirect('/');
   }
 };

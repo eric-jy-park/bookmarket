@@ -21,6 +21,6 @@ export const loginUser = async (state: null, formData: FormData) => {
   } catch (error) {
     throw new Error(JSON.stringify(error));
   } finally {
-    redirect('/');
+    redirect('/home');
   }
 };

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useAppState } from '~/app/(pages)/(home)/_state/store/use-app-state-store';
+import { useAppState } from '~/app/(pages)/(home)/home/_state/store/use-app-state-store';
 import { Dialog } from '~/app/_core/components/dialog';
 import { cn } from '~/app/_core/utils/cn';
 

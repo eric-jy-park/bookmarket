@@ -42,6 +42,6 @@ export const fetchGoogleUserInfo = async (codeResponse: GoogleTokenResponse) => 
   } catch (error) {
     Sentry.captureException(error);
   } finally {
-    redirect('/');
+    redirect('/home');
   }
 };

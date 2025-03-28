@@ -5,7 +5,7 @@ import { FolderIcon } from 'lucide-react';
 import { parseAsString, useQueryState } from 'nuqs';
 
 import React from 'react';
-import { CategoryDrawerContent } from '~/app/(pages)/(home)/_components/category-drawer-content';
+import { CategoryDrawerContent } from '~/app/(pages)/(home)/home/_components/category-drawer-content';
 import { Drawer, DrawerTrigger } from '~/app/_core/components/drawer';
 import { type Category } from '../interfaces/category.interface';
 import { AddCategoryButton } from './add-category-button';
