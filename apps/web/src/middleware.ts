@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/nextjs';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated, refreshNewAccessToken } from '~/app/_common/actions/auth.action';
-import { unauthenticatedRoutes } from '~/path';
+import { authRelatedRoutes, unauthenticatedRoutes } from '~/path';
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host');
@@ -46,9 +46,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(newUrl);
   }
 
+  let auth: boolean | undefined;
+
+  if (authRelatedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+    auth = await isAuthenticated();
+    if (auth) return NextResponse.redirect(new URL('/home', request.url));
+  }
+
   if (unauthenticatedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) return NextResponse.next();
 
-  const auth = await isAuthenticated();
+  if (!auth) auth = await isAuthenticated();
 
   if (!auth) {
     try {
@@ -62,6 +69,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
