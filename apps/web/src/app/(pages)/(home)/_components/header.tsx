@@ -12,12 +12,15 @@ export const HomeHeader = () => {
   };
 
   return (
-    <div className='fixed left-0 top-0 flex h-32 w-full items-center justify-between px-8 backdrop-blur-xl'>
+    <div className='fixed left-0 top-0 flex h-20 w-full items-center justify-between px-8 backdrop-blur-xl md:h-32'>
       <div className='flex items-center gap-2'>
-        <Logo includeText={false} className='z-10 size-12' />
-        <h1 className='text-3xl font-black'>Bookmarket</h1>
+        <Logo includeText={false} className='z-10 size-12 shrink-0' />
+        <h1 className='hidden font-black sm:block sm:text-2xl md:text-3xl'>Bookmarket</h1>
       </div>
-      <Button onClick={handleJoinNowButtonClick} className='h-14 w-40 rounded-full bg-black text-xl'>
+      <Button
+        onClick={handleJoinNowButtonClick}
+        className='text-md h-10 w-28 rounded-full bg-black md:h-14 md:w-40 md:text-xl'
+      >
         Join Now
       </Button>
     </div>
