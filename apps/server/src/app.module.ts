@@ -18,8 +18,12 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
-      ssl: true,
+      port: parseInt(process.env.POSTGRES_PORT ?? '5432', 10),
+      host: process.env.POSTGRES_HOST,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_NAME,
+
       autoLoadEntities: true,
       // FIXME: Should be set to false on prod
       synchronize: false,

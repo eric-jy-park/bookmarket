@@ -5,9 +5,12 @@ import { DataSource } from 'typeorm';
 config();
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  url: process.env.DATABASE_URL,
-  ssl: true,
-  // Use hardcoded relative paths for entity discovery
+  port: parseInt(process.env.POSTGRES_PORT ?? '5432', 10),
+  host: process.env.POSTGRES_HOST,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_NAME,
+
   entities: ['./dist/**/*.entity.js'],
   // FIXME: Should be set to false on prod
   synchronize: false,
