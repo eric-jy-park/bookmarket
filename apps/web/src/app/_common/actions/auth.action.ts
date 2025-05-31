@@ -26,8 +26,8 @@ export const refreshNewAccessToken = async () => {
       })
       .json();
 
-    setAccessToken(tokens.accessToken);
-    setRefreshToken(tokens.refreshToken);
+    await setAccessToken(tokens.accessToken);
+    await setRefreshToken(tokens.refreshToken);
     return tokens;
   } catch (error: any) {
     Sentry.captureException('Failed to refresh token:', error);
@@ -47,22 +47,49 @@ export const refreshNewAccessToken = async () => {
 export const setAccessToken = async (accessToken: string) => {
   'use server';
   const cookieStore = await cookies();
-  cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-    maxAge: 604800,
+
+  // Check if we're in a container/localhost environment
+  const isLocalhost =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_DOMAIN?.includes('localhost') ||
+    !process.env.NEXT_PUBLIC_DOMAIN;
+
+  const cookieOptions = {
+    maxAge: 604800, // 7 days
     path: '/',
     httpOnly: true,
-    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    secure: process.env.NODE_ENV === 'production' && !isLocalhost,
+    sameSite: 'lax' as const,
+    domain: isLocalhost ? undefined : `.${process.env.NEXT_PUBLIC_DOMAIN}`,
+  };
+
+  console.log('Setting access token cookie:', {
+    isLocalhost,
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+    cookieOptions,
   });
+
+  cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieOptions);
 };
 
 export const setRefreshToken = async (refreshToken: string) => {
   'use server';
   const cookieStore = await cookies();
+
+  // Check if we're in a container/localhost environment
+  const isLocalhost =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_DOMAIN?.includes('localhost') ||
+    !process.env.NEXT_PUBLIC_DOMAIN;
+
   cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
-    maxAge: 3024000,
+    maxAge: 3024000, // 35 days
     path: '/',
     httpOnly: true,
-    domain: process.env.NODE_ENV === 'production' ? `.${process.env.NEXT_PUBLIC_DOMAIN}` : undefined,
+    secure: process.env.NODE_ENV === 'production' && !isLocalhost,
+    sameSite: 'lax',
+    domain: isLocalhost ? undefined : `.${process.env.NEXT_PUBLIC_DOMAIN}`,
   });
 };
 
