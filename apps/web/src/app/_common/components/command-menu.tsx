@@ -3,7 +3,7 @@
 import '~/styles/raycast.scss';
 
 import { useQuery } from '@tanstack/react-query';
-import { FolderIcon, PlusIcon, SettingsIcon } from 'lucide-react';
+import { FolderIcon } from 'lucide-react';
 import { parseAsString, useQueryState } from 'nuqs';
 import React from 'react';
 
@@ -16,14 +16,10 @@ import {
   CommandList,
   CommandSeparator,
 } from 'cmdk';
-import { useAppState } from '~/app/(pages)/(home)/home/_state/store/use-app-state-store';
 import { cn } from '~/app/_core/utils/cn';
-import { getMe } from '../actions/user.action';
-import { modalIds } from '../constants/modal-id.constants';
 import { bookmarksQuery } from '../state/query/bookmark.query';
 import { categoriesQuery } from '../state/query/category.query';
 import { Logo } from './logo';
-import UserSettingsDialog from './user-settings-dialog';
 
 const INITIAL_BOOKMARK_LIMIT = 8;
 
@@ -31,14 +27,9 @@ export function CommandMenu() {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [, setCategory] = useQueryState('c', parseAsString);
-  const { openModal, closeModal } = useAppState();
 
   const { data: bookmarks } = useQuery(bookmarksQuery());
   const { data: categories } = useQuery(categoriesQuery());
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: getMe,
-  });
 
   const displayedBookmarks = React.useMemo(() => {
     if (!bookmarks) return [];
@@ -54,26 +45,6 @@ export function CommandMenu() {
     return bookmarks.slice(0, INITIAL_BOOKMARK_LIMIT);
   }, [bookmarks, search]);
 
-  const openSettings = React.useCallback(() => {
-    if (user) {
-      openModal({
-        id: modalIds.userSettings,
-        content: (
-          <UserSettingsDialog onCloseClick={() => closeModal({ id: modalIds.userSettings })} initialUser={user} />
-        ),
-      });
-      setOpen(false);
-    }
-  }, [closeModal, openModal, user]);
-
-  const openAddCategory = React.useCallback(() => {
-    const addCategoryButton = document.querySelector('[data-add-category-trigger]') as HTMLElement;
-    if (addCategoryButton) {
-      addCategoryButton.click();
-      setOpen(false);
-    }
-  }, []);
-
   const handleCategorySelect = React.useCallback(
     (categoryName: string) => {
       setCategory(categoryName);
@@ -83,7 +54,7 @@ export function CommandMenu() {
   );
 
   const handleBookmarkOpen = React.useCallback((url: string) => {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
     setOpen(false);
   }, []);
 
@@ -161,23 +132,6 @@ export function CommandMenu() {
               </CommandGroup>
             </>
           )}
-
-          <CommandSeparator />
-
-          <CommandGroup heading='Actions'>
-            {categories && categories.length <= 5 && (
-              <CommandItem value='action-add-category' onSelect={openAddCategory}>
-                <PlusIcon className={cn('mr-2 h-4 w-4')} />
-                <span>Add Category</span>
-              </CommandItem>
-            )}
-            {user && (
-              <CommandItem value='action-settings' onSelect={openSettings}>
-                <SettingsIcon className={cn('mr-2 h-4 w-4')} />
-                <span>Settings</span>
-              </CommandItem>
-            )}
-          </CommandGroup>
         </CommandList>
 
         {/* Footer */}

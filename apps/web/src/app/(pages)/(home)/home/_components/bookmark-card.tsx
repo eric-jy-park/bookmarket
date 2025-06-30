@@ -46,7 +46,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
 
   const handleCardClick = React.useCallback(() => {
     if (isActive || isBlurred) return;
-    window.open(bookmark.url, '_blank');
+    window.open(bookmark.url, '_blank', 'noopener,noreferrer');
   }, [bookmark.url, isActive, isBlurred]);
 
   const startLongPress = React.useCallback(

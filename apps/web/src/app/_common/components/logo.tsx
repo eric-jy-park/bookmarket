@@ -12,7 +12,7 @@ export const Logo = ({
   className?: string;
   includeText?: boolean;
   sharedUsername?: string;
-  isLink: boolean;
+  isLink?: boolean;
 }) => {
   const logo = React.useMemo(() => {
     return (
