@@ -1,19 +1,19 @@
+import { FolderIcon } from 'lucide-react';
 import Image from 'next/image';
+import React from 'react';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import {
   Drawer,
-  DrawerHeader,
   DrawerContent,
-  DrawerTitle,
   DrawerDescription,
-  DrawerTrigger,
+  DrawerHeader,
   DrawerNestedRoot,
+  DrawerTitle,
+  DrawerTrigger,
 } from '~/app/_core/components/drawer';
-import { useBookmarkContext } from '../_hooks/use-bookmark-context';
-import { FolderIcon } from 'lucide-react';
 import { useBookmarkCategory } from '../_hooks/use-bookmark-category';
+import { useBookmarkContext } from '../_hooks/use-bookmark-context';
 import { CategoryDrawerContent } from './category-drawer-content';
-import React from 'react';
 
 export const BookmarkContextMenuDrawer = ({
   bookmark,
