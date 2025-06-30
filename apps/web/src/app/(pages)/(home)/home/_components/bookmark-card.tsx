@@ -46,7 +46,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
 
   const handleCardClick = React.useCallback(() => {
     if (isActive || isBlurred) return;
-    window.open(bookmark.url, '_blank');
+    window.open(bookmark.url, '_blank', 'noopener,noreferrer');
   }, [bookmark.url, isActive, isBlurred]);
 
   const startLongPress = React.useCallback(
@@ -140,7 +140,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
                   }}
                 />
               ) : (
-                <Logo className='h-4 w-4 shrink-0' includeText={false} />
+                <Logo className='h-4 w-4 shrink-0' includeText={false} isLink={false} />
               )}
               <div className='flex min-w-0 flex-1 flex-col'>
                 {isActive ? (
@@ -193,7 +193,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
             }}
           />
         ) : (
-          <Logo className='h-4 w-4 shrink-0' includeText={false} />
+          <Logo className='h-4 w-4 shrink-0' includeText={false} isLink={false} />
         )}
         <div className='flex min-w-0 flex-1 flex-col'>
           {isActive ? (
@@ -253,7 +253,7 @@ const ViewOnlyBookmarkCard = React.memo(({ bookmark }: { bookmark: Bookmark }) =
           }}
         />
       ) : (
-        <Logo className='h-4 w-4 shrink-0' includeText={false} />
+        <Logo className='h-4 w-4 shrink-0' includeText={false} isLink={false} />
       )}
       <div className='flex min-w-0 flex-1 flex-col'>
         <p className='truncate text-sm font-medium'>{bookmark.title ?? ''}</p>
