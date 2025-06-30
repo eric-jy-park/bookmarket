@@ -1,15 +1,14 @@
 'use client';
 
+import Link from 'next/link';
+import { useActionState } from 'react';
+import { GithubIcon, GoogleIcon } from '~/app/_common/components/icons';
+import { Logo } from '~/app/_common/components/logo';
 import { Button } from '~/app/_core/components/button';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
-import Link from 'next/link';
-import { Logo } from '~/app/_common/components/logo';
-import { GoogleIcon } from '~/app/_common/components/icons';
-import { GithubIcon } from '~/app/_common/components/icons';
-import { useOAuth } from '../_hooks/use-oauth';
-import { useActionState } from 'react';
 import { createUser } from '../_actions/create-user.action';
+import { useOAuth } from '../_hooks/use-oauth';
 
 export default function SignupPage() {
   const { googleLogin, githubLogin } = useOAuth();
@@ -20,9 +19,7 @@ export default function SignupPage() {
       <form action={formAction} className='max-w-92 m-auto h-fit w-full'>
         <div className='p-6'>
           <div className='flex flex-col'>
-            <Link href='/' aria-label='home' className='w-fit'>
-              <Logo />
-            </Link>
+            <Logo />
             <h1 className='mb-1 mt-4 text-xl font-semibold'>Jump into Bookmarket</h1>
             <p>Create an account to continue</p>
           </div>
