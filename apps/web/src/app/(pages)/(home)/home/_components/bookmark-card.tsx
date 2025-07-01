@@ -1,13 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import { cn } from '~/app/_core/utils/cn';
-import { fixBrokenFavicon } from '../_actions/fix-broken-favicon.action';
+import { useBookmarkContext } from '../_hooks/use-bookmark-context';
 import { BookmarkCardTitleInput } from './bookmark-card-title-input';
 import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
 import { BookmarkContextMenuDrawer } from './bookmark-context-menu-drawer';
@@ -22,7 +20,6 @@ interface BookmarkCardProps {
 }
 
 export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: BookmarkCardProps) => {
-  const router = useRouter();
   const [isLongPressing, setIsLongPressing] = React.useState(false);
   const longPressTimer = React.useRef<number | null>(null);
   const longPressStartTime = React.useRef<number>(0);
@@ -32,21 +29,8 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
     y: 0,
   });
 
-  const { mutate } = useMutation({
-    mutationFn: () => fixBrokenFavicon({ id: bookmark.id }),
-    onSuccess: () => {
-      setTimeout(() => {
-        router.refresh();
-      }, 3000);
-    },
-  });
-
-  // FIXME: This is a hack to migrate the favicon url to the new provider
-  React.useEffect(() => {
-    if (!bookmark.faviconUrl || bookmark.faviconUrl.startsWith('https://icon.horse')) {
-      mutate();
-    }
-  }, [bookmark.faviconUrl, mutate]);
+  // Get refetching state for this bookmark
+  const { isCurrentBookmarkRefetching } = useBookmarkContext({ bookmark });
 
   const handleCardClick = React.useCallback(() => {
     if (isActive || isBlurred) return;
@@ -126,6 +110,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
                 'flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted',
                 isActive && 'bg-muted',
                 isBlurred && 'pointer-events-none blur-sm',
+                !isViewOnly && isCurrentBookmarkRefetching && 'blur-sm',
               )}
               animate={animationControls}
               initial={{ scale: isActive ? 1.05 : 1 }}
@@ -174,6 +159,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
         className={cn(
           'flex w-full cursor-pointer select-none items-center gap-3 rounded-md p-2 transition-all sm:hidden',
           isLongPressing && 'bg-muted',
+          !isViewOnly && isCurrentBookmarkRefetching && 'opacity-50 shadow-md ring-2 ring-blue-200 dark:ring-blue-800',
         )}
         animate={animationControls}
         initial={{ scale: isActive ? 1.05 : 1 }}

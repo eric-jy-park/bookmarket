@@ -70,6 +70,19 @@ export class BookmarksController {
     return { message: 'Enhancement queued', bookmarkId: id };
   }
 
+  @Post(':id/refetch')
+  @Auth(AuthType.Cookie)
+  async refetchBookmark(@ActiveUser('id') userId: string, @Param('id') id: string) {
+    // Verify user owns this bookmark
+    const bookmark = await this.bookmarksService.findOneBookmark(userId, id);
+    if (!bookmark) {
+      throw new NotFoundException('Bookmark not found');
+    }
+
+    // Refetch metadata immediately and return updated bookmark
+    return this.bookmarksService.refetchBookmarkMetadata(userId, id);
+  }
+
   @Get('/s/:username')
   @Auth(AuthType.None)
   findAllBookmarksByUsername(

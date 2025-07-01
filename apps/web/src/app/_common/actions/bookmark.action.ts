@@ -111,3 +111,15 @@ export const deleteBookmark = async ({ id }: { id: string }) => {
     },
   });
 };
+
+export const refetchBookmark = async ({ id }: { id: string }) => {
+  const response: Bookmark = await http
+    .post(`bookmarks/${id}/refetch`, {
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
+    })
+    .json();
+
+  return response;
+};

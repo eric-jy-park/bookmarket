@@ -8,6 +8,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
+import { MetadataService } from './services/metadata.service';
 
 @Injectable()
 export class BookmarksService {
@@ -15,8 +16,8 @@ export class BookmarksService {
     @InjectRepository(Bookmark)
     private bookmarksRepository: Repository<Bookmark>,
     private categoriesService: CategoriesService,
-
     private readonly usersService: UsersService,
+    private readonly metadataService: MetadataService,
   ) {}
 
   async createBookmark(createBookmarkDto: CreateBookmarkDto, userId: string) {
@@ -134,5 +135,40 @@ export class BookmarksService {
     }
 
     return this.bookmarksRepository.delete(id);
+  }
+
+  async refetchBookmarkMetadata(userId: string, id: string) {
+    const bookmark = await this.findOneBookmark(userId, id);
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException("This bookmark doesn't belong to the user");
+    }
+
+    try {
+      const metadata = await this.metadataService.fetchMetadata(bookmark.url);
+
+      const updateData: Partial<Bookmark> = {};
+
+      if (metadata.title && metadata.title.trim()) {
+        updateData.title = metadata.title.trim();
+      }
+
+      if (metadata.description && metadata.description.trim()) {
+        updateData.description = metadata.description.trim();
+      }
+
+      if (metadata.logo !== undefined) {
+        updateData.faviconUrl = metadata.logo?.trim() || undefined;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await this.bookmarksRepository.update(id, updateData);
+      }
+
+      return this.findOneBookmark(userId, id);
+    } catch (error) {
+      console.error(`Failed to refetch metadata for bookmark ${id}:`, error);
+      throw new Error('Failed to refetch bookmark metadata');
+    }
   }
 }

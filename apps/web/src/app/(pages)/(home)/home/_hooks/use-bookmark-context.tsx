@@ -1,17 +1,23 @@
 import { useBookmarkDelete } from './use-bookmark-delete';
 
-import { CopyIcon, TrashIcon } from 'lucide-react';
+import { CopyIcon, RefreshCwIcon, TrashIcon } from 'lucide-react';
 
 import { PencilIcon } from 'lucide-react';
 import React from 'react';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import { useBookmarkStore } from '../_state/store/use-bookmark-store';
 import { useBookmarkCopy } from './use-bookmark-copy';
+import { useBookmarkRefetch } from './use-bookmark-refetch';
+
 export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
   const { handleDelete } = useBookmarkDelete();
   const { handleCopy } = useBookmarkCopy();
+  const { handleRefetch } = useBookmarkRefetch();
+  const { refetchingBookmarkId } = useBookmarkStore();
 
   const { setActiveBookmarkId, activeBookmarkId } = useBookmarkStore();
+
+  const isCurrentBookmarkRefetching = refetchingBookmarkId === bookmark.id;
 
   const menuItems = React.useMemo(
     () => [
@@ -36,6 +42,14 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         disabled: false,
       },
       {
+        icon: RefreshCwIcon,
+        label: 'Refetch',
+        onClick: () => {
+          handleRefetch(bookmark.id);
+        },
+        disabled: isCurrentBookmarkRefetching,
+      },
+      {
         icon: TrashIcon,
         label: 'Delete',
         onClick: () => {
@@ -44,8 +58,17 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         disabled: false,
       },
     ],
-    [activeBookmarkId, bookmark.id, bookmark.url, handleCopy, handleDelete, setActiveBookmarkId],
+    [
+      activeBookmarkId,
+      bookmark.id,
+      bookmark.url,
+      handleCopy,
+      handleDelete,
+      handleRefetch,
+      isCurrentBookmarkRefetching,
+      setActiveBookmarkId,
+    ],
   );
 
-  return { menuItems };
+  return { menuItems, isCurrentBookmarkRefetching };
 };
