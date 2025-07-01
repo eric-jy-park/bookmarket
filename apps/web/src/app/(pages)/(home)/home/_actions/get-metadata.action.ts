@@ -1,68 +1,47 @@
 'use server';
 
-import urlMetadata from 'url-metadata';
 import * as Sentry from '@sentry/nextjs';
 import { type UrlMetadata } from '~/app/_common/interfaces/metadata.interface';
-import ky from 'ky';
+import { getAuthCookie } from '~/app/_common/utils/get-auth-cookie';
+import { http } from '~/app/_common/utils/http';
 
-interface MetadataResponse {
-  data: UrlMetadata;
-}
-
-const options = {
-  requestHeaders: {
-    Accept:
-      'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-    'Accept-Encoding': 'gzip',
-    'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
-    'Upgrade-Insecure-Requests': '1',
-    'User-Agent':
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  },
-};
-
-export async function getMetadata(url: string, isFallback = false) {
-  let metadata: UrlMetadata;
-
-  if (isFallback) {
-    const response = await getMetadataFallback(url);
-    return response.data;
-  }
-
+export async function getMetadata(url: string) {
   try {
-    const response = await urlMetadata(url, options);
-    metadata = {
-      title: response.title,
-      description: response.description,
-      url: response.url,
-    };
+    const metadata = await http
+      .get('bookmarks/metadata', {
+        searchParams: { url },
+        headers: {
+          Cookie: await getAuthCookie(),
+        },
+        timeout: 15000,
+        retry: 1,
+      })
+      .json<UrlMetadata>();
+
+    return metadata;
   } catch (error) {
-    Sentry.captureException('url-metadata failed, falling back to metadata vision', {
+    Sentry.captureException(error, {
+      tags: { action: 'get-metadata' },
       extra: {
+        message: 'Failed to fetch metadata from server',
         url,
         error,
       },
     });
-
-    const response = await getMetadataFallback(url);
-
-    metadata = {
-      title: response.data.title,
-      description: response.data.description,
-      url: response.data.url,
+    // Fallback: return basic metadata from URL
+    return {
+      title: extractTitleFromUrl(url),
+      description: '',
+      url: url,
     };
   }
-
-  return metadata;
 }
 
-export async function getMetadataFallback(url: string) {
-  const response = await ky
-    .get<MetadataResponse>(`https://og.metadata.vision/${url}`, {
-      timeout: 30000,
-      retry: 2,
-    })
-    .json();
-
-  return response;
+function extractTitleFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+    return urlObj.hostname.replace('www.', '');
+  } catch {
+    return url;
+  }
 }

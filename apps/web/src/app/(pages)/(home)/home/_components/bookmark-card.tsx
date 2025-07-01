@@ -33,8 +33,12 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
   });
 
   const { mutate } = useMutation({
-    mutationFn: () => fixBrokenFavicon({ id: bookmark.id, url: bookmark.url }),
-    onSuccess: () => router.refresh(),
+    mutationFn: () => fixBrokenFavicon({ id: bookmark.id }),
+    onSuccess: () => {
+      setTimeout(() => {
+        router.refresh();
+      }, 3000);
+    },
   });
 
   // FIXME: This is a hack to migrate the favicon url to the new provider

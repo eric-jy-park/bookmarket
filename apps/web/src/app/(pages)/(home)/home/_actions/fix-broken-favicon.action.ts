@@ -1,19 +1,21 @@
-import { updateBookmark } from '~/app/_common/actions/bookmark.action';
-import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
-import { getMetadata } from './get-metadata.action';
+'use server';
 
-export async function fixBrokenFavicon({ id, url }: Pick<Bookmark, 'id' | 'url'>) {
+import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { http } from '~/app/_common/utils/http';
+import { getAuthCookie } from '~/app/_common/utils/get-auth-cookie';
+
+export async function fixBrokenFavicon({ id }: Pick<Bookmark, 'id'>) {
   try {
-    const metadata = await getMetadata(url, true);
-    await updateBookmark({
-      id,
-      faviconUrl: metadata.logo,
-      title: metadata.title,
-      description: metadata.description,
+    // Use the new enhancement endpoint for better metadata
+    await http.post(`bookmarks/${id}/enhance`, {
+      headers: {
+        Cookie: await getAuthCookie(),
+      },
     });
+    
     return { success: true, id };
   } catch (error) {
-    console.error(`Error fixing favicon for bookmark ${id}:`, error);
+    console.error(`Error enhancing bookmark ${id}:`, error);
     return { success: false, error: String(error) };
   }
 }
