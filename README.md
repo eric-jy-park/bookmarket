@@ -80,7 +80,7 @@ orchestrated with Docker for seamless development and deployment.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Frontend (Next.js)                      │
+│                        Frontend (Next.js)                       │
 │  ┌─────────────────┐  ┌──────────────────┐  ┌─────────────────┐ │
 │  │  App Router     │  │  Server Actions  │  │  Client State   │ │
 │  │  (Pages)        │  │  (API Calls)     │  │  (Zustand)      │ │
@@ -94,7 +94,7 @@ orchestrated with Docker for seamless development and deployment.
                                    │ HTTP/REST API
                                    │
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Backend (NestJS)                        │
+│                        Backend (NestJS)                         │
 │  ┌─────────────────┐  ┌──────────────────┐  ┌─────────────────┐ │
 │  │  Controllers    │  │  Services        │  │  Guards &       │ │
 │  │  (REST API)     │  │  (Business Logic)│  │  Middleware     │ │
@@ -108,7 +108,7 @@ orchestrated with Docker for seamless development and deployment.
                                    │ SQL Queries
                                    │
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Database (PostgreSQL)                     │
+│                      Database (PostgreSQL)                      │
 │  ┌─────────────────┐  ┌──────────────────┐  ┌─────────────────┐ │
 │  │  Users          │  │  Bookmarks       │  │  Categories     │ │
 │  │  (Auth Data)    │  │  (URLs + Meta)   │  │  (Organization) │ │
