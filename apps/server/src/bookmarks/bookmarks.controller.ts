@@ -7,21 +7,56 @@ import { User } from 'src/users/entities/user.entity';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { MetadataEnhancementService } from './services/metadata-enhancement.service';
+import { MetadataService } from './services/metadata.service';
 
 @Controller('bookmarks')
 export class BookmarksController {
-  constructor(private readonly bookmarksService: BookmarksService) {}
+  constructor(
+    private readonly bookmarksService: BookmarksService,
+    private readonly metadataService: MetadataService,
+    private readonly metadataEnhancementService: MetadataEnhancementService,
+  ) {}
 
   @Post()
   @Auth(AuthType.Cookie)
-  createBookmark(@ActiveUser('id') userId: string, @Body() createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarksService.createBookmark(createBookmarkDto, userId);
+  async createBookmark(@ActiveUser('id') userId: string, @Body() createBookmarkDto: CreateBookmarkDto) {
+    const bookmark = await this.bookmarksService.createBookmark(createBookmarkDto, userId);
+
+    // Queue background metadata enhancement (fire and forget)
+    this.metadataEnhancementService.queueEnhancement(bookmark.id);
+
+    return bookmark;
   }
 
   @Get()
   @Auth(AuthType.Cookie)
   findAllBookmarks(@ActiveUser('id') userId: string, @Query('category') categoryName?: Category['name']) {
     return this.bookmarksService.findAllBookmarks(userId, categoryName);
+  }
+
+  @Get('metadata')
+  @Auth(AuthType.Cookie)
+  async getMetadata(@Query('url') url: string) {
+    if (!url) {
+      throw new Error('URL parameter is required');
+    }
+    return this.metadataService.fetchMetadata(url);
+  }
+
+  @Post(':id/enhance')
+  @Auth(AuthType.Cookie)
+  async enhanceBookmark(@ActiveUser('id') userId: string, @Param('id') id: string) {
+    // Verify user owns this bookmark
+    const bookmark = await this.bookmarksService.findOneBookmark(userId, id);
+    if (!bookmark) {
+      throw new Error('Bookmark not found');
+    }
+
+    // Queue enhancement (fire and forget)
+    this.metadataEnhancementService.queueEnhancement(id);
+
+    return { message: 'Enhancement queued', bookmarkId: id };
   }
 
   @Get('/s/:username')

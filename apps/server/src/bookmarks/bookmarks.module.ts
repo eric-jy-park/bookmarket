@@ -9,10 +9,12 @@ import { UsersModule } from 'src/users/users.module';
 import { BookmarksController } from './bookmarks.controller';
 import { BookmarksService } from './bookmarks.service';
 import { Bookmark } from './entities/bookmark.entity';
+import { MetadataService } from './services/metadata.service';
+import { MetadataEnhancementService } from './services/metadata-enhancement.service';
 
 @Module({
   controllers: [BookmarksController],
-  providers: [BookmarksService],
+  providers: [BookmarksService, MetadataService, MetadataEnhancementService],
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
