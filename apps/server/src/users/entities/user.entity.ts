@@ -39,6 +39,12 @@ export class User {
   @Column({ nullable: true })
   picture?: string;
 
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
   @OneToMany(() => Bookmark, bookmark => bookmark.user)
   bookmarks: Bookmark[];
 

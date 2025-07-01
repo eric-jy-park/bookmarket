@@ -1,14 +1,20 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { slotStatusQuery } from '../_store/queries/slot-status.query';
+import { SlotsCounter } from './slots-counter';
 
 export const HomeContent = () => {
   const router = useRouter();
+  const { data: slotStatus } = useQuery(slotStatusQuery());
 
   const handleJoinNowButtonClick = () => {
-    router.push('/login');
+    if (slotStatus?.canSignUp) {
+      router.push('/login');
+    }
   };
 
   const handleGithubButtonClick = () => {
@@ -35,6 +41,15 @@ export const HomeContent = () => {
       </motion.p>
 
       <motion.div
+        className='mt-4'
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.25 }}
+      >
+        <SlotsCounter />
+      </motion.div>
+
+      <motion.div
         className='mt-6 flex gap-4'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -42,9 +57,14 @@ export const HomeContent = () => {
       >
         <motion.button
           onClick={handleJoinNowButtonClick}
-          className='h-10 rounded-full bg-black px-5 text-sm font-bold text-white transition-colors hover:bg-gray-800 md:h-12 md:px-8 md:text-lg'
+          disabled={!slotStatus?.canSignUp}
+          className={`h-10 rounded-full px-5 text-sm font-bold transition-colors md:h-12 md:px-8 md:text-lg ${
+            slotStatus?.canSignUp
+              ? 'bg-black text-white hover:bg-gray-800'
+              : 'cursor-not-allowed bg-gray-400 text-white'
+          }`}
         >
-          Join Now
+          {slotStatus?.canSignUp ? 'Join Now' : 'Slots Full'}
         </motion.button>
         <motion.button
           onClick={handleGithubButtonClick}

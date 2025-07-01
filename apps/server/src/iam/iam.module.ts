@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SlotsModule } from 'src/slots/slots.module';
 import { User } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
 import { AuthenticationController } from './authentication/authentication.controller';
@@ -25,6 +26,7 @@ import { HashingService } from './hashing/hashing.service';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     UsersModule,
+    SlotsModule,
   ],
   providers: [
     {

@@ -6,6 +6,7 @@ import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { CategoriesModule } from './categories/categories.module';
 import { IamModule } from './iam/iam.module';
+import { SlotsModule } from './slots/slots.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { UsersModule } from './users/users.module';
     }),
     IamModule,
     CategoriesModule,
+    SlotsModule,
   ],
   providers: [
     {

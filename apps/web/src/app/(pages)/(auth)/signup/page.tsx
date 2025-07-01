@@ -1,18 +1,22 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
 import { GithubIcon, GoogleIcon } from '~/app/_common/components/icons';
 import { Logo } from '~/app/_common/components/logo';
+import { trackAuthEvent } from '~/app/_common/utils/analytics';
 import { Button } from '~/app/_core/components/button';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
-import { trackAuthEvent } from '~/app/_common/utils/analytics';
+import { SlotsCounter } from '../../(home)/_components/slots-counter';
+import { slotStatusQuery } from '../../(home)/_store/queries/slot-status.query';
 import { createUser } from '../_actions/create-user.action';
 import { useOAuth } from '../_hooks/use-oauth';
 
 export default function SignupPage() {
   const { googleLogin, githubLogin } = useOAuth();
+  const { data: slotStatus } = useQuery(slotStatusQuery());
   const [_, formAction, isPending] = useActionState(createUser, null);
 
   useEffect(() => {
@@ -27,20 +31,33 @@ export default function SignupPage() {
             <Logo />
             <h1 className='mb-1 mt-4 text-xl font-semibold'>Jump into Bookmarket</h1>
             <p>Create an account to continue</p>
+            <div className='mt-4 flex justify-center'>
+              <SlotsCounter />
+            </div>
           </div>
 
           <div className='mt-6 grid grid-cols-2 gap-3'>
-            <Button type='button' variant='outline' onClick={() => {
-              trackAuthEvent.oauthGoogle();
-              googleLogin();
-            }}>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={() => {
+                trackAuthEvent.oauthGoogle();
+                googleLogin();
+              }}
+              disabled={!slotStatus?.canSignUp}
+            >
               <GoogleIcon />
               <span>Google</span>
             </Button>
-            <Button type='button' variant='outline' onClick={() => {
-              trackAuthEvent.oauthGithub();
-              githubLogin();
-            }}>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={() => {
+                trackAuthEvent.oauthGithub();
+                githubLogin();
+              }}
+              disabled={!slotStatus?.canSignUp}
+            >
               <GithubIcon />
               <span>Github</span>
             </Button>
@@ -57,7 +74,7 @@ export default function SignupPage() {
               <Label htmlFor='email' className='block text-sm'>
                 Email
               </Label>
-              <Input type='email' required name='email' id='email' />
+              <Input type='email' required name='email' id='email' disabled={!slotStatus?.canSignUp} />
             </div>
 
             <div className='space-y-2'>
@@ -66,11 +83,18 @@ export default function SignupPage() {
                   Password
                 </Label>
               </div>
-              <Input type='password' required name='password' id='password' className='input sz-md variant-mixed' />
+              <Input
+                type='password'
+                required
+                name='password'
+                id='password'
+                className='input sz-md variant-mixed'
+                disabled={!slotStatus?.canSignUp}
+              />
             </div>
 
-            <Button className='w-full' type='submit' disabled={isPending}>
-              Sign Up
+            <Button className='w-full' type='submit' disabled={isPending || !slotStatus?.canSignUp}>
+              {slotStatus?.canSignUp ? 'Sign Up' : 'Slots Full'}
             </Button>
           </div>
         </div>

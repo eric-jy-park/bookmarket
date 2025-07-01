@@ -19,10 +19,9 @@ export const createUser = async (state: null, formData: FormData) => {
 
     await setAccessToken(response.accessToken);
     await setRefreshToken(response.refreshToken);
+    redirect('/home');
   } catch (error) {
     Sentry.captureException(error);
     throw new Error(JSON.stringify(error));
-  } finally {
-    redirect('/');
   }
 };
