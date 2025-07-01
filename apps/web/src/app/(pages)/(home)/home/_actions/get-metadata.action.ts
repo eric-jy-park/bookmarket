@@ -2,8 +2,8 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { type UrlMetadata } from '~/app/_common/interfaces/metadata.interface';
-import { http } from '~/app/_common/utils/http';
 import { getAuthCookie } from '~/app/_common/utils/get-auth-cookie';
+import { http } from '~/app/_common/utils/http';
 
 export async function getMetadata(url: string) {
   try {
@@ -20,8 +20,10 @@ export async function getMetadata(url: string) {
 
     return metadata;
   } catch (error) {
-    Sentry.captureException('Failed to fetch metadata from server', {
+    Sentry.captureException(error, {
+      tags: { action: 'get-metadata' },
       extra: {
+        message: 'Failed to fetch metadata from server',
         url,
         error,
       },

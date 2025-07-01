@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Category } from 'src/categories/entities/category.entity';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
@@ -39,7 +50,7 @@ export class BookmarksController {
   @Auth(AuthType.Cookie)
   async getMetadata(@Query('url') url: string) {
     if (!url) {
-      throw new Error('URL parameter is required');
+      throw new BadRequestException('URL parameter is required');
     }
     return this.metadataService.fetchMetadata(url);
   }
@@ -50,7 +61,7 @@ export class BookmarksController {
     // Verify user owns this bookmark
     const bookmark = await this.bookmarksService.findOneBookmark(userId, id);
     if (!bookmark) {
-      throw new Error('Bookmark not found');
+      throw new NotFoundException('Bookmark not found');
     }
 
     // Queue enhancement (fire and forget)
