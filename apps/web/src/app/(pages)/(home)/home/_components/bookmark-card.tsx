@@ -159,7 +159,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
         className={cn(
           'flex w-full cursor-pointer select-none items-center gap-3 rounded-md p-2 transition-all sm:hidden',
           isLongPressing && 'bg-muted',
-          !isViewOnly && isCurrentBookmarkRefetching && 'opacity-50 shadow-md ring-2 ring-blue-200 dark:ring-blue-800',
+          !isViewOnly && isCurrentBookmarkRefetching && 'blur-sm',
         )}
         animate={animationControls}
         initial={{ scale: isActive ? 1.05 : 1 }}
