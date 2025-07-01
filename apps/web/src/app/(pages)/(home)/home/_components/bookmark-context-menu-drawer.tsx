@@ -62,10 +62,16 @@ export const BookmarkContextMenuDrawer = ({
           {menuItems.map(item => (
             <div
               key={item.label}
-              className='flex cursor-pointer items-center gap-2.5 rounded-md px-6 py-4 text-sm hover:bg-muted'
+              className={`flex items-center gap-2.5 rounded-md px-6 py-4 text-sm ${
+                item.disabled 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : 'cursor-pointer hover:bg-muted'
+              }`}
               onClick={() => {
-                item.onClick();
-                onClose();
+                if (!item.disabled) {
+                  item.onClick();
+                  onClose();
+                }
               }}
             >
               <item.icon size={16} />
