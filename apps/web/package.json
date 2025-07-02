@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
-    "dev:dhost": "next dev -H myapp.local",
+    "dev": "NODE_ENV=development next dev",
+    "dev:dhost": "NODE_ENV=development next dev -H myapp.local",
     "lint": "next lint",
     "start": "next start",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\""
