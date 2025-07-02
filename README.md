@@ -268,6 +268,25 @@ bookmarket/
 
 ### Quick Start
 
+#### Option 1: Automated Setup (Recommended)
+
+```bash
+git clone https://github.com/yourusername/bookmarket.git
+cd bookmarket
+./setup.sh
+```
+
+The setup script will:
+
+- ✅ Check prerequisites (Node.js 18+, pnpm, Docker)
+- ✅ Install dependencies
+- ✅ Create environment files from examples
+- ✅ Start PostgreSQL database
+- ✅ Run database migrations
+- ✅ Provide next steps
+
+#### Option 2: Manual Setup
+
 1. **Clone the repository**
 
    ```bash

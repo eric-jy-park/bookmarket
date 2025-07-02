@@ -5,7 +5,7 @@ export class BookmarkCategory1741515061023 implements MigrationInterface {
     // Create Category table
     await queryRunner.query(`
       CREATE TABLE "category" (
-        "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
         "name" character varying NOT NULL,
         "userId" uuid,
         "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
