@@ -2,6 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
+import { trackAuthEvent } from '~/app/_common/utils/analytics';
 import { fetchGithubUserInfo } from '../../_actions/fetch-github-user-info.action';
 
 export default function GithubOAuthPage() {
@@ -13,6 +14,7 @@ export default function GithubOAuthPage() {
       return;
     }
 
+    trackAuthEvent.loginSuccess('github');
     void fetchGithubUserInfo(code);
   }, [code]);
 

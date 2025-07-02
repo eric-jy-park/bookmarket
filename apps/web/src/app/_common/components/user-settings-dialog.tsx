@@ -13,6 +13,7 @@ import { Button } from '~/app/_core/components/button';
 import { DialogFooter, DialogHeader, DialogTitle } from '~/app/_core/components/dialog';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
+import { trackProfileEvent } from '../utils/analytics';
 import { checkUsernameAvailable } from '../actions/user.action';
 import { useBodyScrollLock } from '../hooks/use-body-scroll-lock';
 import { UserProfile } from './user-profile';
@@ -29,8 +30,18 @@ export default function UserSettingsDialog({
   const formRef = React.useRef<HTMLFormElement>(null);
   const [user, setUser] = React.useState(() => initialUser);
 
+  React.useEffect(() => {
+    trackProfileEvent.editStart();
+  }, []);
+
   const { data: usernameCheck, isLoading: isUsernameChecking } = useQuery({
-    queryFn: () => checkUsernameAvailable(user.username!),
+    queryFn: () => {
+      const result = checkUsernameAvailable(user.username!);
+      result.then((data) => {
+        trackProfileEvent.usernameCheck(data.isAvailable);
+      });
+      return result;
+    },
     queryKey: ['username', user.username],
     enabled: !!user.username && user.username !== initialUser.username,
   });
@@ -39,13 +50,19 @@ export default function UserSettingsDialog({
     async (_: any, formData: FormData) => {
       const result = await updateUserProfileAction(formData);
       if (result?.success) {
+        const changedFields = [];
+        if (formData.get('firstName') !== initialUser.firstName) changedFields.push('firstName');
+        if (formData.get('lastName') !== initialUser.lastName) changedFields.push('lastName');
+        if (formData.get('username') !== initialUser.username) changedFields.push('username');
+        
+        trackProfileEvent.editSave(changedFields);
         router.refresh();
         onCloseClick();
         toast.success(result.success);
       }
       return result;
     },
-    [onCloseClick, router],
+    [onCloseClick, router, initialUser.firstName, initialUser.lastName, initialUser.username],
   );
 
   const [state, formAction, isPending] = React.useActionState(handleFormAction, {

@@ -5,6 +5,7 @@ import React from 'react';
 import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import { cn } from '~/app/_core/utils/cn';
+import { trackBookmarkEvent, trackSharingEvent } from '~/app/_common/utils/analytics';
 import { useBookmarkContext } from '../_hooks/use-bookmark-context';
 import { BookmarkCardTitleInput } from './bookmark-card-title-input';
 import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
@@ -34,6 +35,7 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
 
   const handleCardClick = React.useCallback(() => {
     if (isActive || isBlurred) return;
+    trackBookmarkEvent.open(bookmark.url, 'list');
     window.open(bookmark.url, '_blank', 'noopener,noreferrer');
   }, [bookmark.url, isActive, isBlurred]);
 
@@ -221,6 +223,15 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
 
 const ViewOnlyBookmarkCard = React.memo(({ bookmark }: { bookmark: Bookmark }) => {
   const animationControls = useAnimation();
+  const handleSharedBookmarkClick = React.useCallback(() => {
+    // Extract username from current URL path
+    const pathParts = window.location.pathname.split('/');
+    const username = pathParts[pathParts.indexOf('s') + 1];
+    if (username) {
+      trackSharingEvent.bookmarkClick(bookmark.url, username);
+    }
+  }, [bookmark.url]);
+  
   return (
     <MotionLink
       href={bookmark.url}
@@ -228,6 +239,7 @@ const ViewOnlyBookmarkCard = React.memo(({ bookmark }: { bookmark: Bookmark }) =
       key={bookmark.id}
       className={cn('flex w-full cursor-pointer items-center gap-3 rounded-md p-2 transition-all hover:bg-muted')}
       animate={animationControls}
+      onClick={handleSharedBookmarkClick}
     >
       {bookmark.faviconUrl ? (
         <Image

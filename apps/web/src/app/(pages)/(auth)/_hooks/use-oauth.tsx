@@ -2,10 +2,12 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { fetchGoogleUserInfo } from '../_actions/fetch-google-user-info.action';
 import * as Sentry from '@sentry/nextjs';
 import React from 'react';
+import { trackAuthEvent } from '~/app/_common/utils/analytics';
 
 export const useOAuth = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: codeResponse => {
+      trackAuthEvent.loginSuccess('google');
       void fetchGoogleUserInfo(codeResponse);
     },
     onError: error => Sentry.captureException(error),

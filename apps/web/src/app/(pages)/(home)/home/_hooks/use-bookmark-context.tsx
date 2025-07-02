@@ -5,6 +5,7 @@ import { CopyIcon, RefreshCwIcon, TrashIcon } from 'lucide-react';
 import { PencilIcon } from 'lucide-react';
 import React from 'react';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { trackBookmarkEvent } from '~/app/_common/utils/analytics';
 import { useBookmarkStore } from '../_state/store/use-bookmark-store';
 import { useBookmarkCopy } from './use-bookmark-copy';
 import { useBookmarkRefetch } from './use-bookmark-refetch';
@@ -25,6 +26,7 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         icon: CopyIcon,
         label: 'Copy',
         onClick: () => {
+          trackBookmarkEvent.copyUrl(bookmark.url);
           void handleCopy(bookmark.url);
         },
         disabled: false,
@@ -34,6 +36,7 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         label: 'Rename',
         onClick: () => {
           if (activeBookmarkId !== bookmark.id) {
+            trackBookmarkEvent.editTitle(bookmark.url);
             setActiveBookmarkId(bookmark.id);
           } else {
             setActiveBookmarkId(null);
@@ -45,6 +48,7 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         icon: RefreshCwIcon,
         label: 'Refetch',
         onClick: () => {
+          trackBookmarkEvent.refetch(bookmark.url);
           handleRefetch(bookmark.id);
         },
         disabled: isCurrentBookmarkRefetching,
@@ -53,6 +57,7 @@ export const useBookmarkContext = ({ bookmark }: { bookmark: Bookmark }) => {
         icon: TrashIcon,
         label: 'Delete',
         onClick: () => {
+          trackBookmarkEvent.delete(bookmark.url);
           void handleDelete(bookmark.id);
         },
         disabled: false,
