@@ -4,11 +4,19 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ../bookmarket-db-data:/var/lib/postgresql/data
+      - ./db-data:/var/lib/postgresql/data
     env_file:
       - ./apps/server/.env
     healthcheck:
-      test: ['CMD', 'pg_isready', '-U', 'bokdol', '-d', 'bookmarket']
+      test:
+        [
+          'CMD',
+          'pg_isready',
+          '-U',
+          '${POSTGRES_USER}',
+          '-d',
+          '${POSTGRES_NAME}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

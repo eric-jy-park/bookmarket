@@ -1,11 +1,12 @@
-import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
-import { Category } from 'src/categories/entities/category.entity';
-import { USERNAME_MAX_LENGTH } from 'src/iam/constants/username';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Bookmark } from '../../bookmarks/entities/bookmark.entity';
+import { Category } from '../../categories/entities/category.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
+import { USERNAME_MAX_LENGTH } from '../../iam/constants/username';
 import { AuthProvider } from '../enums/auth-provider.enum';
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

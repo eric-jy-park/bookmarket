@@ -19,8 +19,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "db:setup": "node scripts/db-setup.js",
+    "db:start": "cd ../.. && docker-compose up -d db",
     "migration:generate": "npm run typeorm -- migration:generate -d src/data-source.ts -p",
-    "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
+    "migration:run": "npm run db:setup && npm run typeorm -- migration:run -d src/data-source-dev.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts"
   },
   "dependencies": {

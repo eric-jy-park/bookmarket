@@ -1,7 +1,7 @@
-import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
-import { BaseEntity } from 'src/common/entities/base.entity';
-import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Bookmark } from '../../bookmarks/entities/bookmark.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Category extends BaseEntity {
