@@ -65,15 +65,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel='manifest' href='/manifest.json' />
         <link rel='apple-touch-icon' href='/logos/logo-base-256x256.png' />
         <link rel='icon' href='/favicon.ico' />
-        {process.env.NODE_ENV !== 'development' && (
-          <Script
-            defer
-            src='https://umami.bmkt.tech/script.js'
-            data-website-id='6fae0a23-df49-437c-844e-a3b6481feb35'
-          />
-        )}
       </head>
       <body className='select-none sm:select-text'>
+        {process.env.NODE_ENV !== 'development' && (
+          <Script
+            strategy='afterInteractive'
+            src='https://umami.bmkt.tech/script.js'
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          />
+        )}
         <GlobalProvider>
           <main className='mx-auto flex w-full min-w-0 flex-auto select-none flex-col px-5 antialiased sm:select-text sm:px-4'>
             {children}
