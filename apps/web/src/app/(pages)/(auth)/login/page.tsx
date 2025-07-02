@@ -1,18 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { GithubIcon, GoogleIcon } from '~/app/_common/components/icons';
 import { Logo } from '~/app/_common/components/logo';
 import { Button } from '~/app/_core/components/button';
 import { Input } from '~/app/_core/components/input';
 import { Label } from '~/app/_core/components/label';
+import { trackAuthEvent } from '~/app/_common/utils/analytics';
 import { loginUser } from '../_actions/login-user.action';
 import { useOAuth } from '../_hooks/use-oauth';
 
 export default function LoginPage() {
   const { googleLogin, githubLogin } = useOAuth();
   const [_, formAction, isPending] = useActionState(loginUser, null);
+
+  useEffect(() => {
+    trackAuthEvent.loginStart();
+  }, []);
 
   return (
     <section className='flex w-full bg-background dark:bg-transparent md:px-4 md:py-32'>
@@ -25,11 +30,17 @@ export default function LoginPage() {
           </div>
 
           <div className='mt-6 grid grid-cols-2 gap-3'>
-            <Button type='button' variant='outline' onClick={() => googleLogin()}>
+            <Button type='button' variant='outline' onClick={() => {
+              trackAuthEvent.oauthGoogle();
+              googleLogin();
+            }}>
               <GoogleIcon />
               <span>Google</span>
             </Button>
-            <Button type='button' variant='outline' onClick={() => githubLogin()}>
+            <Button type='button' variant='outline' onClick={() => {
+              trackAuthEvent.oauthGithub();
+              githubLogin();
+            }}>
               <GithubIcon />
               <span>Github</span>
             </Button>

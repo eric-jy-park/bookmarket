@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import React, { useActionState } from 'react';
 import { Input } from '~/app/_core/components/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/app/_core/components/sheet';
+import { trackCategoryEvent } from '../utils/analytics';
 import { createCategory } from '../actions/category.action';
 
 export const AddCategoryButton = () => {
@@ -20,10 +21,14 @@ export const AddCategoryButton = () => {
       }
       try {
         await createCategory(categoryName);
+        trackCategoryEvent.create(categoryName);
         setOpen(false);
         return { error: '' };
       } catch (error) {
-        return { error: 'Failed to create category' };
+        const errorMessage = error instanceof Error ? error.message : 'Failed to create category';
+        trackCategoryEvent.createError(errorMessage);
+        console.error('Error creating category:', error);
+        return { error: errorMessage };
       } finally {
         router.refresh();
       }

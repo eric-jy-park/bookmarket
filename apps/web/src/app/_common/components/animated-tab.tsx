@@ -8,6 +8,7 @@ import React from 'react';
 import { CategoryDrawerContent } from '~/app/(pages)/(home)/home/_components/category-drawer-content';
 import { Drawer, DrawerTrigger } from '~/app/_core/components/drawer';
 import { type Category } from '../interfaces/category.interface';
+import { trackCategoryEvent } from '../utils/analytics';
 import { AddCategoryButton } from './add-category-button';
 import { TextMorph } from './text-morph';
 
@@ -18,7 +19,11 @@ export const AnimatedTab = ({ categories, isShared }: { categories: Category[]; 
 
   const handleCategoryClick = React.useCallback(
     (category: Category) => {
-      if (activeTab?.name === category.name) return setCategory(null);
+      if (activeTab?.name === category.name) {
+        setCategory(null);
+        return;
+      }
+      trackCategoryEvent.filter(category.name);
       setCategory(category.name);
     },
     [activeTab?.name, setCategory],

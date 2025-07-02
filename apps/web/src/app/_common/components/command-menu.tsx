@@ -17,6 +17,7 @@ import {
   CommandSeparator,
 } from 'cmdk';
 import { cn } from '~/app/_core/utils/cn';
+import { trackCommandEvent } from '../utils/analytics';
 import { bookmarksQuery } from '../state/query/bookmark.query';
 import { categoriesQuery } from '../state/query/category.query';
 import { Logo } from './logo';
@@ -47,6 +48,7 @@ export function CommandMenu() {
 
   const handleCategorySelect = React.useCallback(
     (categoryName: string) => {
+      trackCommandEvent.categorySelect(categoryName);
       setCategory(categoryName);
       setOpen(false);
     },
@@ -54,6 +56,7 @@ export function CommandMenu() {
   );
 
   const handleBookmarkOpen = React.useCallback((url: string) => {
+    trackCommandEvent.bookmarkOpen(url);
     window.open(url, '_blank', 'noopener,noreferrer');
     setOpen(false);
   }, []);
@@ -62,7 +65,12 @@ export function CommandMenu() {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen(open => !open);
+        setOpen(open => {
+          if (!open) {
+            trackCommandEvent.open();
+          }
+          return !open;
+        });
       }
     };
 
@@ -88,7 +96,12 @@ export function CommandMenu() {
         <CommandInput
           placeholder='Search for a bookmark...'
           value={search}
-          onValueChange={setSearch}
+          onValueChange={(value) => {
+            setSearch(value);
+            if (value.length > 0) {
+              trackCommandEvent.search(value);
+            }
+          }}
           className='border-b py-2'
         />
         <CommandList className='pt-2'>
