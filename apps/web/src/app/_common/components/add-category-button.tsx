@@ -24,8 +24,11 @@ export const AddCategoryButton = () => {
         trackCategoryEvent.create(categoryName);
         setOpen(false);
         return { error: '' };
-      } catch {
-        return { error: 'Failed to create category' };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to create category';
+        trackCategoryEvent.createError(errorMessage);
+        console.error('Error creating category:', error);
+        return { error: errorMessage };
       } finally {
         router.refresh();
       }

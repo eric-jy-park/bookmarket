@@ -6,6 +6,7 @@ import { Logo } from '~/app/_common/components/logo';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
 import { cn } from '~/app/_core/utils/cn';
 import { trackBookmarkEvent, trackSharingEvent } from '~/app/_common/utils/analytics';
+import { extractUsernameFromPath } from '~/app/_common/utils/url';
 import { useBookmarkContext } from '../_hooks/use-bookmark-context';
 import { BookmarkCardTitleInput } from './bookmark-card-title-input';
 import { BookmarkContextMenu, BookmarkContextMenuProvider, BookmarkContextMenuTrigger } from './bookmark-context-menu';
@@ -224,11 +225,13 @@ export const BookmarkCard = ({ bookmark, isActive, isBlurred, isViewOnly }: Book
 const ViewOnlyBookmarkCard = React.memo(({ bookmark }: { bookmark: Bookmark }) => {
   const animationControls = useAnimation();
   const handleSharedBookmarkClick = React.useCallback(() => {
-    // Extract username from current URL path
-    const pathParts = window.location.pathname.split('/');
-    const username = pathParts[pathParts.indexOf('s') + 1];
-    if (username) {
-      trackSharingEvent.bookmarkClick(bookmark.url, username);
+    try {
+      const username = extractUsernameFromPath(window.location.pathname);
+      if (username) {
+        trackSharingEvent.bookmarkClick(bookmark.url, username);
+      }
+    } catch (error) {
+      console.warn('Failed to track shared bookmark click:', error);
     }
   }, [bookmark.url]);
   

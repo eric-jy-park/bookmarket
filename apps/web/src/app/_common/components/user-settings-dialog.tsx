@@ -35,16 +35,21 @@ export default function UserSettingsDialog({
   }, []);
 
   const { data: usernameCheck, isLoading: isUsernameChecking } = useQuery({
-    queryFn: () => {
-      const result = checkUsernameAvailable(user.username!);
-      result.then((data) => {
-        trackProfileEvent.usernameCheck(data.isAvailable);
-      });
-      return result;
-    },
+    queryFn: () => checkUsernameAvailable(user.username!),
     queryKey: ['username', user.username],
     enabled: !!user.username && user.username !== initialUser.username,
   });
+
+  // Track username availability check results
+  React.useEffect(() => {
+    if (usernameCheck?.isAvailable !== undefined) {
+      try {
+        trackProfileEvent.usernameCheck(usernameCheck.isAvailable);
+      } catch (error) {
+        console.warn('Failed to track username check:', error);
+      }
+    }
+  }, [usernameCheck?.isAvailable]);
 
   const handleFormAction = React.useCallback(
     async (_: any, formData: FormData) => {
