@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
+import Script from 'next/script';
 import { GlobalProvider } from '../_common/providers/global-provider';
 import { Toaster } from '../_core/components/toaster';
 import { cn } from '../_core/utils/cn';
@@ -64,6 +65,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel='manifest' href='/manifest.json' />
         <link rel='apple-touch-icon' href='/logos/logo-base-256x256.png' />
         <link rel='icon' href='/favicon.ico' />
+        {process.env.NODE_ENV !== 'development' && (
+          <Script
+            defer
+            src='https://umami.bmkt.tech/script.js'
+            data-website-id='6fae0a23-df49-437c-844e-a3b6481feb35'
+          />
+        )}
       </head>
       <body className='select-none sm:select-text'>
         <GlobalProvider>
