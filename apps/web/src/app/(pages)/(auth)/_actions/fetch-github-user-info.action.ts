@@ -65,9 +65,14 @@ export const fetchGithubUserInfo = async (code: string) => {
 
     await setAccessToken(response.accessToken);
     await setRefreshToken(response.refreshToken);
+    redirect('/home');
   } catch (error) {
     Sentry.captureException(error);
-  } finally {
-    redirect('/home');
+
+    if (error instanceof Error && error.message.includes('403')) {
+      redirect('/signup?error=slots_full');
+    } else {
+      redirect('/login?error=oauth_failed');
+    }
   }
 };

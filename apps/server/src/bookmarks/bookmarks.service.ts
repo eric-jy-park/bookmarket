@@ -167,7 +167,6 @@ export class BookmarksService {
 
       return this.findOneBookmark(userId, id);
     } catch (error) {
-      console.error(`Failed to refetch metadata for bookmark ${id}:`, error);
       throw new Error('Failed to refetch bookmark metadata');
     }
   }

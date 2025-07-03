@@ -61,6 +61,7 @@ orchestrated with Docker for seamless development and deployment.
   users
 - **📱 Progressive Web App**: Full PWA support with offline capabilities and
   native app-like experience
+- **🎫 User Slot Management**: First-come-first-serve user registration with configurable limits and real-time slot tracking
 
 ### Advanced Features
 
@@ -73,6 +74,8 @@ orchestrated with Docker for seamless development and deployment.
 - **🎯 Type Safety**: End-to-end TypeScript for robust development experience
 - **🔒 Security Headers**: Comprehensive security headers and CSP policies
 - **📐 Responsive Design**: Mobile-first design that works across all devices
+- **⚡ Real-time Slot Updates**: Live slot availability counter with short polling for immediate feedback
+- **🛡️ Race Condition Protection**: Atomic slot reservation prevents concurrent signup issues
 
 ## 🏗 Architecture
 
@@ -596,6 +599,29 @@ Retrieves public bookmarks for a user (no authentication required).
 
 Retrieves public categories for a user (no authentication required).
 
+### Slot Management Endpoints
+
+#### `GET /slots/status`
+
+Returns current slot availability information (no authentication required).
+
+**Response:**
+
+```json
+{
+  "remaining": 85,
+  "total": 100,
+  "canSignUp": true
+}
+```
+
+**Description:**
+- `remaining`: Number of available signup slots
+- `total`: Maximum number of users allowed
+- `canSignUp`: Boolean indicating if new signups are permitted
+
+This endpoint is used by the frontend to display real-time slot availability and enable/disable signup functionality.
+
 ### Error Responses
 
 All endpoints return consistent error responses:
@@ -614,9 +640,21 @@ Common HTTP status codes:
 - `201` - Created
 - `400` - Bad Request (validation errors)
 - `401` - Unauthorized (invalid/missing token)
-- `403` - Forbidden (insufficient permissions)
+- `403` - Forbidden (insufficient permissions or slots full)
 - `404` - Not Found
 - `500` - Internal Server Error
+
+**Slot-specific Error Responses:**
+
+When signup slots are full, authentication endpoints return:
+
+```json
+{
+  "statusCode": 403,
+  "message": "No more signup slots available. Maximum of 100 users reached.",
+  "error": "Forbidden"
+}
+```
 
 ## 🗄️ Database
 
@@ -722,6 +760,36 @@ Users (1) ────── (N) Categories
 - **One user** can have **many bookmarks**
 - **One category** can have **many bookmarks**
 - **One bookmark** belongs to **one category** (optional)
+
+### Slot Management System
+
+#### Configuration
+
+The user slot system is configured in `apps/server/src/slots/slots.service.ts`:
+
+```typescript
+private readonly MAX_NEW_USERS = 100; // Configurable limit
+```
+
+#### Features
+
+- **Real-time Tracking**: Live slot availability displayed on landing page
+- **Race Condition Protection**: Atomic database transactions prevent concurrent signup issues
+- **Universal Enforcement**: Applies to all signup methods (email, Google OAuth, GitHub OAuth)
+- **Frontend Integration**: Real-time updates via 10-second polling
+- **Error Handling**: Graceful error messages when slots are full
+
+#### Frontend Components
+
+- **Slots Counter**: Visual indicator showing remaining slots with color coding
+- **Dynamic UI**: Signup buttons and forms automatically disable when slots are full
+- **Real-time Updates**: Short polling keeps slot status current across all users
+
+#### Security Considerations
+
+- **Atomic Operations**: Uses database transactions with pessimistic locking
+- **Race Prevention**: Slot reservation happens atomically with user creation
+- **Consistent Enforcement**: All authentication paths check slots before user creation
 
 ## 🚀 Deployment
 

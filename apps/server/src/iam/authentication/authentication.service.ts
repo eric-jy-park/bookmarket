@@ -1,7 +1,8 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomAlphaStringGenerator } from 'src/common/utils/random-alpha-string-generator';
+import { SlotsService } from 'src/slots/slots.service';
 import { User } from 'src/users/entities/user.entity';
 import { AuthProvider } from 'src/users/enums/auth-provider.enum';
 import { UsersService } from 'src/users/users.service';
@@ -16,7 +17,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 export class AuthenticationService {
   constructor(
     private readonly usersService: UsersService,
-
+    private readonly slotsService: SlotsService,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
 
@@ -25,6 +26,11 @@ export class AuthenticationService {
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
+    const slotReserved = await this.slotsService.tryReserveSlot();
+    if (!slotReserved) {
+      throw new ForbiddenException('No more signup slots available. Maximum of 100 users reached.');
+    }
+
     const hashedPassword = await this.hashingService.hash(signUpDto.password);
 
     const user = await this.usersService.create({

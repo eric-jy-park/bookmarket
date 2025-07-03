@@ -1,11 +1,12 @@
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { BaseEntity } from 'src/common/entities/base.entity';
 import { USERNAME_MAX_LENGTH } from 'src/iam/constants/username';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AuthProvider } from '../enums/auth-provider.enum';
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

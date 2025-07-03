@@ -1,11 +1,14 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Logo } from '~/app/_common/components/logo';
 import { Button } from '~/app/_core/components/button';
+import { slotStatusQuery } from '../_store/queries/slot-status.query';
 
 export const HomeHeader = () => {
   const router = useRouter();
+  const { data: slotStatus } = useQuery(slotStatusQuery());
 
   const handleJoinNowButtonClick = () => {
     router.push('/login');
@@ -21,7 +24,7 @@ export const HomeHeader = () => {
         onClick={handleJoinNowButtonClick}
         className='text-md h-10 w-28 rounded-full bg-black md:h-14 md:w-40 md:text-xl'
       >
-        Join Now
+        {slotStatus?.canSignUp ? 'Join Now' : 'Sign In'}
       </Button>
     </div>
   );
