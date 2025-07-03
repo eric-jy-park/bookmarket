@@ -5,5 +5,5 @@ export const slotStatusQuery = () =>
   queryOptions({
     queryKey: ['slot-status'],
     queryFn: fetchSlotStatus,
-    refetchInterval: 1000,
+    refetchInterval: 1000 * 5,
   });
