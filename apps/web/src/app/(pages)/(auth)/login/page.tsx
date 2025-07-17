@@ -13,7 +13,7 @@ import { useOAuth } from '../_hooks/use-oauth';
 
 export default function LoginPage() {
   const { googleLogin, githubLogin } = useOAuth();
-  const [_, formAction, isPending] = useActionState(loginUser, null);
+  const [state, formAction, isPending] = useActionState(loginUser, null);
 
   useEffect(() => {
     trackAuthEvent.loginStart();
@@ -53,6 +53,12 @@ export default function LoginPage() {
           </div>
 
           <div className='space-y-6'>
+            {state?.error && (
+              <div className='rounded-md bg-red-50 p-4 text-sm text-red-800 border border-red-200'>
+                {state.error}
+              </div>
+            )}
+            
             <div className='space-y-2'>
               <Label htmlFor='email' className='block text-sm'>
                 Email

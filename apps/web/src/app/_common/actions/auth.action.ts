@@ -63,13 +63,6 @@ export const setAccessToken = async (accessToken: string) => {
     domain: isLocalhost ? undefined : `.${process.env.NEXT_PUBLIC_DOMAIN}`,
   };
 
-  console.log('Setting access token cookie:', {
-    isLocalhost,
-    NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
-    cookieOptions,
-  });
-
   cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieOptions);
 };
 
@@ -116,8 +109,6 @@ export const isAuthenticated = async () => {
 };
 
 export const signOut = async () => {
-  'use server';
-
   try {
     const cookieStore = await cookies();
 
@@ -125,7 +116,7 @@ export const signOut = async () => {
     cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
   } catch (e) {
     Sentry.captureException(e);
-  } finally {
-    redirect('/');
   }
+  
+  redirect('/');
 };

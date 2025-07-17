@@ -17,7 +17,7 @@ import { useOAuth } from '../_hooks/use-oauth';
 export default function SignupPage() {
   const { googleLogin, githubLogin } = useOAuth();
   const { data: slotStatus } = useQuery(slotStatusQuery());
-  const [_, formAction, isPending] = useActionState(createUser, null);
+  const [state, formAction, isPending] = useActionState(createUser, null);
 
   useEffect(() => {
     trackAuthEvent.signupStart();
@@ -70,11 +70,27 @@ export default function SignupPage() {
           </div>
 
           <div className='space-y-6'>
+            {state?.error && state.field === 'general' && (
+              <div className='rounded-md bg-red-50 p-4 text-sm text-red-800 border border-red-200'>
+                {state.error}
+              </div>
+            )}
+            
             <div className='space-y-2'>
               <Label htmlFor='email' className='block text-sm'>
                 Email
               </Label>
-              <Input type='email' required name='email' id='email' disabled={!slotStatus?.canSignUp} />
+              <Input 
+                type='email' 
+                required 
+                name='email' 
+                id='email' 
+                disabled={!slotStatus?.canSignUp}
+                className={state?.field === 'email' ? 'border-red-500' : ''}
+              />
+              {state?.error && state.field === 'email' && (
+                <p className='text-sm text-red-600'>{state.error}</p>
+              )}
             </div>
 
             <div className='space-y-2'>

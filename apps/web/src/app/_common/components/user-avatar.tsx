@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { LogOutIcon, SettingsIcon, UserRoundIcon } from 'lucide-react';
 import React from 'react';
 import { type User } from '~/app/(pages)/(auth)/types';
@@ -20,6 +21,7 @@ import UserSettingsDialog from './user-settings-dialog';
 
 export const UserAvatar = ({ user }: { user: User }) => {
   const { openModal, closeModal } = useAppState();
+  const queryClient = useQueryClient();
 
   const handleSettingsClick = React.useCallback(() => {
     openModal({
@@ -27,6 +29,15 @@ export const UserAvatar = ({ user }: { user: User }) => {
       content: <UserSettingsDialog onCloseClick={() => closeModal({ id: modalIds.userSettings })} initialUser={user} />,
     });
   }, [closeModal, openModal, user]);
+
+  const handleLogout = React.useCallback(async () => {
+    queryClient.clear();
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    await signOut();
+  }, [queryClient]);
 
   return (
     <DropdownMenu>
@@ -48,7 +59,7 @@ export const UserAvatar = ({ user }: { user: User }) => {
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='cursor-pointer' onClick={() => signOut()}>
+        <DropdownMenuItem className='cursor-pointer' onClick={handleLogout}>
           <LogOutIcon size={16} className='opacity-60' aria-hidden='true' />
           <span>Logout</span>
         </DropdownMenuItem>

@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomAlphaStringGenerator } from 'src/common/utils/random-alpha-string-generator';
@@ -26,6 +26,11 @@ export class AuthenticationService {
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
+    const existingUser = await this.usersService.findOne(signUpDto.email, AuthProvider.EMAIL);
+    if (existingUser) {
+      throw new ConflictException('User already exists');
+    }
+
     const slotReserved = await this.slotsService.tryReserveSlot();
     if (!slotReserved) {
       throw new ForbiddenException('No more signup slots available. Maximum of 100 users reached.');

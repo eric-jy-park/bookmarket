@@ -28,11 +28,12 @@ export class SlotsService {
 
   async tryReserveSlot(): Promise<boolean> {
     return this.dataSource.transaction(async transactionalEntityManager => {
+      await transactionalEntityManager.query('SELECT pg_advisory_xact_lock(1)');
+
       const result = await transactionalEntityManager
         .createQueryBuilder()
         .select('COUNT(*)', 'count')
         .from(User, 'user')
-        .setLock('pessimistic_write')
         .getRawOne();
 
       const currentCount = parseInt(result.count, 10);
