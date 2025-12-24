@@ -28,8 +28,7 @@ export async function middleware(request: NextRequest) {
     host.endsWith(mainDomain) &&
     !host.startsWith('www.') &&
     !host.startsWith('api.') &&
-    !host.startsWith('bmkt.') &&
-    !host.startsWith('ericpark.')
+    !host.startsWith('bmkt.')
   ) {
     // Logic for handling subdomains
     const subdomain = host.split('.')[0];
