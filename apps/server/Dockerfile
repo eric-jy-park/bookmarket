@@ -15,8 +15,9 @@ COPY apps/server apps/server
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the server app
-RUN pnpm --filter bookmarket-server build
+# Build the server app directly (bypass turbo caching issues)
+WORKDIR /app/apps/server
+RUN pnpm run build
 
 # Production stage
 FROM node:20-slim AS runner
@@ -35,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy only necessary files from builder
+# Copy package files for pnpm install
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/packages packages
 COPY --from=builder /app/apps/server/package.json apps/server/

@@ -15,9 +15,10 @@ COPY apps/web apps/web
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the web app (skip env validation for Docker)
+# Build the web app directly (bypass turbo caching issues)
+WORKDIR /app/apps/web
 ENV SKIP_ENV_VALIDATION=true
-RUN pnpm --filter bookmarket-client build
+RUN pnpm run build
 
 # Production stage
 FROM node:20-slim AS runner
