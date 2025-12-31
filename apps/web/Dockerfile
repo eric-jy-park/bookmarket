@@ -1,33 +1,50 @@
-FROM node:20
+# Build stage
+FROM node:20-slim AS builder
 
-# Set up PNPM
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-# Set the working directory
 WORKDIR /app
 
 # Copy root configuration files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-
-# Copy shared packages source code
-# Assuming shared packages are in 'packages/' relative to the root
 COPY packages packages
-
-# Copy the server app source code
 COPY apps/web apps/web
 
-# Install only the server dependencies and its workspace dependencies
-RUN pnpm install 
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-# Build the server app
-RUN pnpm run build
+# Build the web app (skip env validation for Docker)
+ENV SKIP_ENV_VALIDATION=true
+RUN pnpm --filter bookmarket-client build
 
-# Change working directory to the server app's directory
+# Production stage
+FROM node:20-slim AS runner
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV NODE_ENV=production
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy package files for pnpm install
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/packages packages
+COPY --from=builder /app/apps/web/package.json apps/web/
+
+# Copy built application
+COPY --from=builder /app/apps/web/.next apps/web/.next
+COPY --from=builder /app/apps/web/public apps/web/public
+COPY --from=builder /app/apps/web/next.config.mjs apps/web/
+COPY --from=builder /app/apps/web/src/env.mjs apps/web/src/
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
 WORKDIR /app/apps/web
 
-# Expose the port and define the entry point
 EXPOSE 3000
 
-ENTRYPOINT ["pnpm", "run", "start"]
+CMD ["pnpm", "run", "start"]

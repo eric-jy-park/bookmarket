@@ -1,33 +1,51 @@
-FROM node:20
+# Build stage
+FROM node:20-slim AS builder
 
-# Set up PNPM
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-# Set the working directory
 WORKDIR /app
 
 # Copy root configuration files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-
-# Copy shared packages source code
-# Assuming shared packages are in 'packages/' relative to the root
 COPY packages packages
-
-# Copy the server app source code
 COPY apps/server apps/server
 
-# Install only the server dependencies and its workspace dependencies
-RUN pnpm install 
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
 # Build the server app
-RUN pnpm run build
+RUN pnpm --filter bookmarket-server build
 
-# Change working directory to the server app's directory
+# Production stage
+FROM node:20-slim AS runner
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV NODE_ENV=production
+RUN corepack enable
+
+# Install runtime dependencies for bcrypt native module
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy only necessary files from builder
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/packages packages
+COPY --from=builder /app/apps/server/package.json apps/server/
+COPY --from=builder /app/apps/server/dist apps/server/dist
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
 WORKDIR /app/apps/server
 
-# Expose the port and define the entry point
 EXPOSE 8000
 
-ENTRYPOINT ["pnpm", "run", "start"]
+CMD ["node", "dist/main"]
