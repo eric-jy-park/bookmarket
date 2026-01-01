@@ -17,6 +17,8 @@ RUN pnpm install --frozen-lockfile
 
 # Build the web app directly (bypass turbo caching issues)
 WORKDIR /app/apps/web
+# Copy .env file for build-time environment variables
+COPY apps/web/.env .env
 ENV SKIP_ENV_VALIDATION=true
 RUN pnpm run build
 
