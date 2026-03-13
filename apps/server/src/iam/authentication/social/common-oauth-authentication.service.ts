@@ -26,7 +26,8 @@ export class CommonOAuthService {
 
       user = await this.usersService.create({
         email: oauthTokenDto.email,
-        github_id: oauthTokenDto.id,
+        google_id: authProvider === AuthProvider.GOOGLE ? oauthTokenDto.id : undefined,
+        github_id: authProvider === AuthProvider.GITHUB ? oauthTokenDto.id : undefined,
         picture: oauthTokenDto.picture,
         firstName: oauthTokenDto.firstName ?? 'Bookmarket',
         lastName: oauthTokenDto.lastName ?? 'User',
