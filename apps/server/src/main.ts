@@ -19,10 +19,7 @@ async function bootstrap() {
     }),
   );
   app.use(morgan('combined'));
-  app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') || true,
-    credentials: true,
-  });
+  app.enableCors();
   app.use(cookieParser());
   await app.listen(8000);
 }
