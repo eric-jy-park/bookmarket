@@ -62,17 +62,21 @@ export class CategoriesService {
   }
 
   async findOne(categoryId: Category['id']) {
-    return this.categoryRepository.findOneOrFail({
+    const category = await this.categoryRepository.findOne({
       where: {
         id: categoryId,
       },
     });
+    if (!category) throw new NotFoundException(`Category with id ${categoryId} not found`);
+    return category;
   }
 
   async findOneByName(categoryName: Category['name'], userId: User['id']) {
-    return this.categoryRepository.findOneOrFail({
+    const category = await this.categoryRepository.findOne({
       where: { name: categoryName, user: { id: userId } },
     });
+    if (!category) throw new NotFoundException(`Category with name ${categoryName} not found`);
+    return category;
   }
 
   async update(userId: User['id'], categoryId: Category['id'], updateCategoryDto: UpdateCategoryDto) {
