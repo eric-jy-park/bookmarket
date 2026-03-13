@@ -26,6 +26,5 @@ jobs:
           script: |
             cd /home/ericpark/Desktop/apps/bookmarket
             git pull origin main
-            docker compose down
-            docker compose build --parallel
-            docker compose up -d
+            DOCKER_BUILDKIT=1 docker compose build --parallel
+            docker compose up -d --remove-orphans
