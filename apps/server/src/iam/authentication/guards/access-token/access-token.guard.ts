@@ -28,8 +28,6 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('');
     }
 
-    this.jwtService.verifyAsync(token);
-
     return true;
   }
 
