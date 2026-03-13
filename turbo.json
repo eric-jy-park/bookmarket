@@ -2,10 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "globalEnv": [
-    "DATABASE_URL", 
-    "CLERK_SECRET_KEY", 
-    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", 
-    "NEXT_PUBLIC_GOOGLE_CLIENT_ID", 
+    "DATABASE_URL",
+    "NEXT_PUBLIC_GOOGLE_CLIENT_ID",
     "NEXT_PUBLIC_GITHUB_CLIENT_ID", 
     "NEXT_PUBLIC_BASE_URL", 
     "GITHUB_CLIENT_SECRET",
