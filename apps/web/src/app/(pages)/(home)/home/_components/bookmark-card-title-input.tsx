@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { updateBookmark } from '~/app/_common/actions/bookmark.action';
 import { type Bookmark } from '~/app/_common/interfaces/bookmark.interface';
+import { withDeploymentCheck } from '~/app/_common/utils/deployment-mismatch';
 import { useBookmarkStore } from '../_state/store/use-bookmark-store';
 
 export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => {
@@ -15,11 +16,11 @@ export const BookmarkCardTitleInput = ({ bookmark }: { bookmark: Bookmark }) => 
 
   const handleUpdateBookmark = React.useCallback(async () => {
     toast.promise(
-      updateBookmark({
+      withDeploymentCheck(updateBookmark({
         ...bookmark,
         category: bookmark.category?.name,
         title: inputValue,
-      }),
+      })),
       {
         loading: 'Updating bookmark...',
         success: 'Bookmark updated!',

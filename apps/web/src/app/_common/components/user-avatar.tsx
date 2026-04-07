@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '~/app/_core/components/dropdown-menu';
 import { signOut } from '../actions/auth.action';
+import { withDeploymentCheck } from '../utils/deployment-mismatch';
 import { modalIds } from '../constants/modal-id.constants';
 import { UserProfile } from './user-profile';
 import UserSettingsDialog from './user-settings-dialog';
@@ -36,7 +37,7 @@ export const UserAvatar = ({ user }: { user: User }) => {
     localStorage.clear();
     sessionStorage.clear();
 
-    await signOut();
+    await withDeploymentCheck(signOut());
   }, [queryClient]);
 
   return (

@@ -18,7 +18,7 @@ export const HomeContent = () => {
   };
 
   const handleGithubButtonClick = () => {
-    router.push('https://github.com/eric-jy-park/bookmarket');
+    router.push('https://github.com/ericjypark/bookmarket');
   };
 
   return (

@@ -1,11 +1,26 @@
-import { isServer, QueryClient } from '@tanstack/react-query';
+import { isServer, MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import { handleStaleDeployment, isStaleDeploymentError } from '~/app/_common/utils/deployment-mismatch';
 
 function makeQueryClient() {
   return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        if (isStaleDeploymentError(error)) handleStaleDeployment();
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (isStaleDeploymentError(error)) handleStaleDeployment();
+      },
+    }),
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
         refetchOnWindowFocus: false,
+        retry: (failureCount, error) => {
+          if (isStaleDeploymentError(error)) return false;
+          return failureCount < 3;
+        },
       },
     },
   });

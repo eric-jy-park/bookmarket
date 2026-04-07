@@ -35,7 +35,7 @@ jobs:
           file: apps/server/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/eric-jy-park/bookmarket-server:latest
+          tags: ghcr.io/ericjypark/bookmarket-server:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -46,7 +46,7 @@ jobs:
           file: apps/web/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/eric-jy-park/bookmarket-web:latest
+          tags: ghcr.io/ericjypark/bookmarket-web:latest
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}

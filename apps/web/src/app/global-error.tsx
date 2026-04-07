@@ -3,11 +3,30 @@
 import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
+import { handleStaleDeployment, isStaleDeploymentError } from '~/app/_common/utils/deployment-mismatch';
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
+  const isStale = isStaleDeploymentError(error);
+
   useEffect(() => {
+    if (isStale) {
+      handleStaleDeployment();
+      return;
+    }
     Sentry.captureException(error);
-  }, [error]);
+  }, [error, isStale]);
+
+  if (isStale) {
+    return (
+      <html>
+        <body style={{ fontFamily: 'sans-serif', textAlign: 'center', padding: '4rem' }}>
+          <h2>App Updated</h2>
+          <p>A new version has been deployed. Please reload to continue.</p>
+          <button onClick={() => window.location.reload()}>Reload Page</button>
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html>

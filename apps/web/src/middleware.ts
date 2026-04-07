@@ -5,7 +5,7 @@ import { authRelatedRoutes, unauthenticatedRoutes } from '~/path';
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host');
-  const mainDomain = process.env.NEXT_PUBLIC_DOMAIN!;
+  const mainDomain = process.env.NEXT_PUBLIC_DOMAIN;
   const pathname = request.nextUrl.pathname;
 
   // Log for debugging in production
@@ -24,6 +24,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     host &&
+    mainDomain &&
     host.includes('.') &&
     host.endsWith(mainDomain) &&
     !host.startsWith('www.') &&
