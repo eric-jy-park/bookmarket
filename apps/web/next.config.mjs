@@ -14,6 +14,7 @@ await import("./src/env.mjs");
 
 
 const nextConfig = {
+  output: 'standalone',
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
