@@ -1,7 +1,5 @@
 import '~/styles/globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
 import Script from 'next/script';
@@ -70,7 +68,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {process.env.NODE_ENV !== 'development' && (
           <Script
             strategy='afterInteractive'
-            src='https://umami.bmkt.tech/script.js'
+            src='https://umami.ericjypark.com/script.js'
             data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
           />
         )}
@@ -79,8 +77,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {children}
             <Toaster position='bottom-center' className='hidden sm:block' />
             <Toaster position='top-center' className='block sm:hidden' duration={2000} />
-            <Analytics />
-            <SpeedInsights />
           </main>
         </GlobalProvider>
       </body>

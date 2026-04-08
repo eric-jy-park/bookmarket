@@ -78,13 +78,10 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script_stop: true
           command_timeout: 10m
-          envs: GHCR_TOKEN
           script: |
-            echo $GHCR_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker logout ghcr.io 2>/dev/null || true
             cd /home/ericpark/Desktop/apps/bookmarket
             git fetch origin main
             git reset --hard origin/main
             docker compose pull
             docker compose up -d --remove-orphans
-        env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
