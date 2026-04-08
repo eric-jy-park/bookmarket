@@ -41,6 +41,16 @@ export class UsersService {
     });
   }
 
+  findOneByProviderId(providerId: string, authProvider: AuthProvider) {
+    if (authProvider === AuthProvider.GITHUB) {
+      return this.usersRepository.findOneBy({ github_id: providerId });
+    }
+    if (authProvider === AuthProvider.GOOGLE) {
+      return this.usersRepository.findOneBy({ google_id: providerId });
+    }
+    return null;
+  }
+
   findOneById(id: string) {
     return this.usersRepository.findOneBy({ id });
   }
@@ -57,6 +67,10 @@ export class UsersService {
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
+  }
+
+  async updateEmail(id: string, email: string) {
+    return this.usersRepository.update(id, { email });
   }
 
   async checkIsUsernameAvailable(userId: string, username: string) {

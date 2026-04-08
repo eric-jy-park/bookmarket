@@ -16,7 +16,11 @@ export class CommonOAuthService {
   ) {}
 
   async authenticate(oauthTokenDto: OAuthTokenDto, authProvider: AuthProvider) {
-    let user = await this.usersService.findOne(oauthTokenDto.email, authProvider);
+    // Match by provider ID first (stable), then fall back to email
+    let user = await this.usersService.findOneByProviderId(oauthTokenDto.id, authProvider);
+    if (!user) {
+      user = await this.usersService.findOne(oauthTokenDto.email, authProvider);
+    }
 
     if (!user) {
       const slotReserved = await this.slotsService.tryReserveSlot();
@@ -34,6 +38,10 @@ export class CommonOAuthService {
         username: randomAlphaStringGenerator(USERNAME_MAX_LENGTH),
         auth_provider: authProvider,
       });
+    } else if (user.email !== oauthTokenDto.email) {
+      // Update email if it changed on the OAuth provider
+      await this.usersService.updateEmail(user.id, oauthTokenDto.email);
+      user.email = oauthTokenDto.email;
     }
 
     const missingUserInfo: Record<string, string> = {};
